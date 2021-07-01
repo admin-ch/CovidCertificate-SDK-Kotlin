@@ -74,15 +74,23 @@ data class EuTestExpectedResult(
 )
 
 class EuTestDataProvider : ArgumentsProvider {
+	companion object {
+		private val KNOWN_TEST_FAILURES = listOf(
+			"LI/2DCode/raw/4.json", // https://github.com/eu-digital-green-certificates/dgc-testdata/issues/339
+		)
+	}
+
 	private val testDataDirectory = File(this::class.java.classLoader.getResource("dgc-testdata")!!.path)
 
 	override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
 		// Get all EU test case json files in the test data directory
 		val testCaseJsonFiles = testDataDirectory.walk().mapNotNull { file ->
-			if (file.path.endsWith("json")) {
-				file.path
-			} else {
-				null
+			val isKnownTestFailure = KNOWN_TEST_FAILURES.any { file.path.endsWith(it) }
+
+			when {
+				isKnownTestFailure -> null
+				file.path.endsWith("json") -> file.path
+				else -> null
 			}
 		}.toSet()
 
