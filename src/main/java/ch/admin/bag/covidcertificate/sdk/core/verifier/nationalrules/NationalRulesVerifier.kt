@@ -30,6 +30,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class NationalRulesVerifier(private val acceptedVaccineProvider: AcceptedVaccineProvider) {
 
@@ -42,6 +43,7 @@ class NationalRulesVerifier(private val acceptedVaccineProvider: AcceptedVaccine
 		val ruleSetData = CertLogicData(payload, externalInfo)
 
 		val jacksonMapper = ObjectMapper()
+		jacksonMapper.setTimeZone(TimeZone.getDefault())
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
 
 		for (rule in ruleSet.rules) {
