@@ -399,7 +399,7 @@ class NationalRulesVerifierTest {
 	}
 
 	@Test
-	fun testRatIsValidFor24h() {
+	fun testRatIsValidFor48h() {
 		var validRat = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
 			AcceptanceCriteriasConstants.NEGATIVE_CODE,
