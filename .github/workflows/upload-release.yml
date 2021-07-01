@@ -1,17 +1,16 @@
-name: Build
+name: Create Github release for tags
 
 on:
   push:
-    branches:
-      - main
-      - 'release/**'
-  pull_request:
+    tags:
+      - 'v*'
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      # Build
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -35,3 +34,11 @@ jobs:
           path: |
             build/libs
             build/reports
+      # Release
+      - name: Create Github release
+        uses: softprops/action-gh-release@v0.1.5
+        with:
+          files: |
+            build/libs/CovidCertificate-SDK-Kotlin-*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
