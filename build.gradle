@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'ch.admin.bag'
-version '1.0-SNAPSHOT'
+version VERSION_NAME
 
 repositories {
     mavenCentral()
