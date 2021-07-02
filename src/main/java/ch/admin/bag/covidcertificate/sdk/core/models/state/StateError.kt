@@ -10,6 +10,10 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.state
 
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.DccHolder
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 
-data class StateError(val code: String, val message: String? = null, val dccHolder: DccHolder? = null)
+data class StateError(
+	val code: String,
+	val message: String? = null,
+	val certificateHolder: CertificateHolder? = null
+)

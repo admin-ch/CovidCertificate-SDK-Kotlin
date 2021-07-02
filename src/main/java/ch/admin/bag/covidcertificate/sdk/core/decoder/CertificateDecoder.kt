@@ -31,20 +31,25 @@ object CertificateDecoder {
 	 */
 	@JvmStatic
 	fun decode(qrCodeData: String): DecodeState {
-
+		// Remove the prefix to retrieve the encoded data
 		val encoded = PrefixIdentifierService.decode(qrCodeData) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_PREFIX))
 
+		// Base45 decode to retrieve the compressed data
 		val compressed = Base45Service.decode(encoded) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_BASE_45))
 
+		// ZLIB decompress to retrieve the COSE data
 		val cose = DecompressionService.decode(compressed) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_Z_LIB))
 
+		// COSE decode to retrieve the CBOR data
 		val cbor = NoopVerificationCoseService.decode(cose) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_COSE))
 
-		val bagdgc = CborService.decode(cbor, qrCodeData) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_CBOR))
+		// Decode the CBOR data into a certificate holder
+		val certificateHolder = CborService.decode(cbor, qrCodeData) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_CBOR))
 
-		bagdgc.certType = CertTypeService.decode(bagdgc)
+		// Determine the certificate type the certificate holder contains
+		certificateHolder.certType = CertTypeService.decode(certificateHolder)
 
-		return DecodeState.SUCCESS(bagdgc)
+		return DecodeState.SUCCESS(certificateHolder)
 	}
 
 }
