@@ -29,6 +29,7 @@ object CertificateDecoder {
 	 *
 	 * @param qrCodeData content of the scanned qr code, of the format "HC1:base45(...)" or "LT1:base45(...)"
 	 */
+	@JvmStatic
 	fun decode(qrCodeData: String): DecodeState {
 
 		val encoded = PrefixIdentifierService.decode(qrCodeData) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_PREFIX))
