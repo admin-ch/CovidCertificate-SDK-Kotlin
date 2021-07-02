@@ -12,6 +12,7 @@ package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
+import java.io.Serializable
 import java.time.Instant
 
 class CertificateHolder(
@@ -20,7 +21,7 @@ class CertificateHolder(
 	val expirationTime: Instant? = null,
 	val issuedAt: Instant? = null,
 	val issuer: String? = null,
-) {
+): Serializable {
 
 	var certType: CertType? = null
 		internal set

@@ -14,9 +14,9 @@ import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRul
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 
 sealed class CheckNationalRulesState {
-	data class SUCCESS(val validityRange: ValidityRange) : CheckNationalRulesState()
-	data class NOT_YET_VALID(val validityRange: ValidityRange, val ruleId: String? = null) : CheckNationalRulesState()
-	data class NOT_VALID_ANYMORE(val validityRange: ValidityRange, val ruleId: String? = null) : CheckNationalRulesState()
+	data class SUCCESS(val validityRange: ValidityRange?) : CheckNationalRulesState()
+	data class NOT_YET_VALID(val validityRange: ValidityRange?, val ruleId: String? = null) : CheckNationalRulesState()
+	data class NOT_VALID_ANYMORE(val validityRange: ValidityRange?, val ruleId: String? = null) : CheckNationalRulesState()
 	data class INVALID(val nationalRulesError: NationalRulesError?, val ruleId: String? = null) : CheckNationalRulesState()
 	object LOADING : CheckNationalRulesState()
 	data class ERROR(val error: StateError) : CheckNationalRulesState()

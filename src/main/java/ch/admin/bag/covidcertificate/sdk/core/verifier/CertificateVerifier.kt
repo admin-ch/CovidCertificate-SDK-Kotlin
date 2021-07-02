@@ -66,7 +66,7 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 				VerificationState.ERROR(checkNationalRulesState.error, null)
 			} else if (
 				checkSignatureState == CheckSignatureState.SUCCESS
-				&& checkRevocationState == CheckRevocationState.SUCCESS
+				&& (checkRevocationState == CheckRevocationState.SUCCESS || checkRevocationState == CheckRevocationState.SKIPPED)
 				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
 			) {
 				VerificationState.SUCCESS(checkNationalRulesState.validityRange)
@@ -139,8 +139,8 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 		certificateHolder: CertificateHolder,
 		revokedCertificates: RevokedCertificates
 	) = withContext(Dispatchers.Default) {
-		// Revocation is not possible for light certificates, so this check always returns SUCCESS for them
-		if (certificateHolder.containsChLightCert()) return@withContext CheckRevocationState.SUCCESS
+		// Revocation is not possible for light certificates, so this check returns the SKIPPED state
+		if (certificateHolder.containsChLightCert()) return@withContext CheckRevocationState.SKIPPED
 
 		try {
 			val revokedCertificateService = RevokedHealthCertService(revokedCertificates)

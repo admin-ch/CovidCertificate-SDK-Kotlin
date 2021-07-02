@@ -155,7 +155,7 @@ class CertificateVerifierTest {
 				(invalidState.signatureState as CheckSignatureState.INVALID).signatureErrorCode
 			)
 
-			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
+			assertTrue(invalidState.revocationState is CheckRevocationState.SKIPPED)
 			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
 		}
 	}
@@ -176,7 +176,7 @@ class CertificateVerifierTest {
 				(invalidState.signatureState as CheckSignatureState.INVALID).signatureErrorCode
 			)
 
-			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
+			assertTrue(invalidState.revocationState is CheckRevocationState.SKIPPED)
 			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
 		}
 	}
@@ -192,10 +192,10 @@ class CertificateVerifierTest {
 
 			val successState = verificationState as VerificationState.SUCCESS
 			val expectedValidFrom = LocalDateTime.ofInstant(certificateHolder.issuedAt!!, ZoneId.systemDefault())
-			assertEquals(expectedValidFrom, successState.validityRange.validFrom)
+			assertEquals(expectedValidFrom, successState.validityRange?.validFrom)
 
 			val expectedValidUntil = LocalDateTime.ofInstant(certificateHolder.expirationTime!!, ZoneId.systemDefault())
-			assertEquals(expectedValidUntil, successState.validityRange.validUntil)
+			assertEquals(expectedValidUntil, successState.validityRange?.validUntil)
 		}
 	}
 
