@@ -10,9 +10,10 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
+import java.io.Serializable
 import java.time.LocalDate
 
-interface CovidCertificate {
+interface CovidCertificate: Serializable {
 
 	fun getPersonName(): PersonName
 	fun getDateOfBirth(): LocalDate
