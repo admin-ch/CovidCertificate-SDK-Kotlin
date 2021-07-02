@@ -26,7 +26,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: Build
-        run: ./gradlew build
+        run: |
+          ./gradlew build
+          ./gradlew shadowJar
       - name: Store build artifacts
         uses: actions/upload-artifact@v2
         with:
