@@ -13,6 +13,7 @@ package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 import ch.admin.bag.covidcertificate.sdk.core.HC1_A
 import ch.admin.bag.covidcertificate.sdk.core.getHardcodedSigningKeys
 import ch.admin.bag.covidcertificate.sdk.core.getInvalidSigningKeys
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -26,7 +27,7 @@ internal class VerificationCoseServiceTest {
 			val encoded = PrefixIdentifierService.decode(HC1_A)
 			val compressed = Base45Service.decode(encoded!!)
 			val cose = DecompressionService.decode(compressed!!)
-			val valid = VerificationCoseService.decode(bagKeys, cose!!)
+			val valid = VerificationCoseService.decode(bagKeys, cose!!, CertType.VACCINATION)
 
 			assertTrue(valid)
 		} catch (t: Throwable) {
@@ -42,7 +43,7 @@ internal class VerificationCoseServiceTest {
 			val encoded = PrefixIdentifierService.decode(HC1_A)
 			val compressed = Base45Service.decode(encoded!!)
 			val cose = DecompressionService.decode(compressed!!)
-			val valid = VerificationCoseService.decode(invalidKeys, cose!!)
+			val valid = VerificationCoseService.decode(invalidKeys, cose!!, CertType.VACCINATION)
 
 			assertFalse(valid)
 		} catch (t: Throwable) {
@@ -58,7 +59,7 @@ internal class VerificationCoseServiceTest {
 			val encoded = PrefixIdentifierService.decode(HC1_A)
 			val compressed = Base45Service.decode(encoded!!)
 			val cose = DecompressionService.decode(compressed!!)
-			val valid = VerificationCoseService.decode(invalidKeys, cose!!)
+			val valid = VerificationCoseService.decode(invalidKeys, cose!!, CertType.VACCINATION)
 
 			assertFalse(valid)
 		} catch (t: Throwable) {

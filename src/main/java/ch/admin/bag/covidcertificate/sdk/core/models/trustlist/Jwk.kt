@@ -39,6 +39,7 @@ data class Jwk(
 ) {
 
 	companion object {
+		private const val FLAG_USE_ALL = "sig"
 		private const val ALG_RSA_256 = "RS256"
 		private const val ALG_ES_256 = "ES256"
 
@@ -77,23 +78,11 @@ data class Jwk(
 
 	fun isAllowedToSign(certType: CertType): Boolean {
 		return getKeyUsageTypes().contains(certType)
-				|| use.isEmpty() // if key.use is empty, we assume the key is allowed to be used for all operations
+				|| use == FLAG_USE_ALL // Keys with use "sig" are allowed to sign everything
 	}
 
-	fun getKeyUsageTypes(): List<CertType> {
-		val certTypes = mutableListOf<CertType>()
-
-		if (use.contains(CertType.VACCINATION.use)) {
-			certTypes.add(CertType.VACCINATION)
-		}
-		if (use.contains(CertType.RECOVERY.use)) {
-			certTypes.add(CertType.RECOVERY)
-		}
-		if (use.contains(CertType.TEST.use)) {
-			certTypes.add(CertType.TEST)
-		}
-
-		return certTypes
+	private fun getKeyUsageTypes(): List<CertType> {
+		return CertType.values().filter { use.contains(it.use) }
 	}
 }
 
