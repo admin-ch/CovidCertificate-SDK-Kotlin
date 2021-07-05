@@ -13,9 +13,9 @@
  */
 package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.Eudgc
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.DccHolder
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.DccLight
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.upokecenter.cbor.CBORObject
@@ -27,11 +27,11 @@ internal object CborService {
 	private val keyEuDgcV1 = CBORObject.FromObject(1)
 
 	// Takes qrCodeData to directly construct a Bagdgc AND keep the field in the DCC a val
-	fun decode(input: ByteArray, qrCodeData: String): DccHolder? {
+	fun decode(input: ByteArray, qrCodeData: String): CertificateHolder? {
 
 		val moshi = Moshi.Builder().add(Date::class.java, Rfc3339DateJsonAdapter()).build()
-		val euDgcAdapter = moshi.adapter(Eudgc::class.java)
-		val dccLightAdapter = moshi.adapter(DccLight::class.java)
+		val dccCertAdapter = moshi.adapter(DccCert::class.java)
+		val chLightCertAdapter = moshi.adapter(ChLightCert::class.java)
 
 		try {
 			val map = CBORObject.DecodeFromBytes(input)
@@ -46,13 +46,13 @@ internal object CborService {
 			when {
 				hcert != null -> {
 					hcert[keyEuDgcV1]?.let {
-						val eudgc = euDgcAdapter.fromJson(it.ToJSONString()) ?: return null
-						return DccHolder(qrCodeData, eudgc, null, expirationTime, issuedAt, issuer)
+						val dccCert = dccCertAdapter.fromJson(it.ToJSONString()) ?: return null
+						return CertificateHolder(dccCert, qrCodeData, expirationTime, issuedAt, issuer)
 					} ?: return null
 				}
 				light != null -> {
-					val dccLight = dccLightAdapter.fromJson(light.ToJSONString()) ?: return null
-					return DccHolder(qrCodeData, null, dccLight, expirationTime, issuedAt, issuer)
+					val chLightCert = chLightCertAdapter.fromJson(light.ToJSONString()) ?: return null
+					return CertificateHolder(chLightCert, qrCodeData, expirationTime, issuedAt, issuer)
 				}
 				else -> return null
 			}

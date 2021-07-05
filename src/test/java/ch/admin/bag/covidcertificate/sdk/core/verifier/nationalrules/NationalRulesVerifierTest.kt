@@ -189,7 +189,7 @@ class NationalRulesVerifierTest {
 		assertTrue(result is CheckNationalRulesState.NOT_YET_VALID)
 
 		result = result as CheckNationalRulesState.NOT_YET_VALID
-		assertEquals(result.validityRange.validFrom!!, expectedValidFrom)
+		assertEquals(result.validityRange?.validFrom!!, expectedValidFrom)
 	}
 
 	@Test

@@ -10,7 +10,7 @@
 
 package ch.admin.bag.covidcertificate.sdk.core
 
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.Eudgc
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import java.time.Duration
@@ -22,7 +22,7 @@ import java.util.*
 
 object TestDataGenerator {
 
-	private val adapter = Moshi.Builder().add(Date::class.java, Rfc3339DateJsonAdapter()).build().adapter(Eudgc::class.java)
+	private val adapter = Moshi.Builder().add(Date::class.java, Rfc3339DateJsonAdapter()).build().adapter(DccCert::class.java)
 
 	fun generateVaccineCert(
 		dn: Int, // dose number
@@ -32,7 +32,7 @@ object TestDataGenerator {
 		tg: String, // target disease code
 		vp: String, // vaccine prophylaxis code
 		vaccinationDate: LocalDateTime,
-	): Eudgc {
+	): DccCert {
 		val vaccineJson = """
                {
                  "v": [
@@ -69,7 +69,7 @@ object TestDataGenerator {
 		name: String,
 		disease: String,
 		sampleCollectionWasAgo: Duration,
-	): Eudgc {
+	): DccCert {
 		val now = OffsetDateTime.now()
 		val sampleCollectionTime = now + sampleCollectionWasAgo
 		val testResultTime = sampleCollectionTime + Duration.ofHours(10)
@@ -109,7 +109,7 @@ object TestDataGenerator {
 		validDateUntil: LocalDateTime,
 		firstTestResult: LocalDateTime,
 		disease: String,
-	): Eudgc {
+	): DccCert {
 		val recoveryJson = """
                {
                  "r": [
@@ -142,7 +142,7 @@ object TestDataGenerator {
 		validFromNow: Duration,
 		firstResultWasAgo: Duration,
 		disease: String,
-	): Eudgc {
+	): DccCert {
 		val now = LocalDate.now().atStartOfDay()
 		val recoveryJson = """
                {

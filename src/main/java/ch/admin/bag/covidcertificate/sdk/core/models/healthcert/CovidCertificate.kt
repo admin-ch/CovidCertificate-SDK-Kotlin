@@ -8,12 +8,14 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package ch.admin.bag.covidcertificate.sdk.core.models.state
+package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
+import java.io.Serializable
+import java.time.LocalDate
 
-data class StateError(
-	val code: String,
-	val message: String? = null,
-	val certificateHolder: CertificateHolder? = null
-)
+interface CovidCertificate: Serializable {
+
+	fun getPersonName(): PersonName
+	fun getDateOfBirth(): LocalDate
+
+}

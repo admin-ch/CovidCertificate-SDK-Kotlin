@@ -12,7 +12,7 @@ package ch.admin.bag.covidcertificate.sdk.core
 
 import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
 import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.Eudgc
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -35,7 +35,7 @@ import java.util.stream.Stream
 
 @JsonClass(generateAdapter = true)
 data class EuTestCase(
-	val JSON: Eudgc?,
+	val JSON: DccCert?,
 	val CBOR: String?, // hex encoded
 	val COSE: String?, // hex encoded
 	val COMPRESSED: String?, // hex encoded

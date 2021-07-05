@@ -10,45 +10,33 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.Eudgc
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.DccLight
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
 import java.io.Serializable
 import java.time.Instant
 
-data class DccHolder internal constructor(
+class CertificateHolder(
+	val certificate: CovidCertificate,
 	val qrCodeData: String,
-	val euDGC: Eudgc? = null,
-	val dccLight: DccLight? = null,
 	val expirationTime: Instant? = null,
 	val issuedAt: Instant? = null,
 	val issuer: String? = null,
-) : Serializable {
-
-	init {
-		if (euDGC == null && dccLight == null) {
-			throw IllegalArgumentException("DccHolder must contain either EuDgc or DccLight")
-		}
-
-		if (euDGC != null && dccLight != null) {
-			throw IllegalArgumentException("DccHolder must not contain both EuDgc and DccLight")
-		}
-	}
+): Serializable {
 
 	var certType: CertType? = null
 		internal set
 
-	fun isFullCertificate() = euDGC != null
+	fun containsDccCert() = certificate is DccCert
 
-	fun isLightCertificate() = dccLight != null
+	fun containsChLightCert() = certificate is ChLightCert
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false
 
-		other as DccHolder
+		other as CertificateHolder
 
-		if (euDGC != other.euDGC) return false
-		if (dccLight != other.dccLight) return false
+		if (certificate != other.certificate) return false
 		if (qrCodeData != other.qrCodeData) return false
 
 		return true
@@ -56,9 +44,7 @@ data class DccHolder internal constructor(
 
 	override fun hashCode(): Int {
 		var result = qrCodeData.hashCode()
-		result = 31 * result + (euDGC?.hashCode() ?: 0)
-		result = 31 * result + (dccLight?.hashCode() ?: 0)
+		result = 31 * result + certificate.hashCode()
 		return result
 	}
-
 }

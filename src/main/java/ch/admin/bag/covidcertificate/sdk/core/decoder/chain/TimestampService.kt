@@ -11,19 +11,19 @@
 package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 
 import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.DccHolder
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import java.time.Instant
 
 internal object TimestampService {
 
-	fun decode(dccHolder: DccHolder, now: Instant = Instant.now()): String? {
-		dccHolder.expirationTime?.also { et ->
+	fun decode(certificateHolder: CertificateHolder, now: Instant = Instant.now()): String? {
+		certificateHolder.expirationTime?.also { et ->
 			if (et.isBefore(now)) {
 				return ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED
 			}
 		}
 
-		dccHolder.issuedAt?.also { ia ->
+		certificateHolder.issuedAt?.also { ia ->
 			if (ia.isAfter(now)) {
 				return ErrorCodes.SIGNATURE_TIMESTAMP_NOT_YET_VALID
 			}

@@ -32,6 +32,10 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+java {
+    withSourcesJar()
+}
+
 dependencies {
     // Kotlin standard library & coroutines
     implementation "org.jetbrains.kotlin:kotlin-stdlib"

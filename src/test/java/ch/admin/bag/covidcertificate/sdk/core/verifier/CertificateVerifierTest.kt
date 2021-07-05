@@ -7,7 +7,7 @@ import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
 import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
 import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.getHardcodedSigningKeys
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.DccHolder
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.products.AcceptedVaccine
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
@@ -24,7 +24,6 @@ import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleValueSets
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.TrustList
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesVerifier
 import com.squareup.moshi.Moshi
-import com.sun.net.httpserver.Authenticator
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -32,7 +31,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 
 class CertificateVerifierTest {
 
@@ -65,11 +63,11 @@ class CertificateVerifierTest {
 
 	@Test
 	fun testFullCertificateInvalidSignature() {
-		val dccHolder = decodeCertificate(HC1_A)
+		val certificateHolder = decodeCertificate(HC1_A)
 		val trustList = createTrustList()
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -86,11 +84,11 @@ class CertificateVerifierTest {
 
 	@Test
 	fun testFullCertificateWrongSignature() {
-		val dccHolder = decodeCertificate(HC1_A)
+		val certificateHolder = decodeCertificate(HC1_A)
 		val trustList = createTrustList(getHardcodedSigningKeys("abn"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -107,14 +105,14 @@ class CertificateVerifierTest {
 
 	@Test
 	fun testFullCertificateRevocation() {
-		val dccHolder = decodeCertificate(HC1_A)
+		val certificateHolder = decodeCertificate(HC1_A)
 		val trustList = createTrustList(
 			signingKeys = getHardcodedSigningKeys("dev"),
 			revokedKeyIds = listOf("01:CH:42A272C9E1CAA43D934142C9")
 		)
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -132,22 +130,22 @@ class CertificateVerifierTest {
 
 	@Test
 	fun testFullCertificateValid() {
-		val dccHolder = decodeCertificate(HC1_A)
+		val certificateHolder = decodeCertificate(HC1_A)
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.SUCCESS)
 		}
 	}
 
 	@Test
 	fun testCertificateLightInvalidSignature() {
-		val dccHolder = decodeCertificate(LT1_A)
+		val certificateHolder = decodeCertificate(LT1_A)
 		val trustList = createTrustList()
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -157,18 +155,18 @@ class CertificateVerifierTest {
 				(invalidState.signatureState as CheckSignatureState.INVALID).signatureErrorCode
 			)
 
-			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
+			assertTrue(invalidState.revocationState is CheckRevocationState.SKIPPED)
 			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
 		}
 	}
 
 	@Test
 	fun testCertificateLightWrongSignature() {
-		val dccHolder = decodeCertificate(LT1_A)
+		val certificateHolder = decodeCertificate(LT1_A)
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -178,34 +176,38 @@ class CertificateVerifierTest {
 				(invalidState.signatureState as CheckSignatureState.INVALID).signatureErrorCode
 			)
 
-			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
+			assertTrue(invalidState.revocationState is CheckRevocationState.SKIPPED)
 			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
 		}
 	}
 
 	@Test
 	fun testCertificateLightValid() {
-		val dccHolder = decodeCertificate(LT1_A)
+		val certificateHolder = decodeCertificate(LT1_A)
 		val trustList = createTrustList(listOf(getCertificateLightTestKey()))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(dccHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			val successState = verificationState as VerificationState.SUCCESS
-			val expectedValidFrom = LocalDateTime.ofInstant(dccHolder.issuedAt!!, ZoneId.systemDefault())
-			assertEquals(expectedValidFrom, successState.validityRange.validFrom)
+			certificateHolder.issuedAt?.let {
+				val expectedValidFrom = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
+				assertEquals(expectedValidFrom, successState.validityRange?.validFrom)
+			}
 
-			val expectedValidUntil = LocalDateTime.ofInstant(dccHolder.expirationTime!!, ZoneId.systemDefault())
-			assertEquals(expectedValidUntil, successState.validityRange.validUntil)
+			certificateHolder.expirationTime?.let {
+				val expectedValidUntil = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
+				assertEquals(expectedValidUntil, successState.validityRange?.validUntil)
+			}
 		}
 	}
 
-	private fun decodeCertificate(qrCodeData: String): DccHolder {
+	private fun decodeCertificate(qrCodeData: String): CertificateHolder {
 		val decodeState = CertificateDecoder.decode(qrCodeData)
 		assertTrue(decodeState is DecodeState.SUCCESS)
 
-		return (decodeState as DecodeState.SUCCESS).dccHolder
+		return (decodeState as DecodeState.SUCCESS).certificateHolder
 	}
 
 	private fun createTrustList(
