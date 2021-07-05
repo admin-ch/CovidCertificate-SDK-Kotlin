@@ -191,11 +191,15 @@ class CertificateVerifierTest {
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			val successState = verificationState as VerificationState.SUCCESS
-			val expectedValidFrom = LocalDateTime.ofInstant(certificateHolder.issuedAt!!, ZoneId.systemDefault())
-			assertEquals(expectedValidFrom, successState.validityRange?.validFrom)
+			certificateHolder.issuedAt?.let {
+				val expectedValidFrom = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
+				assertEquals(expectedValidFrom, successState.validityRange?.validFrom)
+			}
 
-			val expectedValidUntil = LocalDateTime.ofInstant(certificateHolder.expirationTime!!, ZoneId.systemDefault())
-			assertEquals(expectedValidUntil, successState.validityRange?.validUntil)
+			certificateHolder.expirationTime?.let {
+				val expectedValidUntil = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
+				assertEquals(expectedValidUntil, successState.validityRange?.validUntil)
+			}
 		}
 	}
 
