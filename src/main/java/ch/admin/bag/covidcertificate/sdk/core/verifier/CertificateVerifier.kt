@@ -170,14 +170,20 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 		ruleSet: RuleSet
 	) = withContext(Dispatchers.Default) {
 		try {
-			if (certificateHolder.containsChLightCert()) {
-				// If the DccHolder contains a light certificate, the national rules don't have to be verified
-				// In that case, the validity range is from the issuedAt date until the expiration date from the CWT headers
-				val issued = certificateHolder.issuedAt?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
-				val expiration = certificateHolder.expirationTime?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
-				CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration))
-			} else {
-				nationalRulesVerifier.verify(certificateHolder.certificate as DccCert, ruleSet)
+			when {
+				certificateHolder.containsChLightCert() -> {
+					// If the DccHolder contains a light certificate, the national rules don't have to be verified
+					// In that case, the validity range is from the issuedAt date until the expiration date from the CWT headers
+					val issued = certificateHolder.issuedAt?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
+					val expiration = certificateHolder.expirationTime?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
+					CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration))
+				}
+				certificateHolder.containsDccCert() -> {
+					nationalRulesVerifier.verify(certificateHolder.certificate as DccCert, ruleSet)
+				}
+				else -> {
+					CheckNationalRulesState.ERROR(StateError(ErrorCodes.RULESET_UNKNOWN, certificateHolder = certificateHolder))
+				}
 			}
 		} catch (e: Exception) {
 			CheckNationalRulesState.ERROR(StateError(ErrorCodes.RULESET_UNKNOWN, e.message.toString(), certificateHolder))
