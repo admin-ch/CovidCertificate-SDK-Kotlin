@@ -26,27 +26,27 @@ internal fun getInvalidSigningKeys(): List<Jwk>{
 	)
 }
 
-internal fun getCertificateLightTestKey() = Jwk.fromXY(LIGHT_TEST_KID, LIGHT_TEST_X, LIGHT_TEST_Y, use = "")
+internal fun getCertificateLightTestKey() = Jwk.fromXY(LIGHT_TEST_KID, LIGHT_TEST_X, LIGHT_TEST_Y, use = "l")
 
 internal fun getHardcodedSigningKeys(flavor: String): List<Jwk> {
 	val jwks = mutableListOf<Jwk>()
 	when (flavor) {
 		"dev" -> {
-			jwks.add(Jwk.fromNE(CH_DEV_KID, CH_DEV_N, CH_DEV_E, use = ""))
+			jwks.add(Jwk.fromNE(CH_DEV_KID, CH_DEV_N, CH_DEV_E, use = "sig"))
 
 			jwks.add(Jwk.fromXY(LI_DEV_ABN_VACCINATION_KID, LI_DEV_ABN_VACCINATION_X, LI_DEV_ABN_VACCINATION_Y, use = "v"))
 			jwks.add(Jwk.fromXY(LI_DEV_ABN_TEST_KID, LI_DEV_ABN_TEST_X, LI_DEV_ABN_TEST_Y, use = "t"))
 			jwks.add(Jwk.fromXY(LI_DEV_ABN_RECOVERY_KID, LI_DEV_ABN_RECOVERY_X, LI_DEV_ABN_RECOVERY_Y, use = "r"))
 		}
 		"abn" -> {
-			jwks.add(Jwk.fromNE(CH_ABN_KID, CH_ABN_N, CH_ABN_E, use = ""))
+			jwks.add(Jwk.fromNE(CH_ABN_KID, CH_ABN_N, CH_ABN_E, use = "sig"))
 
 			jwks.add(Jwk.fromXY(LI_DEV_ABN_VACCINATION_KID, LI_DEV_ABN_VACCINATION_X, LI_DEV_ABN_VACCINATION_Y, use = "v"))
 			jwks.add(Jwk.fromXY(LI_DEV_ABN_TEST_KID, LI_DEV_ABN_TEST_X, LI_DEV_ABN_TEST_Y, use = "t"))
 			jwks.add(Jwk.fromXY(LI_DEV_ABN_RECOVERY_KID, LI_DEV_ABN_RECOVERY_X, LI_DEV_ABN_RECOVERY_Y, use = "r"))
 		}
 		else -> {
-			jwks.add(Jwk.fromNE(CH_PROD_KID, CH_PROD_N, CH_PROD_E, use = ""))
+			jwks.add(Jwk.fromNE(CH_PROD_KID, CH_PROD_N, CH_PROD_E, use = "sig"))
 		}
 	}
 	return jwks
