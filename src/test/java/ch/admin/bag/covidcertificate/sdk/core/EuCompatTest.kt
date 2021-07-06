@@ -75,9 +75,9 @@ data class EuTestExpectedResult(
 
 class EuTestDataProvider : ArgumentsProvider {
 	companion object {
-		private val KNOWN_TEST_FAILURES = listOf(
-			"LI/2DCode/raw/4.json", // https://github.com/eu-digital-green-certificates/dgc-testdata/issues/339
-		)
+		// If a testdata json is known to be faulty, add it's path to the list so it will be ignored during the unit tests
+		// E.g. "LI/2DCode/raw/4.json" used to have a missing version
+		private val KNOWN_TEST_FAILURES: List<String> = listOf()
 	}
 
 	private val testDataDirectory = File(this::class.java.classLoader.getResource("dgc-testdata")!!.path)
