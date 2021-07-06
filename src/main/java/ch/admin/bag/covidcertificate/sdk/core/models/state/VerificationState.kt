@@ -10,10 +10,11 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.state
 
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 
 sealed class VerificationState {
-	data class SUCCESS(val validityRange: ValidityRange?) : VerificationState()
+	data class SUCCESS(val certType: CertType?, val validityRange: ValidityRange?) : VerificationState()
 	data class INVALID(
 		val signatureState: CheckSignatureState?,
 		val revocationState: CheckRevocationState?,
