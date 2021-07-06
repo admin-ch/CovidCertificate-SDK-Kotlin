@@ -24,7 +24,8 @@ import java.util.*
 
 internal object CborService {
 
-	private val keyEuDgcV1 = CBORObject.FromObject(1)
+	private val keyDccCertV1 = CBORObject.FromObject(1)
+	private val keyChLightCertV1 = CBORObject.FromObject(1)
 
 	// Takes qrCodeData to directly construct a Bagdgc AND keep the field in the DCC a val
 	fun decode(input: ByteArray, qrCodeData: String): CertificateHolder? {
@@ -45,14 +46,16 @@ internal object CborService {
 
 			when {
 				hcert != null -> {
-					hcert[keyEuDgcV1]?.let {
+					hcert[keyDccCertV1]?.let {
 						val dccCert = dccCertAdapter.fromJson(it.ToJSONString()) ?: return null
 						return CertificateHolder(dccCert, qrCodeData, expirationTime, issuedAt, issuer)
 					} ?: return null
 				}
 				light != null -> {
-					val chLightCert = chLightCertAdapter.fromJson(light.ToJSONString()) ?: return null
-					return CertificateHolder(chLightCert, qrCodeData, expirationTime, issuedAt, issuer)
+					light[keyChLightCertV1]?.let {
+						val chLightCert = chLightCertAdapter.fromJson(it.ToJSONString()) ?: return null
+						return CertificateHolder(chLightCert, qrCodeData, expirationTime, issuedAt, issuer)
+					} ?: return null
 				}
 				else -> return null
 			}
