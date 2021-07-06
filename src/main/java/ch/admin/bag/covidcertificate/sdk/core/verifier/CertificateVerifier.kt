@@ -99,9 +99,8 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 	private suspend fun checkSignature(certificateHolder: CertificateHolder, signatures: Jwks) = withContext(Dispatchers.Default) {
 		try {
 			// Check that the certificate type is valid
-			if (certificateHolder.certType == null) {
-				return@withContext CheckSignatureState.INVALID(ErrorCodes.SIGNATURE_TYPE_INVALID)
-			}
+			val certType = certificateHolder.certType
+				?: return@withContext CheckSignatureState.INVALID(ErrorCodes.SIGNATURE_TYPE_INVALID)
 
 			// Check that the signature timestamps are valid
 			val timestampError = TimestampService.decode(certificateHolder)
@@ -117,7 +116,7 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 			val cose = DecompressionService.decode(compressed)
 				?: return@withContext CheckSignatureState.INVALID(ErrorCodes.DECODE_Z_LIB)
 
-			val valid = VerificationCoseService.decode(signatures.certs, cose)
+			val valid = VerificationCoseService.decode(signatures.certs, cose, certType)
 			if (valid) {
 				CheckSignatureState.SUCCESS
 			} else {
