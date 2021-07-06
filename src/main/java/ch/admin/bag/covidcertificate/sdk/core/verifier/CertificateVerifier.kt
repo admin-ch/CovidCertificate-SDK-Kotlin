@@ -69,7 +69,7 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 				&& (checkRevocationState == CheckRevocationState.SUCCESS || checkRevocationState == CheckRevocationState.SKIPPED)
 				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
 			) {
-				VerificationState.SUCCESS(checkNationalRulesState.validityRange)
+				VerificationState.SUCCESS(certificateHolder.certType, checkNationalRulesState.validityRange)
 			} else if (
 				checkSignatureState is CheckSignatureState.INVALID
 				|| checkRevocationState is CheckRevocationState.INVALID
