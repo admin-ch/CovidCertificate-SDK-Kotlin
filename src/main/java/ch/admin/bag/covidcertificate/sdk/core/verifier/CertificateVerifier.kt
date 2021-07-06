@@ -17,6 +17,7 @@ import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.PrefixIdentifierServ
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.RevokedHealthCertService
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.TimestampService
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.VerificationCoseService
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
@@ -69,7 +70,8 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 				&& (checkRevocationState == CheckRevocationState.SUCCESS || checkRevocationState == CheckRevocationState.SKIPPED)
 				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
 			) {
-				VerificationState.SUCCESS(certificateHolder.certType, checkNationalRulesState.validityRange)
+				val isLightCertificate = certificateHolder.certType == CertType.LIGHT
+				VerificationState.SUCCESS(isLightCertificate, checkNationalRulesState.validityRange)
 			} else if (
 				checkSignatureState is CheckSignatureState.INVALID
 				|| checkRevocationState is CheckRevocationState.INVALID
