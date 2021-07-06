@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2021 Ubique Innovation AG <https://www.ubique.ch>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * SPDX-License-Identifier: MPL-2.0
+ */
 /**
  * Adapted from https://github.com/ehn-digital-green-development/hcert-kotlin
  * published under Apache-2.0 License.
@@ -27,8 +36,14 @@ internal object VerificationCoseService {
 			null
 		} ?: return false
 
-		// Return true if any public key that is allowed to sign this specific certificate type correctly validates the signature
-		return keys.filter { it.isAllowedToSign(certType) }
+		// The keyId is not security-critical and thus may be in either header: https://datatracker.ietf.org/doc/html/rfc8152#section-3.1
+		val kid: ByteArray = signature.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
+			?: signature.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
+			?: return false
+
+		// Return true if any public key of the correct keyId that is allowed to sign this specific certificate type correctly validates the signature
+		return keys.filter { it.getKid() contentEquals kid }
+			.filter { it.isAllowedToSign(certType) }
 			.mapNotNull { it.getPublicKey() }
 			.any { pk ->
 				try {
