@@ -10,7 +10,7 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.extensions
 
-import java.util.*
+import ch.admin.bag.covidcertificate.sdk.core.data.base64.Base64Impl
 
-fun ByteArray.toBase64(): String = Base64.getEncoder().encodeToString(this).trim()
-fun String.fromBase64(): ByteArray = Base64.getDecoder().decode(this)
+fun ByteArray.toBase64(): String = Base64Impl.encode(this)
+fun String.fromBase64(): ByteArray = Base64Impl.decode(this)
