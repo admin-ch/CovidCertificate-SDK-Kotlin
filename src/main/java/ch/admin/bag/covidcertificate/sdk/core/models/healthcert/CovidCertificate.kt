@@ -16,6 +16,6 @@ import java.time.LocalDate
 interface CovidCertificate: Serializable {
 
 	fun getPersonName(): PersonName
-	fun getDateOfBirth(): LocalDate
+	fun getDateOfBirth(): LocalDate?
 
 }

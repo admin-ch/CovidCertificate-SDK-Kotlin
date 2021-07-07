@@ -12,6 +12,7 @@ package ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu
 
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CovidCertificate
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.PersonName
+import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -28,5 +29,5 @@ data class DccCert(
 ) : CovidCertificate {
 	override fun getPersonName() = person
 
-	override fun getDateOfBirth(): LocalDate = LocalDate.parse(dateOfBirth)
+	override fun getDateOfBirth(): LocalDate? = DateUtil.parseDate(dateOfBirth)
 }

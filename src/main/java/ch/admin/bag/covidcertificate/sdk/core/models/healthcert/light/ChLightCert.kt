@@ -12,6 +12,7 @@ package ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light
 
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CovidCertificate
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.PersonName
+import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.time.LocalDate
@@ -24,5 +25,5 @@ data class ChLightCert(
 ) : CovidCertificate {
 	override fun getPersonName() = person
 
-	override fun getDateOfBirth(): LocalDate = LocalDate.parse(dateOfBirth)
+	override fun getDateOfBirth(): LocalDate? = DateUtil.parseDate(dateOfBirth)
 }
