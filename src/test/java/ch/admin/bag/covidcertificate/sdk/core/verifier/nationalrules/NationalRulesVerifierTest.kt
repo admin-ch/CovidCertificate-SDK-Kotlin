@@ -342,23 +342,6 @@ class NationalRulesVerifierTest {
 	}
 
 	@Test
-	fun testTestHasToBeInWhitelist() {
-		val invalidTest = TestDataGenerator.generateTestCert(
-			TestType.RAT.code,
-			AcceptanceCriteriasConstants.NEGATIVE_CODE,
-			"abcdef",
-			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			Duration.ofHours(-10)
-		)
-		val invalidTestResult = nationalRulesVerifier.verify(invalidTest, nationalRuleSet)
-		if (invalidTestResult is CheckNationalRulesState.INVALID) {
-			assertTrue(invalidTestResult.nationalRulesError == NationalRulesError.NO_VALID_PRODUCT)
-		} else {
-			assertFalse(true)
-		}
-	}
-
-	@Test
 	fun testPcrTestsAreAlwaysAccepted() {
 		var validTest = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
