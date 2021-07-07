@@ -64,6 +64,9 @@ data class AcceptanceCriterias(
 	@Json(name = "single-vaccine-validity-offset")
 	@get:JsonProperty("single-vaccine-validity-offset")
 	val singleVaccineValidityOffset: Int,
+	@Json(name = "two-doses-vaccine-validity-offset")
+	@get:JsonProperty("two-doses-vaccine-validity-offset")
+	val twoDoseVaccineValidityOffset: Int = 0,
 	@Json(name = "vaccine-immunity")
 	@get:JsonProperty("vaccine-immunity")
 	val vaccineImmunity: Int,

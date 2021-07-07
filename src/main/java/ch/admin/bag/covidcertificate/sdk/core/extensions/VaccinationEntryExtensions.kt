@@ -41,16 +41,9 @@ fun VaccinationEntry.isTargetDiseaseCorrect(): Boolean {
 	return this.disease == AcceptanceCriteriasConstants.TARGET_DISEASE
 }
 
-fun VaccinationEntry.validFromDate(vaccine: Vaccine, acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {
+fun VaccinationEntry.validFromDate(offsetInDays: Long): LocalDateTime? {
 	val vaccineDate = this.vaccineDate() ?: return null
-	val totalNumberOfDosis = vaccine.total_dosis_number
-	// if this is a vaccine, which only needs one shot, the vaccine is valid 15 days after the date of vaccination
-	return if (totalNumberOfDosis == 1) {
-		return vaccineDate.plusDays(acceptanceCriterias.singleVaccineValidityOffset.toLong())
-	} else {
-		// In any other case the vaccine is valid from the date of vaccination
-		vaccineDate
-	}
+	return vaccineDate.plusDays(offsetInDays)
 }
 
 fun VaccinationEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {
