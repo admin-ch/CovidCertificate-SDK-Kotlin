@@ -30,7 +30,7 @@ fun TestEntry.isTargetDiseaseCorrect(): Boolean {
 
 fun TestEntry.getFormattedSampleDate(dateTimeFormatter: DateTimeFormatter): String? {
 	return try {
-		return this.timestampSample.toInstant().atZone(ZoneId.systemDefault()).format(dateTimeFormatter)
+		return LocalDateTime.parse(this.timestampSample).atZone(ZoneId.systemDefault()).format(dateTimeFormatter)
 	} catch (e: Exception) {
 		null
 	}
@@ -41,7 +41,7 @@ fun TestEntry.getFormattedResultDate(dateTimeFormatter: DateTimeFormatter): Stri
 		return null
 	}
 	return try {
-		this.timestampResult.toInstant().atZone(ZoneId.systemDefault()).format(dateTimeFormatter)
+		LocalDateTime.parse(this.timestampResult).atZone(ZoneId.systemDefault()).format(dateTimeFormatter)
 	} catch (e: Exception) {
 		null
 	}
@@ -77,7 +77,7 @@ fun TestEntry.getCertificateIdentifier(): String {
 
 fun TestEntry.validFromDate(): LocalDateTime? {
 	return try {
-		this.timestampSample.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+		LocalDateTime.parse(this.timestampSample).atZone(ZoneId.systemDefault()).toLocalDateTime()
 	} catch (e: Exception) {
 		return null
 	}

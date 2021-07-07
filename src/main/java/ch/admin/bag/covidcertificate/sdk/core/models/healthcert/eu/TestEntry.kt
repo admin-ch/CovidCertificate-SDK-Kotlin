@@ -10,12 +10,10 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.io.Serializable
-import java.util.Date
 
 @JsonClass(generateAdapter = true)
 data class TestEntry(
@@ -23,8 +21,8 @@ data class TestEntry(
 	@Json(name = "tt") @get:JsonProperty("tt") val type: String,
 	@Json(name = "nm") @get:JsonProperty("nm") val naaTestName: String?,
 	@Json(name = "ma") @get:JsonProperty("ma") val ratTestNameAndManufacturer: String?,
-	@Json(name = "sc") @get:JsonProperty("sc") @get:JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") val timestampSample: Date,
-	@Json(name = "dr") @get:JsonProperty("dr") @get:JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") val timestampResult: Date?,
+	@Json(name = "sc") @get:JsonProperty("sc") val timestampSample: String,
+	@Json(name = "dr") @get:JsonProperty("dr") val timestampResult: String?,
 	@Json(name = "tr") @get:JsonProperty("tr") val result: String,
 	@Json(name = "tc") @get:JsonProperty("tc") val testCenter: String?,
 	@Json(name = "co") @get:JsonProperty("co") val country: String,
