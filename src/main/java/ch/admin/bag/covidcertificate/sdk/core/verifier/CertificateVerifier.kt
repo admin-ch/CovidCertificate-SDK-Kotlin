@@ -37,7 +37,7 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.ZoneId
 
-class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifier) {
+class CertificateVerifier {
 
 	/**
 	 * Verify the validity of a certificate. This checks the certificate signature, its revocation status as well as the conformity
@@ -52,7 +52,7 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 			// Execute all three checks in parallel...
 			val checkSignatureStateDeferred = async { checkSignature(certificateHolder, trustList.signatures) }
 			val checkRevocationStateDeferred = async { checkRevocationStatus(certificateHolder, trustList.revokedCertificates) }
-			val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, nationalRulesVerifier, trustList.ruleSet) }
+			val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, trustList.ruleSet) }
 
 			// ... but wait for all of them to finish
 			val checkSignatureState = checkSignatureStateDeferred.await()
@@ -161,13 +161,11 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 	 * Checks whether a certificate conforms to a set of national rules
 	 *
 	 * @param certificateHolder The object returned from the decoder
-	 * @param nationalRulesVerifier The verifier responsible to verify a certificate against a national rule set
 	 * @param ruleSet The national rule set from the trust list
 	 * @return Outcome state of the national rules check
 	 */
 	private suspend fun checkNationalRules(
 		certificateHolder: CertificateHolder,
-		nationalRulesVerifier: NationalRulesVerifier,
 		ruleSet: RuleSet
 	) = withContext(Dispatchers.Default) {
 		try {
@@ -180,6 +178,7 @@ class CertificateVerifier(private val nationalRulesVerifier: NationalRulesVerifi
 					CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration))
 				}
 				certificateHolder.containsDccCert() -> {
+					val nationalRulesVerifier = NationalRulesVerifier()
 					nationalRulesVerifier.verify(certificateHolder.certificate as DccCert, ruleSet)
 				}
 				else -> {

@@ -12,14 +12,11 @@ package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules
 
 import ch.admin.bag.covidcertificate.sdk.core.TestDataGenerator
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
-import ch.admin.bag.covidcertificate.sdk.core.data.AcceptedVaccineProvider
 import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonStringAdapter
 import ch.admin.bag.covidcertificate.sdk.core.extensions.isTargetDiseaseCorrect
 import ch.admin.bag.covidcertificate.sdk.core.extensions.validFromDate
 import ch.admin.bag.covidcertificate.sdk.core.extensions.validUntilDate
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
-import ch.admin.bag.covidcertificate.sdk.core.models.products.AcceptedVaccine
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
 import com.squareup.moshi.Moshi
@@ -34,7 +31,6 @@ import java.time.ZoneId
 
 class NationalRulesVerifierTest {
 
-	private lateinit var acceptedVaccineProvider: AcceptedVaccineProvider
 	private lateinit var nationalRulesVerifier: NationalRulesVerifier
 	private lateinit var nationalRuleSet: RuleSet
 
@@ -44,24 +40,7 @@ class NationalRulesVerifierTest {
 		val nationalRulesContent = this::class.java.classLoader.getResource("nationalrules.json")!!.readText()
 		nationalRuleSet = moshi.adapter(RuleSet::class.java).fromJson(nationalRulesContent)!!
 
-		val acceptedVaccineContent = this::class.java.classLoader.getResource("acceptedCHVaccine.json")!!.readText()
-		val acceptedVaccines = moshi.adapter(AcceptedVaccine::class.java).fromJson(acceptedVaccineContent)!!
-
-		acceptedVaccineProvider = object : AcceptedVaccineProvider {
-			override fun getVaccineName(vaccinationEntry: VaccinationEntry) =
-				acceptedVaccines.entries.first { it.code == vaccinationEntry.medicinialProduct }.name
-
-			override fun getProphylaxis(vaccinationEntry: VaccinationEntry) =
-				acceptedVaccines.entries.first { it.code == vaccinationEntry.medicinialProduct }.prophylaxis
-
-			override fun getAuthHolder(vaccinationEntry: VaccinationEntry) =
-				acceptedVaccines.entries.first { it.code == vaccinationEntry.medicinialProduct }.auth_holder
-
-			override fun getVaccineDataFromList(vaccinationEntry: VaccinationEntry) =
-				acceptedVaccines.entries.firstOrNull { it.code == vaccinationEntry.medicinialProduct }
-		}
-
-		nationalRulesVerifier = NationalRulesVerifier(acceptedVaccineProvider)
+		nationalRulesVerifier = NationalRulesVerifier()
 	}
 
 	/// VACCINE TESTS
@@ -150,7 +129,7 @@ class NationalRulesVerifierTest {
 			vaccinationDate,
 		)
 		// Sanity check - this vaccine usually needs 2 shots
-		assertEquals(acceptedVaccineProvider.getVaccineDataFromList(cert.vaccinations!!.first())!!.total_dosis_number, 2)
+		assertTrue(nationalRuleSet.valueSets.twoDoseVaccines?.contains(cert.vaccinations!!.first().medicinialProduct) == true)
 
 		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, clock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
