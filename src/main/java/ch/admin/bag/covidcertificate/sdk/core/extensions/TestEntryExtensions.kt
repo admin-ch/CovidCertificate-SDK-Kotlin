@@ -30,7 +30,7 @@ fun TestEntry.isTargetDiseaseCorrect(): Boolean {
 }
 
 fun TestEntry.getFormattedSampleDate(dateTimeFormatter: DateTimeFormatter): String? {
-	return DateUtil.parseDateTime(this.timestampSample)?.atZone(ZoneId.systemDefault())?.format(dateTimeFormatter)
+	return DateUtil.parseDateTime(this.timestampSample)?.format(dateTimeFormatter)
 }
 
 fun TestEntry.getFormattedResultDate(dateTimeFormatter: DateTimeFormatter): String? {
@@ -38,7 +38,7 @@ fun TestEntry.getFormattedResultDate(dateTimeFormatter: DateTimeFormatter): Stri
 		return null
 	}
 
-	return DateUtil.parseDateTime(this.timestampSample)?.atZone(ZoneId.systemDefault())?.format(dateTimeFormatter)
+	return DateUtil.parseDateTime(this.timestampSample)?.format(dateTimeFormatter)
 }
 
 fun TestEntry.getTestCenter(): String? {
@@ -70,7 +70,7 @@ fun TestEntry.getCertificateIdentifier(): String {
 }
 
 fun TestEntry.validFromDate(): LocalDateTime? {
-	return DateUtil.parseDateTime(this.timestampSample)?.atZone(ZoneId.systemDefault())?.toLocalDateTime()
+	return DateUtil.parseDateTime(this.timestampSample)
 }
 
 fun TestEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {

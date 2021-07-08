@@ -12,12 +12,12 @@ object DateUtil {
 
 	val DEFAULT_DISPLAY_DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-	fun parseDate(input: String): LocalDate? {
+	fun parseDate(input: String, zoneId: ZoneId = ZoneId.systemDefault()): LocalDate? {
 		return try {
-			OffsetDateTime.parse(input).toLocalDate()
+			OffsetDateTime.parse(input).atZoneSameInstant(zoneId).toLocalDate()
 		} catch (e: DateTimeParseException) {
 			try {
-				LocalDateTime.parse(input).toLocalDate()
+				LocalDateTime.parse(input).atOffset(ZoneOffset.UTC).atZoneSameInstant(zoneId).toLocalDate()
 			} catch (e: DateTimeParseException) {
 				try {
 					LocalDate.parse(input)
@@ -28,12 +28,12 @@ object DateUtil {
 		}
 	}
 
-	fun parseDateTime(input: String): LocalDateTime? {
+	fun parseDateTime(input: String, zoneId: ZoneId = ZoneId.systemDefault()): LocalDateTime? {
 		return try {
-			OffsetDateTime.parse(input).toLocalDateTime()
+			OffsetDateTime.parse(input).atZoneSameInstant(zoneId).toLocalDateTime()
 		} catch (e: DateTimeParseException) {
 			try {
-				LocalDateTime.parse(input)
+				LocalDateTime.parse(input).atOffset(ZoneOffset.UTC).atZoneSameInstant(zoneId).toLocalDateTime()
 			} catch (e: DateTimeParseException) {
 				null
 			}
