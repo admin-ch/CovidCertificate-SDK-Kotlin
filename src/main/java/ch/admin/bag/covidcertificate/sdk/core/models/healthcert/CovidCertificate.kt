@@ -11,11 +11,18 @@
 package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
 import java.io.Serializable
-import java.time.LocalDate
 
-interface CovidCertificate: Serializable {
+interface CovidCertificate : Serializable {
 
+	/**
+	 * Returns the object that contains the personal information of the certificate, including given and family name and their
+	 * standardized values
+	 */
 	fun getPersonName(): PersonName
-	fun getDateOfBirth(): LocalDate?
+
+	/**
+	 * Returns the formatted date of birth or the original date of birth string if the datetime format is unknown
+	 */
+	fun getFormattedDateOfBirth(): String
 
 }

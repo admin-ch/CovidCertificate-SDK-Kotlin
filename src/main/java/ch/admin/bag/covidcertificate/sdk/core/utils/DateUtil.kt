@@ -3,9 +3,12 @@ package ch.admin.bag.covidcertificate.sdk.core.utils
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-internal object DateUtil {
+object DateUtil {
+
+	val DEFAULT_DISPLAY_DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
 	fun parseDate(input: String): LocalDate? {
 		return try {
@@ -21,6 +24,10 @@ internal object DateUtil {
 				}
 			}
 		}
+	}
+
+	fun formatDate(date: LocalDate, formatter: DateTimeFormatter = DEFAULT_DISPLAY_DATE_FORMATTER): String {
+		return formatter.format(date)
 	}
 
 }
