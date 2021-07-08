@@ -178,9 +178,7 @@
 									{
 										"var": "payload.v.0.dt"
 									},
-									{
-										"var": "external.valueSets.acceptance-criteria.two-doses-vaccine-validity-offset"
-									},
+									0,
 									"day"
 								]
 							}
@@ -197,10 +195,10 @@
 			"logic": {
 				"if": [
 					{
-						"and": [
-							{
-								"var": "payload.v.0"
-							},
+						"var": "payload.v.0"
+					},
+					{
+						"if": [
 							{
 								"and": [
 									{
@@ -224,37 +222,30 @@
 								]
 							},
 							{
-								"===": [
+								">=": [
 									{
-										"var": "payload.v.0.dn"
+										"plusTime": [
+											{
+												"var": "external.validationClockAtStartOfDay"
+											},
+											0,
+											"day"
+										]
 									},
-									1
-								]
-							}
-						]
-					},
-					{
-						">=": [
-							{
-								"plusTime": [
 									{
-										"var": "external.validationClockAtStartOfDay"
-									},
-									0,
-									"day"
+										"plusTime": [
+											{
+												"var": "payload.v.0.dt"
+											},
+											{
+												"var": "external.valueSets.acceptance-criteria.single-vaccine-validity-offset"
+											},
+											"day"
+										]
+									}
 								]
 							},
-							{
-								"plusTime": [
-									{
-										"var": "payload.v.0.dt"
-									},
-									{
-										"var": "external.valueSets.acceptance-criteria.single-vaccine-validity-offset"
-									},
-									"day"
-								]
-							}
+							true
 						]
 					},
 					true
@@ -679,7 +670,6 @@
 		],
 		"acceptance-criteria": {
 			"single-vaccine-validity-offset": 21,
-			"two-doses-vaccine-validity-offset": 0,
 			"vaccine-immunity": 364,
 			"rat-test-validity": 48,
 			"pcr-test-validity": 72,
