@@ -33,6 +33,7 @@ object ErrorCodes {
 
 	/* Errors during national rules verification */
 	const val NO_VALID_DATE = "N|NVD"
+	const val VALIDITY_RANGE_NOT_FOUND = "N|VNF"
 	const val NO_VALID_PRODUCT = "N|NVP"
 	const val WRONG_DISEASE_TARGET = "N|WDT"
 	const val WRONG_TEST_TYPE = "N|WTT"
