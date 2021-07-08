@@ -14,6 +14,7 @@ import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.AcceptanceCriterias
+import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -29,22 +30,15 @@ fun TestEntry.isTargetDiseaseCorrect(): Boolean {
 }
 
 fun TestEntry.getFormattedSampleDate(dateTimeFormatter: DateTimeFormatter): String? {
-	return try {
-		return LocalDateTime.parse(this.timestampSample).atZone(ZoneId.systemDefault()).format(dateTimeFormatter)
-	} catch (e: Exception) {
-		null
-	}
+	return DateUtil.parseDateTime(this.timestampSample)?.atZone(ZoneId.systemDefault())?.format(dateTimeFormatter)
 }
 
 fun TestEntry.getFormattedResultDate(dateTimeFormatter: DateTimeFormatter): String? {
 	if (this.timestampResult == null) {
 		return null
 	}
-	return try {
-		LocalDateTime.parse(this.timestampResult).atZone(ZoneId.systemDefault()).format(dateTimeFormatter)
-	} catch (e: Exception) {
-		null
-	}
+
+	return DateUtil.parseDateTime(this.timestampSample)?.atZone(ZoneId.systemDefault())?.format(dateTimeFormatter)
 }
 
 fun TestEntry.getTestCenter(): String? {
@@ -76,11 +70,7 @@ fun TestEntry.getCertificateIdentifier(): String {
 }
 
 fun TestEntry.validFromDate(): LocalDateTime? {
-	return try {
-		LocalDateTime.parse(this.timestampSample).atZone(ZoneId.systemDefault()).toLocalDateTime()
-	} catch (e: Exception) {
-		return null
-	}
+	return DateUtil.parseDateTime(this.timestampSample)?.atZone(ZoneId.systemDefault())?.toLocalDateTime()
 }
 
 fun TestEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {

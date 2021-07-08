@@ -3,6 +3,8 @@ package ch.admin.bag.covidcertificate.sdk.core.utils
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
@@ -22,6 +24,18 @@ object DateUtil {
 				} catch (e: DateTimeParseException) {
 					null
 				}
+			}
+		}
+	}
+
+	fun parseDateTime(input: String): LocalDateTime? {
+		return try {
+			OffsetDateTime.parse(input).toLocalDateTime()
+		} catch (e: DateTimeParseException) {
+			try {
+				LocalDateTime.parse(input)
+			} catch (e: DateTimeParseException) {
+				null
 			}
 		}
 	}
