@@ -113,12 +113,12 @@ internal class NationalRulesVerifier {
 			!dccCert.vaccinations.isNullOrEmpty() -> {
 				val vaccination = dccCert.vaccinations.first()
 				val offset = when {
+					// Use the offset value from the acceptance criteria for single-dose vaccines
 					ruleValueSets.oneDoseVaccinesWithOffset?.contains(vaccination.medicinialProduct) == true -> {
 						ruleValueSets.acceptanceCriteria.singleVaccineValidityOffset
 					}
-					ruleValueSets.twoDoseVaccines?.contains(vaccination.medicinialProduct) == true -> {
-						ruleValueSets.acceptanceCriteria.twoDoseVaccineValidityOffset
-					}
+					// Two-dose vaccines don't have an offset
+					ruleValueSets.twoDoseVaccines?.contains(vaccination.medicinialProduct) == true -> 0
 					else -> null
 				}
 
