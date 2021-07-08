@@ -13,6 +13,7 @@ package ch.admin.bag.covidcertificate.sdk.core.extensions
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.AcceptanceCriterias
+import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
@@ -55,16 +56,7 @@ fun RecoveryEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): Loca
 }
 
 fun RecoveryEntry.firstPositiveResult(): LocalDateTime? {
-	if (this.dateFirstPositiveTest.isEmpty()) {
-		return null
-	}
-	val date: LocalDate?
-	try {
-		date = LocalDate.parse(this.dateFirstPositiveTest, ISO_DATE)
-	} catch (e: Exception) {
-		return null
-	}
-	return date.atStartOfDay()
+	return DateUtil.parseDate(this.dateFirstPositiveTest)?.atStartOfDay()
 }
 
 

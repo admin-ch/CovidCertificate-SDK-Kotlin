@@ -15,7 +15,6 @@ package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
@@ -73,10 +72,7 @@ public class JsonDateTime extends ValueNode implements Comparable<JsonDateTime> 
 	 */
 	private static JsonDateTime fromStringInternal(String dateTimeString) {
 		try {
-			OffsetDateTime parsed = OffsetDateTime.parse(dateTimeString);
-			OffsetDateTime offsetAdjusted = parsed.atZoneSimilarLocal(ZoneId.systemDefault()).toOffsetDateTime();
-
-			return new JsonDateTime(offsetAdjusted);
+			return new JsonDateTime(OffsetDateTime.parse(dateTimeString));
 		} catch (DateTimeParseException e) {
 			throw e;
 		}
@@ -92,8 +88,8 @@ public class JsonDateTime extends ValueNode implements Comparable<JsonDateTime> 
 
 	public JsonDateTime plusTime(int amount, TimeUnit unit) {
 		switch (unit) {
-			case DAY: return new JsonDateTime(this._value.plusDays(amount).atZoneSimilarLocal(ZoneId.systemDefault()).toOffsetDateTime());
-			case HOUR: return new JsonDateTime(this._value.plusHours(amount).atZoneSimilarLocal(ZoneId.systemDefault()).toOffsetDateTime());
+			case DAY: return new JsonDateTime(this._value.plusDays(amount));
+			case HOUR: return new JsonDateTime(this._value.plusHours(amount));
 			default: throw new RuntimeException(String.format("time unit \"%s\" not handled", unit));
 		}
 	}

@@ -14,6 +14,7 @@ import ch.admin.bag.covidcertificate.sdk.core.models.products.Vaccine
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.AcceptanceCriterias
+import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -52,16 +53,7 @@ fun VaccinationEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): L
 }
 
 fun VaccinationEntry.vaccineDate(): LocalDateTime? {
-	if (this.vaccinationDate.isEmpty()) {
-		return null
-	}
-	val date: LocalDate?
-	try {
-		date = LocalDate.parse(this.vaccinationDate, DateTimeFormatter.ISO_DATE)
-	} catch (e: Exception) {
-		return null
-	}
-	return date.atStartOfDay()
+	return DateUtil.parseDate(this.vaccinationDate)?.atStartOfDay()
 }
 
 fun VaccinationEntry.getVaccinationCountry(showEnglishVersionForLabels: Boolean): String {
