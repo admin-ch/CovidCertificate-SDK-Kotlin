@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 class TimestampServiceTest {
 
@@ -27,14 +28,14 @@ class TimestampServiceTest {
 
 	@Test
 	fun future_expiration() {
-		val certificateHolder = CertificateHolder(emptyDccCert, "", expirationTime = Instant.now().plusSeconds(60))
+		val certificateHolder = CertificateHolder(emptyDccCert, "", expirationTime = Instant.now().plus(1L, ChronoUnit.MINUTES))
 		assertNull(TimestampService.decode(certificateHolder))
 	}
 
 	@Test
 	fun past_expiration() {
-		val certificateHolder = CertificateHolder(emptyDccCert, "", expirationTime = Instant.now().minusSeconds(60))
-		assertEquals(TimestampService.decode(certificateHolder), ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED)
+		val certificateHolder = CertificateHolder(emptyDccCert, "", expirationTime = Instant.now().minus(1L, ChronoUnit.MINUTES))
+		assertEquals(ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED, TimestampService.decode(certificateHolder))
 	}
 
 	@Test
@@ -44,14 +45,20 @@ class TimestampServiceTest {
 	}
 
 	@Test
-	fun future_issuedAt() {
-		val certificateHolder = CertificateHolder(emptyDccCert, "", issuedAt = Instant.now().plusSeconds(60))
-		assertEquals(TimestampService.decode(certificateHolder), ErrorCodes.SIGNATURE_TIMESTAMP_NOT_YET_VALID)
+	fun future_issuedAt_within_offset() {
+		val certificateHolder = CertificateHolder(emptyDccCert, "", issuedAt = Instant.now().plus(1L, ChronoUnit.MINUTES))
+		assertNull(TimestampService.decode(certificateHolder))
+	}
+
+	@Test
+	fun future_issuedAt_outside_offset() {
+		val certificateHolder = CertificateHolder(emptyDccCert, "", issuedAt = Instant.now().plus(10L, ChronoUnit.MINUTES))
+		assertEquals(ErrorCodes.SIGNATURE_TIMESTAMP_NOT_YET_VALID, TimestampService.decode(certificateHolder))
 	}
 
 	@Test
 	fun past_issuedAt() {
-		val certificateHolder = CertificateHolder(emptyDccCert, "", issuedAt = Instant.now().minusSeconds(60))
+		val certificateHolder = CertificateHolder(emptyDccCert, "", issuedAt = Instant.now().minus(1L, ChronoUnit.MINUTES))
 		assertNull(TimestampService.decode(certificateHolder))
 	}
 
@@ -66,10 +73,10 @@ class TimestampServiceTest {
 		val certificateHolder = CertificateHolder(
 			emptyDccCert,
 			"",
-			expirationTime = Instant.now().minusSeconds(120),
-			issuedAt = Instant.now().plusSeconds(60)
+			expirationTime = Instant.now().minus(2L, ChronoUnit.MINUTES),
+			issuedAt = Instant.now().plus(1L, ChronoUnit.MINUTES)
 		)
-		assertEquals(TimestampService.decode(certificateHolder), ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED)
+		assertEquals(ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED, TimestampService.decode(certificateHolder))
 	}
 
 	@Test
@@ -77,8 +84,8 @@ class TimestampServiceTest {
 		val certificateHolder = CertificateHolder(
 			emptyDccCert,
 			"",
-			expirationTime = Instant.now().plusSeconds(120),
-			issuedAt = Instant.now().minusSeconds(60)
+			expirationTime = Instant.now().plus(2L, ChronoUnit.MINUTES),
+			issuedAt = Instant.now().minus(1L, ChronoUnit.MINUTES)
 		)
 		assertNull(TimestampService.decode(certificateHolder))
 	}
