@@ -56,10 +56,6 @@ fun RecoveryEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): Loca
 }
 
 fun RecoveryEntry.firstPositiveResult(): LocalDateTime? {
-	if (this.dateFirstPositiveTest.isEmpty()) {
-		return null
-	}
-
 	return DateUtil.parseDate(this.dateFirstPositiveTest)?.atStartOfDay()
 }
 

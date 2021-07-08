@@ -53,10 +53,6 @@ fun VaccinationEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): L
 }
 
 fun VaccinationEntry.vaccineDate(): LocalDateTime? {
-	if (this.vaccinationDate.isEmpty()) {
-		return null
-	}
-
 	return DateUtil.parseDate(this.vaccinationDate)?.atStartOfDay()
 }
 

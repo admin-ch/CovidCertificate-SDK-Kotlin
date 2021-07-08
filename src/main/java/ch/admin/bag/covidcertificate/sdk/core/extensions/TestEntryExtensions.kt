@@ -34,11 +34,9 @@ fun TestEntry.getFormattedSampleDate(dateTimeFormatter: DateTimeFormatter): Stri
 }
 
 fun TestEntry.getFormattedResultDate(dateTimeFormatter: DateTimeFormatter): String? {
-	if (this.timestampResult == null) {
-		return null
+	return this.timestampResult?.let {
+		DateUtil.parseDateTime(it)?.format(dateTimeFormatter)
 	}
-
-	return DateUtil.parseDateTime(this.timestampSample)?.format(dateTimeFormatter)
 }
 
 fun TestEntry.getTestCenter(): String? {
