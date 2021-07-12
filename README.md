@@ -12,7 +12,10 @@ It is partially based on [these](https://github.com/ehn-digital-green-developmen
 ## How To Use
 
 This repository is used internally in the [CovidCertificate-SDK-Android](https://github.com/admin-ch/CovidCertificate-SDK-Android) as well as the backend services 
-that provide the functionality for the Swiss CovidCertificate apps. For usage in Android apps, please refer to the above mentioned SDK for Android. 
+that provide the functionality for the Swiss CovidCertificate apps. For usage in Android apps, please refer to the above mentioned SDK for Android.
+
+As of now, this repository is only available as a tagged JAR file (meaning no transitive dependencies are automatically included), which you can find on the [releases](https://github.com/admin-ch/CovidCertificate-SDK-Kotlin/releases) page.
+A Maven Central dependency is planned for future releases.
 
 ## Repositories
 
@@ -20,7 +23,6 @@ that provide the functionality for the Swiss CovidCertificate apps. For usage in
 * Android SDK: [CovidCertificate-SDK-Android](https://github.com/admin-ch/CovidCertificate-SDK-Android)
 * iOS App: [CovidCertificate-App-iOS](https://github.com/admin-ch/CovidCertificate-App-iOS)
 * iOS SDK: [CovidCertificate-SDK-iOS](https://github.com/admin-ch/CovidCertificate-SDK-iOS)
-* Config Service: [CovidCertificate-App-Config-Service](https://github.com/admin-ch/CovidCertificate-App-Config-Service)
 * For all others, see the [Github organisation](https://github.com/admin-ch/)
 
 ## License
