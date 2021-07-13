@@ -11,10 +11,11 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm' version '1.4.32'
-    id "org.jetbrains.kotlin.kapt" version "1.4.32"
+    id 'org.jetbrains.kotlin.kapt' version '1.4.32'
+    id 'com.vanniktech.maven.publish' version '0.17.0'
 }
 
-group 'ch.admin.bag'
+group GROUP
 version VERSION_NAME
 
 repositories {
@@ -30,10 +31,6 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
-}
-
-java {
-    withSourcesJar()
 }
 
 dependencies {
@@ -66,4 +63,8 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+mavenPublish {
+    sonatypeHost = "S01"
 }
