@@ -13,6 +13,7 @@
  */
 package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 
+import ch.admin.bag.covidcertificate.sdk.core.data.moshi.TrimmedStringAdapter
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
@@ -30,7 +31,10 @@ internal object CborService {
 	// Takes qrCodeData to directly construct a Bagdgc AND keep the field in the DCC a val
 	fun decode(input: ByteArray, qrCodeData: String): CertificateHolder? {
 
-		val moshi = Moshi.Builder().add(Date::class.java, Rfc3339DateJsonAdapter()).build()
+		val moshi = Moshi.Builder()
+			.add(Date::class.java, Rfc3339DateJsonAdapter())
+			.add(String::class.java, TrimmedStringAdapter())
+			.build()
 		val dccCertAdapter = moshi.adapter(DccCert::class.java)
 		val chLightCertAdapter = moshi.adapter(ChLightCert::class.java)
 
