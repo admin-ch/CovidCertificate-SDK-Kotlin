@@ -40,7 +40,7 @@ dependencies {
 
     // Security
     implementation "com.augustcellars.cose:cose-java:1.1.0"
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
 
     // IO
     implementation 'com.squareup.okio:okio:2.10.0'
