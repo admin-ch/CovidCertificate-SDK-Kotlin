@@ -36,7 +36,7 @@ jobs:
             build/reports
       # Release
       - name: Create Github release
-        uses: softprops/action-gh-release@v0.1.5
+        uses: softprops/action-gh-release@b7e450da2a4b4cb4bfbae528f788167786cfcedf
         with:
           files: |
             build/libs/CovidCertificate-SDK-Kotlin-*.jar
