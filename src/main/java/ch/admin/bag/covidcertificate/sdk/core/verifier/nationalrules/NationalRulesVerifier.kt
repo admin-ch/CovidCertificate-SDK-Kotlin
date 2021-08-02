@@ -82,10 +82,12 @@ internal class NationalRulesVerifier {
 			"VR-CH-0006" -> getValidityRange(dccCert, ruleValueSets)?.let {
 				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
 			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
+			"VR-CH-0007" -> getValidityRange(dccCert, ruleValueSets)?.let {
+				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
 			"TR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_TEST_ENTRIES, rule.id)
 			"TR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.POSITIVE_RESULT, rule.id)
 			"TR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_TEST_TYPE, rule.id)
-			"TR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.id)
 			"TR-CH-0004" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
 			"TR-CH-0005" -> getValidityRange(dccCert, ruleValueSets)?.let {
 				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
