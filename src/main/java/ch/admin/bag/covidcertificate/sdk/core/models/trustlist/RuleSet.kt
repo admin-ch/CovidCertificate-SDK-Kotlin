@@ -101,6 +101,6 @@ internal data class CertLogicPayload(
 
 internal data class CertLogicExternalInfo(
 	val valueSets: RuleValueSets,
-	val validationClock: String, // ISO-8601 extended offset date-time format
-	val validationClockAtStartOfDay: String, // ISO-8601 date format
+	val validationClock: String? = null, // ISO-8601 extended offset date-time format
+	val validationClockAtStartOfDay: String? = null, // ISO-8601 date format
 )
