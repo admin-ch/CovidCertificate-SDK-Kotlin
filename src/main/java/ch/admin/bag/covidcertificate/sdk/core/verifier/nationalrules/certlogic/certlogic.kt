@@ -181,12 +181,19 @@ internal fun evaluatePlusTime(dateOperand: JsonNode, amount: JsonNode, unit: Jso
 	}
 	val timeUnit = TimeUnit.fromName(unit.textValue())
 	val dateTimeStr = evaluate(dateOperand, data)
-	if (dateTimeStr !is TextNode) {
-		throw RuntimeException("date argument of \"plusTime\" must be a string")
+	if (dateTimeStr !is TextNode && dateTimeStr !is JsonDateTime) {
+		throw RuntimeException("date argument of \"plusTime\" must be a string or JsonDateTime")
 	}
 	return JsonDateTime.fromString(dateTimeStr.asText()).plusTime(longAmount.toInt(), timeUnit)
 }
 
+internal fun evaluateAtStartOfDay(dateOperand: JsonNode, data: JsonNode): JsonDateTime {
+	val dateTimeStr = evaluate(dateOperand, data)
+	if (dateTimeStr !is TextNode) {
+		throw RuntimeException("date argument of \"atStartOfDay\" must be a string")
+	}
+	return JsonDateTime.fromString(dateTimeStr.asText()).atStartOfDay()
+}
 
 internal fun evaluateReduce(operand: JsonNode, lambda: JsonNode, initial: JsonNode, data: JsonNode): JsonNode {
 	val evalOperand = evaluate(operand, data)
@@ -231,6 +238,7 @@ fun evaluate(expr: JsonNode, data: JsonNode): JsonNode = when (expr) {
 				"===", "and", ">", "<", ">=", "<=", "in", "+" -> evaluateBinOp(operator, args, data)
 				"!" -> evaluateNot(args[0], data)
 				"plusTime" -> evaluatePlusTime(args[0], args[1], args[2], data)
+				"atStartOfDay" -> evaluateAtStartOfDay(args[0], data)
 				"reduce" -> evaluateReduce(args[0], args[1], args[2], data)
 				else -> throw RuntimeException("unrecognised operator: \"$operator\"")
 			}

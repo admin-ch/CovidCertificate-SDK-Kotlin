@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,6 +93,10 @@ public class JsonDateTime extends ValueNode implements Comparable<JsonDateTime> 
 			case HOUR: return new JsonDateTime(this._value.plusHours(amount));
 			default: throw new RuntimeException(String.format("time unit \"%s\" not handled", unit));
 		}
+	}
+
+	public JsonDateTime atStartOfDay() {
+		return new JsonDateTime(this._value.truncatedTo(ChronoUnit.DAYS));
 	}
 
 	@Override
