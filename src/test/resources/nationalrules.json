@@ -646,6 +646,248 @@
 			}
 		}
 	],
+	"validityRules": {
+		"validFrom": [
+			{
+				"id": "CH-VACCINATION-VALID-FROM",
+				"description": "Vaccination certificate valid from",
+				"inputParameter": "Full HCert + ValueSets",
+				"logic": {
+					"if": [
+						{
+							"var": "payload.v.0"
+						},
+						{
+							"if": [
+								{
+									"in": [
+										{
+											"var": "payload.v.0.mp"
+										},
+										{
+											"var": "external.valueSets.one-dose-vaccines-with-offset"
+										}
+									]
+								},
+								{
+									"plusTime": [
+										{
+											"atStartOfDay": [
+												{
+													"var": "payload.v.0.dt"
+												}
+											]
+										},
+										{
+											"var": "external.valueSets.acceptance-criteria.single-vaccine-validity-offset"
+										},
+										"day"
+									]
+								},
+								{
+									"if": [
+										{
+											"in": [
+												{
+													"var": "payload.v.0.mp"
+												},
+												{
+													"var": "external.valueSets.two-dose-vaccines"
+												}
+											]
+										},
+										{
+											"plusTime": [
+												{
+													"atStartOfDay": [
+														{
+															"var": "payload.v.0.dt"
+														}
+													]
+												},
+												0,
+												"day"
+											]
+										},
+										null
+									]
+								}
+							]
+						},
+						null
+					]
+				}
+			},
+			{
+				"id": "CH-TEST-VALID-FROM",
+				"description": "Test certificate valid from",
+				"inputParameter": "Full HCert + ValueSets",
+				"logic": {
+					"if": [
+						{
+							"var": "payload.t.0"
+						},
+						{
+							"plusTime": [
+								{
+									"var": "payload.t.0.sc"
+								},
+								0,
+								"day"
+							]
+						},
+						null
+					]
+				}
+			},
+			{
+				"id": "CH-RECOVERY-VALID-FROM",
+				"description": "Recovery certificate valid from",
+				"inputParameter": "Full HCert + ValueSets",
+				"logic": {
+					"if": [
+						{
+							"var": "payload.r.0"
+						},
+						{
+							"plusTime": [
+								{
+									"atStartOfDay": [
+										{
+											"var": "payload.r.0.fr"
+										}
+									]
+								},
+								{
+									"var": "external.valueSets.acceptance-criteria.recovery-offset-valid-from"
+								},
+								"day"
+							]
+						},
+						null
+					]
+				}
+			}
+		],
+		"validUntil": [
+			{
+				"id": "CH-VACCINATION-VALID-UNTIL",
+				"description": "Vaccination certificate valid until",
+				"inputParameter": "Full HCert + ValueSets",
+				"logic": {
+					"if": [
+						{
+							"var": "payload.v.0"
+						},
+						{
+							"plusTime": [
+								{
+									"atStartOfDay": [
+										{
+											"var": "payload.v.0.dt"
+										}
+									]
+								},
+								{
+									"var": "external.valueSets.acceptance-criteria.vaccine-immunity"
+								},
+								"day"
+							]
+						},
+						null
+					]
+				}
+			},
+			{
+				"id": "CH-TEST-VALID-UNTIL",
+				"description": "Test certificate valid until",
+				"inputParameter": "Full HCert + ValueSets",
+				"logic": {
+					"if": [
+						{
+							"var": "payload.t.0"
+						},
+						{
+							"if": [
+								{
+									"===": [
+										{
+											"var": "payload.t.0.tt"
+										},
+										"LP217198-3"
+									]
+								},
+								{
+									"plusTime": [
+										{
+											"var": "payload.t.0.sc"
+										},
+										{
+											"var": "external.valueSets.acceptance-criteria.rat-test-validity"
+										},
+										"hour"
+									]
+								},
+								{
+									"if": [
+										{
+											"===": [
+												{
+													"var": "payload.t.0.tt"
+												},
+												"LP6464-4"
+											]
+										},
+										{
+											"plusTime": [
+												{
+													"var": "payload.t.0.sc"
+												},
+												{
+													"var": "external.valueSets.acceptance-criteria.pcr-test-validity"
+												},
+												"hour"
+											]
+										},
+										null
+									]
+								}
+							]
+						},
+						null
+					]
+				}
+			},
+			{
+				"id": "CH-RECOVERY-VALID-UNTIL",
+				"description": "Recovery certificate valid until",
+				"inputParameter": "Full HCert + ValueSets",
+				"logic": {
+					"if": [
+						{
+							"var": "payload.r.0"
+						},
+						{
+							"plusTime": [
+								{
+									"atStartOfDay": [
+										{
+											"var": "payload.r.0.fr"
+										}
+									]
+								},
+								{
+									"var": "external.valueSets.acceptance-criteria.recovery-offset-valid-until"
+								},
+								"day"
+							]
+						},
+						null
+					]
+				}
+			}
+		]
+	},
 	"valueSets": {
 		"disease-agent-targeted": [
 			"840539006"

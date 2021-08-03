@@ -21,8 +21,15 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class RuleSet(
 	val rules: List<Rule>,
+	val validityRules: ValidityRules,
 	val valueSets: RuleValueSets,
 	val validDuration: Long,
+)
+
+@JsonClass(generateAdapter = true)
+data class ValidityRules(
+	val validFrom: List<Rule>,
+	val validUntil: List<Rule>
 )
 
 @JsonClass(generateAdapter = true)
