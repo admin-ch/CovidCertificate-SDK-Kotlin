@@ -17,6 +17,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ValidityRangeCalculatorTest {
@@ -133,8 +134,14 @@ class ValidityRangeCalculatorTest {
 
 		val validityRange = validityRangeCalculator.getValidityRange(test, nationalRuleSet.validityRules, nationalRuleSet.valueSets)
 		assertNotNull(validityRange)
-		assertEquals(sampleCollectionTime.toLocalDateTime(), validityRange?.validFrom)
-		assertEquals(sampleCollectionTime.plusHours(48).toLocalDateTime(), validityRange?.validUntil)
+
+		// The expected values need to be truncated to milliseconds because the JsonDateTime class reformats the timestamp string
+		// and strips away micro- and nanoseconds
+		val expectedValidFrom = sampleCollectionTime.toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+		assertEquals(expectedValidFrom, validityRange?.validFrom)
+
+		val expectedValidUntil = sampleCollectionTime.plusHours(48).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+		assertEquals(expectedValidUntil, validityRange?.validUntil)
 	}
 
 	@Test
@@ -152,8 +159,14 @@ class ValidityRangeCalculatorTest {
 
 		val validityRange = validityRangeCalculator.getValidityRange(test, nationalRuleSet.validityRules, nationalRuleSet.valueSets)
 		assertNotNull(validityRange)
-		assertEquals(sampleCollectionTime.toLocalDateTime(), validityRange?.validFrom)
-		assertEquals(sampleCollectionTime.plusHours(72).toLocalDateTime(), validityRange?.validUntil)
+
+		// The expected values need to be truncated to milliseconds because the JsonDateTime class reformats the timestamp string
+		// and strips away micro- and nanoseconds
+		val expectedValidFrom = sampleCollectionTime.toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+		assertEquals(expectedValidFrom, validityRange?.validFrom)
+
+		val expectedValidUntil = sampleCollectionTime.plusHours(72).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+		assertEquals(expectedValidUntil, validityRange?.validUntil)
 	}
 
 	@Test
