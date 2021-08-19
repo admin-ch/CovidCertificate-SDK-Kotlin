@@ -99,7 +99,7 @@ class CertTypeServiceTest {
 		assertTrue(certificateHolder.containsDccCert(), "CertificateHolder should contain a DccCert")
 
 		val certificateType = CertTypeService.decode(certificateHolder)
-		assertNull(certificateType, "Certificate can only contain one of the three data sets (v, t or r)")
+		assertNotNull(certificateType, "Certificate can  contain one or more of the three data sets (v, t or r)")
 	}
 
 }

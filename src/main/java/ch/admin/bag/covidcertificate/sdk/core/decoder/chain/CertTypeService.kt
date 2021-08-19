@@ -48,8 +48,7 @@ internal object CertTypeService {
 				}
 			}
 		}
-
-		return if (numContainedContent == 1) type else null
+		return if (numContainedContent >= 1) type else null
 	}
 
 }
