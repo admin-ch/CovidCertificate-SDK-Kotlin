@@ -67,44 +67,44 @@ internal class NationalRulesVerifier {
 		dccCert: DccCert,
 		ruleValueSets: RuleValueSets
 	): CheckNationalRulesState {
-		return when (rule.id) {
-			"GR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_DISEASE_TARGET, rule.id)
-			"VR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_VACCINE_ENTRIES, rule.id)
-			"VR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NOT_FULLY_PROTECTED, rule.id)
-			"VR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.id)
-			"VR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
+		return when (rule.identifier) {
+			"GR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_DISEASE_TARGET, rule.identifier)
+			"VR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_VACCINE_ENTRIES, rule.identifier)
+			"VR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NOT_FULLY_PROTECTED, rule.identifier)
+			"VR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.identifier)
+			"VR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.identifier)
 			"VR-CH-0004" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
+				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"VR-CH-0005" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
+				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"VR-CH-0006" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"TR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_TEST_ENTRIES, rule.id)
-			"TR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.POSITIVE_RESULT, rule.id)
-			"TR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_TEST_TYPE, rule.id)
-			"TR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.id)
-			"TR-CH-0004" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
+				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_TEST_ENTRIES, rule.identifier)
+			"TR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.POSITIVE_RESULT, rule.identifier)
+			"TR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_TEST_TYPE, rule.identifier)
+			"TR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.identifier)
+			"TR-CH-0004" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.identifier)
 			"TR-CH-0005" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
+				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"TR-CH-0006" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
+				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"TR-CH-0007" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"RR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_RECOVERY_ENTRIES, rule.id)
-			"RR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
+				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"RR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_RECOVERY_ENTRIES, rule.identifier)
+			"RR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.identifier)
 			"RR-CH-0002" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
+				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"RR-CH-0003" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			else -> CheckNationalRulesState.INVALID(NationalRulesError.UNKNOWN_RULE_FAILED, rule.id)
+				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			else -> CheckNationalRulesState.INVALID(NationalRulesError.UNKNOWN_RULE_FAILED, rule.identifier)
 		}
 	}
 

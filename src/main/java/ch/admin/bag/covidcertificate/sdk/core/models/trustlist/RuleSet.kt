@@ -20,80 +20,84 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class RuleSet(
-	val rules: List<Rule>,
-	val valueSets: RuleValueSets,
-	val validDuration: Long,
+    val displayRules: List<String>,
+    val rules: List<Rule>,
+    val valueSets: RuleValueSets,
+    val validDuration: Long,
 )
 
 @JsonClass(generateAdapter = true)
 data class Rule(
-	val id: String,
-	val businessDescription: String?,
-	val description: String,
-	val inputParameter: String,
-	@RawJsonString val logic: String,
+    val affectedFields: List<String>,
+    val certificateType: String,
+    val country: String,
+    val description: List<Description>,
+    val engine: String,
+    val engineVersion: String,
+    val identifier: String,
+    @RawJsonString val logic: String,
+    val schemaVersion: String,
+    val type: String,
+    val validFrom: String,
+    val validTo: String,
+    val version: String
+
+)
+
+@JsonClass(generateAdapter = true)
+data class Description(
+    val desc: String,
+    val lang: String
 )
 
 @JsonClass(generateAdapter = true)
 data class RuleValueSets(
-	@Json(name = "disease-agent-targeted")
-	@get:JsonProperty("disease-agent-targeted")
-	val diseaseAgents: List<String>?,
-	@Json(name = "accepted-vaccines")
-	@get:JsonProperty("accepted-vaccines")
-	val acceptedVaccines: List<String>?,
-	@Json(name = "two-dose-vaccines")
-	@get:JsonProperty("two-dose-vaccines")
-	val twoDoseVaccines: List<String>?,
-	@Json(name = "one-dose-vaccines-with-offset")
-	@get:JsonProperty("one-dose-vaccines-with-offset")
-	val oneDoseVaccinesWithOffset: List<String>?,
-	@Json(name = "covid-19-lab-test-type")
-	@get:JsonProperty("covid-19-lab-test-type")
-	val testTypes: List<String>?,
-	@Json(name = "covid-19-lab-test-manufacturer-and-name")
-	@get:JsonProperty("covid-19-lab-test-manufacturer-and-name")
-	val testManufacturers: List<String>?,
-	@Json(name = "acceptance-criteria")
-	@get:JsonProperty("acceptance-criteria")
-	val acceptanceCriteria: AcceptanceCriterias,
+    @Json(name = "two-dose-vaccines")
+    @get:JsonProperty("two-dose-vaccines")
+    val twoDoseVaccines: List<String>?,
+    @Json(name = "one-dose-vaccines-with-offset")
+    @get:JsonProperty("one-dose-vaccines-with-offset")
+    val oneDoseVaccinesWithOffset: List<String>?,
+    @Json(name = "acceptance-criteria")
+    @get:JsonProperty("acceptance-criteria")
+    val acceptanceCriteria: AcceptanceCriterias,
 )
 
 @JsonClass(generateAdapter = true)
 data class AcceptanceCriterias(
-	@Json(name = "single-vaccine-validity-offset")
-	@get:JsonProperty("single-vaccine-validity-offset")
-	val singleVaccineValidityOffset: Int,
-	@Json(name = "vaccine-immunity")
-	@get:JsonProperty("vaccine-immunity")
-	val vaccineImmunity: Int,
-	@Json(name = "rat-test-validity")
-	@get:JsonProperty("rat-test-validity")
-	val ratTestValidity: Int,
-	@Json(name = "pcr-test-validity")
-	@get:JsonProperty("pcr-test-validity")
-	val pcrTestValidity: Int,
-	@Json(name = "recovery-offset-valid-from")
-	@get:JsonProperty("recovery-offset-valid-from")
-	val recoveryOffsetValidFrom: Int,
-	@Json(name = "recovery-offset-valid-until")
-	@get:JsonProperty("recovery-offset-valid-until")
-	val recoveryOffsetValidUntil: Int
+    @Json(name = "single-vaccine-validity-offset")
+    @get:JsonProperty("single-vaccine-validity-offset")
+    val singleVaccineValidityOffset: Int,
+    @Json(name = "vaccine-immunity")
+    @get:JsonProperty("vaccine-immunity")
+    val vaccineImmunity: Int,
+    @Json(name = "rat-test-validity")
+    @get:JsonProperty("rat-test-validity")
+    val ratTestValidity: Int,
+    @Json(name = "pcr-test-validity")
+    @get:JsonProperty("pcr-test-validity")
+    val pcrTestValidity: Int,
+    @Json(name = "recovery-offset-valid-from")
+    @get:JsonProperty("recovery-offset-valid-from")
+    val recoveryOffsetValidFrom: Int,
+    @Json(name = "recovery-offset-valid-until")
+    @get:JsonProperty("recovery-offset-valid-until")
+    val recoveryOffsetValidUntil: Int
 )
 
 internal data class CertLogicData(
-	val payload: CertLogicPayload,
-	val external: CertLogicExternalInfo,
+    val payload: CertLogicPayload,
+    val external: CertLogicExternalInfo,
 )
 
 internal data class CertLogicPayload(
-	val r: List<RecoveryEntry>? = null,
-	val t: List<TestEntry>? = null,
-	val v: List<VaccinationEntry>? = null,
+    val r: List<RecoveryEntry>? = null,
+    val t: List<TestEntry>? = null,
+    val v: List<VaccinationEntry>? = null,
 )
 
 internal data class CertLogicExternalInfo(
-	val valueSets: RuleValueSets,
-	val validationClock: String, // ISO-8601 extended offset date-time format
-	val validationClockAtStartOfDay: String, // ISO-8601 date format
+    val valueSets: RuleValueSets,
+    val validationClock: String, // ISO-8601 extended offset date-time format
+    val validationClockAtStartOfDay: String, // ISO-8601 date format
 )

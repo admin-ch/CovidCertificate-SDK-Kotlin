@@ -67,6 +67,25 @@ class NationalRulesVerifierTest {
 	}
 
 	@Test
+	fun testVaccineDiseaseTargetedIsNotSarsCoV2() {
+		val clock = Clock.fixed(Instant.parse("2021-05-25T12:00:00Z"), ZoneId.systemDefault())
+		val vaccinationDate = LocalDate.now(clock).minusDays(10).atStartOfDay()
+
+		val cert = TestDataGenerator.generateVaccineCert(
+			2,
+			2,
+			"ORG-100001699",
+			"EU/1/21/1529",
+			"840539009",
+			"J07BX03",
+			vaccinationDate,
+		)
+
+		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, clock)
+		assertTrue(result is CheckNationalRulesState.INVALID)
+	}
+
+	@Test
 	fun testVaccineMustBeInWhitelist() {
 		val clock = Clock.fixed(Instant.parse("2021-05-25T12:00:00Z"), ZoneId.systemDefault())
 		val vaccinationDate = LocalDate.now(clock).minusDays(10).atStartOfDay()
