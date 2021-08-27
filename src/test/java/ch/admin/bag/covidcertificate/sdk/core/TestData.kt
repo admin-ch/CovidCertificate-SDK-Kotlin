@@ -52,6 +52,13 @@ internal fun getHardcodedSigningKeys(flavor: String): List<Jwk> {
 	return jwks
 }
 
+internal enum class Vaccine(val identifier: String, val manufacturer: String, val prophylaxis: String) {
+	BIONTECH("EU/1/20/1528", "ORG-100030215", "1119349007"),
+	MODERNA("EU/1/20/1507", "ORG-100031184", "1119349007"),
+	JANSSEN("EU/1/20/1525", "ORG-100001417", "J07BX03"),
+	ASTRA_ZENECA("EU/1/21/1529", "ORG-100001699", "J07BX03")
+}
+
 /* Certificate Light Test Key */
 private const val LIGHT_TEST_KID = "AAABAQICAwM="
 private const val LIGHT_TEST_X = "ceBrQgj3RwWzoxkv8/vApqkB7yJGfpBC9TjeIiXUR0U="

@@ -12,7 +12,6 @@ package ch.admin.bag.covidcertificate.sdk.core.extensions
 
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.AcceptanceCriterias
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -43,16 +42,6 @@ fun RecoveryEntry.getIssuer(): String {
 
 fun RecoveryEntry.getCertificateIdentifier(): String {
 	return this.certificateIdentifier
-}
-
-fun RecoveryEntry.validFromDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {
-	val firstPositiveResultDate = this.firstPositiveResult() ?: return null
-	return firstPositiveResultDate.plusDays(acceptanceCriterias.recoveryOffsetValidFrom.toLong())
-}
-
-fun RecoveryEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {
-	val firstPositiveResultDate = this.firstPositiveResult() ?: return null
-	return firstPositiveResultDate.plusDays(acceptanceCriterias.recoveryOffsetValidUntil.toLong())
 }
 
 fun RecoveryEntry.firstPositiveResult(): LocalDateTime? {

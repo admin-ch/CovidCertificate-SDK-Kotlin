@@ -74,6 +74,16 @@ object TestDataGenerator {
 	): DccCert {
 		val now = OffsetDateTime.now(clock)
 		val sampleCollectionTime = now + sampleCollectionWasAgo
+		return generateTestCertFromDate(testType, testResult, name, disease, sampleCollectionTime)
+	}
+
+	fun generateTestCertFromDate(
+		testType: String,
+		testResult: String,
+		name: String,
+		disease: String,
+		sampleCollectionTime: OffsetDateTime,
+	): DccCert {
 		val testResultTime = sampleCollectionTime + Duration.ofHours(10)
 		val testJson = """
               {

@@ -28,6 +28,11 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build
         run: ./gradlew build
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action/composite@95a3aff882d4abe2838b187c66477be7fbf3ddb8
+        if: always()
+        with:
+          files: build/test-results/test/*.xml
       - name: Store build artifacts
         uses: actions/upload-artifact@v2
         with:
