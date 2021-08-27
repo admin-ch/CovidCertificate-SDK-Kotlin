@@ -14,14 +14,7 @@
 package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.databind.node.BooleanNode
-import com.fasterxml.jackson.databind.node.IntNode
-import com.fasterxml.jackson.databind.node.JsonNodeFactory
-import com.fasterxml.jackson.databind.node.NullNode
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.node.TextNode
-
+import com.fasterxml.jackson.databind.node.*
 
 
 internal fun evaluateVar(args: JsonNode, data: JsonNode): JsonNode {
@@ -62,7 +55,9 @@ internal fun evaluateIf(guard: JsonNode, then: JsonNode, else_: JsonNode, data: 
 internal fun evaluateInfix(operator: String, args: ArrayNode, data: JsonNode): JsonNode {
 	when (operator) {
 		"and" -> if (args.size() < 2) throw RuntimeException("an \"and\" operation must have at least 2 operands")
-		"<", ">", "<=", ">=", "after", "before", "not-after", "not-before" -> if (args.size() < 2 || args.size() > 3) throw RuntimeException("an operation with operator \"$operator\" must have 2 or 3 operands")
+		"<", ">", "<=", ">=", "after", "before", "not-after", "not-before" -> if (args.size() < 2 || args.size() > 3) throw RuntimeException(
+			"an operation with operator \"$operator\" must have 2 or 3 operands"
+		)
 		else -> if (args.size() != 2) throw RuntimeException("an operation with operator \"$operator\" must have 2 operands")
 	}
 	val evalArgs = args.map { arg -> evaluate(arg, data) }
@@ -79,7 +74,7 @@ internal fun evaluateInfix(operator: String, args: ArrayNode, data: JsonNode): J
 			val l = evalArgs[0]
 			val r = evalArgs[1]
 			if (l !is IntNode || r !is IntNode) {
-				throw RuntimeException("operands of a "+" operator must both be integers")
+				throw RuntimeException("operands of a " + " operator must both be integers")
 			}
 			IntNode.valueOf(evalArgs[0].intValue() + evalArgs[1].intValue())
 		}
@@ -138,7 +133,11 @@ internal fun evaluatePlusTime(dateOperand: JsonNode, amount: JsonNode, unit: Jso
 		throw RuntimeException("\"amount\" argument (#2) of \"plusTime\" must be an integer")
 	}
 	if (!isTimeUnit(unit)) {
-		throw RuntimeException("\"unit\" argument (#3) of \"plusTime\" must be a string with one of the time units: ${TimeUnit.values().map { it.toString() }}")
+		throw RuntimeException(
+			"\"unit\" argument (#3) of \"plusTime\" must be a string with one of the time units: ${
+				TimeUnit.values().map { it.toString() }
+			}"
+		)
 	}
 	val timeUnit = TimeUnit.valueOf(unit.textValue())
 	val dateTimeStr = evaluate(dateOperand, data)
@@ -201,7 +200,11 @@ fun evaluate(expr: JsonNode, data: JsonNode): JsonNode = when (expr) {
 			}
 			when (operator) {
 				"if" -> evaluateIf(args[0], args[1], args[2], data)
-				"===", "and", ">", "<", ">=", "<=", "in", "+", "after", "before", "not-after", "not-before" -> evaluateInfix(operator, args, data)
+				"===", "and", ">", "<", ">=", "<=", "in", "+", "after", "before", "not-after", "not-before" -> evaluateInfix(
+					operator,
+					args,
+					data
+				)
 				"!" -> evaluateNot(args[0], data)
 				"plusTime" -> evaluatePlusTime(args[0], args[1], args[2], data)
 				"reduce" -> evaluateReduce(args[0], args[1], args[2], data)

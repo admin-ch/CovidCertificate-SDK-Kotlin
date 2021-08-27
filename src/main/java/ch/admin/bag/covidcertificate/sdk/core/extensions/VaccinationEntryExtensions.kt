@@ -23,48 +23,48 @@ fun VaccinationEntry.doseNumber(): Int = this.doseNumber
 fun VaccinationEntry.totalDoses(): Int = this.totalDoses
 
 fun VaccinationEntry.hadPastInfection(vaccine: Vaccine): Boolean {
-    //if the total Doses of the vaccine is bigger then the total doses in the certificate, the patient had a past infection
-    return vaccine.total_dosis_number > this.totalDoses()
+	//if the total Doses of the vaccine is bigger then the total doses in the certificate, the patient had a past infection
+	return vaccine.total_dosis_number > this.totalDoses()
 }
 
 fun VaccinationEntry.getNumberOverTotalDose(): String {
-    return " ${this.doseNumber()}/${this.totalDoses()}"
+	return " ${this.doseNumber()}/${this.totalDoses()}"
 }
 
 fun VaccinationEntry.isNotFullyProtected(): Boolean {
-    return this.doseNumber < this.totalDoses
+	return this.doseNumber < this.totalDoses
 }
 
 fun VaccinationEntry.isTargetDiseaseCorrect(): Boolean {
-    return this.disease == AcceptanceCriteriasConstants.TARGET_DISEASE
+	return this.disease == AcceptanceCriteriasConstants.TARGET_DISEASE
 }
 
 fun VaccinationEntry.validFromDate(offsetInDays: Long): LocalDateTime? {
-    val vaccineDate = this.vaccineDate() ?: return null
-    return vaccineDate.plusDays(offsetInDays)
+	val vaccineDate = this.vaccineDate() ?: return null
+	return vaccineDate.plusDays(offsetInDays)
 }
 
 fun VaccinationEntry.vaccineDate(): LocalDateTime? {
-    return DateUtil.parseDate(this.vaccinationDate)?.atStartOfDay()
+	return DateUtil.parseDate(this.vaccinationDate)?.atStartOfDay()
 }
 
 fun VaccinationEntry.getVaccinationCountry(showEnglishVersionForLabels: Boolean): String {
-    return try {
-        val loc = Locale("", this.country)
-        var countryString = loc.displayCountry
-        if (showEnglishVersionForLabels) {
-            countryString = "$countryString / ${loc.getDisplayCountry(Locale.ENGLISH)}"
-        }
-        return countryString
-    } catch (e: Exception) {
-        this.country
-    }
+	return try {
+		val loc = Locale("", this.country)
+		var countryString = loc.displayCountry
+		if (showEnglishVersionForLabels) {
+			countryString = "$countryString / ${loc.getDisplayCountry(Locale.ENGLISH)}"
+		}
+		return countryString
+	} catch (e: Exception) {
+		this.country
+	}
 }
 
 fun VaccinationEntry.getIssuer(): String {
-    return this.certificateIssuer
+	return this.certificateIssuer
 }
 
 fun VaccinationEntry.getCertificateIdentifier(): String {
-    return this.certificateIdentifier
+	return this.certificateIdentifier
 }

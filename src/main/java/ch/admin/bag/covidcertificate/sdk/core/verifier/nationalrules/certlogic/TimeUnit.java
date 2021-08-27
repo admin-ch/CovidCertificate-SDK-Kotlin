@@ -25,5 +25,4 @@ public enum TimeUnit {
 			return false;
 		}
 	}
-
 }

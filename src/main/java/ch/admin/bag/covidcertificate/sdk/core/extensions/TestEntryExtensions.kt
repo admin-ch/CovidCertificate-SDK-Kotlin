@@ -19,52 +19,52 @@ import java.util.*
 
 
 fun TestEntry.isNegative(): Boolean {
-    return this.result == AcceptanceCriteriasConstants.NEGATIVE_CODE
+	return this.result == AcceptanceCriteriasConstants.NEGATIVE_CODE
 }
 
 fun TestEntry.isTargetDiseaseCorrect(): Boolean {
-    return this.disease == AcceptanceCriteriasConstants.TARGET_DISEASE
+	return this.disease == AcceptanceCriteriasConstants.TARGET_DISEASE
 }
 
 fun TestEntry.getFormattedSampleDate(dateTimeFormatter: DateTimeFormatter): String? {
-    return DateUtil.parseDateTime(this.timestampSample)?.format(dateTimeFormatter)
+	return DateUtil.parseDateTime(this.timestampSample)?.format(dateTimeFormatter)
 }
 
 fun TestEntry.getFormattedResultDate(dateTimeFormatter: DateTimeFormatter): String? {
-    return this.timestampResult?.let {
-        DateUtil.parseDateTime(it)?.format(dateTimeFormatter)
-    }
+	return this.timestampResult?.let {
+		DateUtil.parseDateTime(it)?.format(dateTimeFormatter)
+	}
 }
 
 fun TestEntry.getTestCenter(): String? {
-    if (!this.testCenter.isNullOrBlank()) {
-        return this.testCenter
-    }
-    return null
+	if (!this.testCenter.isNullOrBlank()) {
+		return this.testCenter
+	}
+	return null
 }
 
 fun TestEntry.getTestCountry(showEnglishVersionForLabels: Boolean): String {
-    return try {
-        val loc = Locale("", this.country)
-        var countryString = loc.displayCountry
-        if (showEnglishVersionForLabels) {
-            countryString = "$countryString / ${loc.getDisplayCountry(Locale.ENGLISH)}"
-        }
-        return countryString
-    } catch (e: Exception) {
-        this.country
-    }
+	return try {
+		val loc = Locale("", this.country)
+		var countryString = loc.displayCountry
+		if (showEnglishVersionForLabels) {
+			countryString = "$countryString / ${loc.getDisplayCountry(Locale.ENGLISH)}"
+		}
+		return countryString
+	} catch (e: Exception) {
+		this.country
+	}
 }
 
 fun TestEntry.getIssuer(): String {
-    return this.certificateIssuer
+	return this.certificateIssuer
 }
 
 fun TestEntry.getCertificateIdentifier(): String {
-    return this.certificateIdentifier
+	return this.certificateIdentifier
 }
 
 fun TestEntry.validFromDate(): LocalDateTime? {
-    return DateUtil.parseDateTime(this.timestampSample)
+	return DateUtil.parseDateTime(this.timestampSample)
 }
 

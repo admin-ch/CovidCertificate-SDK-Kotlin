@@ -13,9 +13,7 @@ package ch.admin.bag.covidcertificate.sdk.core.extensions
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter.ISO_DATE
 import java.util.*
 
 
