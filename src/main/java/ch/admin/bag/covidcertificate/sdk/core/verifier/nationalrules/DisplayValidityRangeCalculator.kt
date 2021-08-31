@@ -45,16 +45,19 @@ internal class DisplayValidityRangeCalculator {
 	private fun getValidity(displayRule: String, data: JsonNode, certType: CertType): LocalDateTime? {
 		val displayLogic = jacksonMapper.readTree(displayRule)
 		val date = evaluate(displayLogic, data)
-		return getLocalDateTime(certType, date)
+		if (date is JsonDateTime) {
+			return getLocalDateTime(certType, date)
+		}
+		return null
 	}
 
-	private fun getLocalDateTime(certType: CertType, data: JsonNode): LocalDateTime? {
+	private fun getLocalDateTime(certType: CertType, data: JsonDateTime): LocalDateTime {
 		if (certType == CertType.TEST) {
 			//test
-			return (data as JsonDateTime).temporalValue().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+			return data.temporalValue().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 		} else {
 			//is vaccine or recovery entry
-			return (data as JsonDateTime).temporalValue().toLocalDate().atStartOfDay()
+			return data.temporalValue().toLocalDate().atStartOfDay()
 		}
 	}
 

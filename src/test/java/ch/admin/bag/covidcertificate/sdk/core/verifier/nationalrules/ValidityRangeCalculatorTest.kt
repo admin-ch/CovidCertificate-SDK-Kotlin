@@ -182,7 +182,7 @@ class ValidityRangeCalculatorTest {
 		vaccination: DccCert,
 		clock: Clock = Clock.systemUTC()
 	): JsonNode {
-		val ruleSetData = nationalRulesVerifier.getCerlogicData(vaccination, nationalRuleSet.valueSets, clock)
+		val ruleSetData = nationalRulesVerifier.getCertlogicData(vaccination, nationalRuleSet.valueSets, clock)
 		return jacksonMapper.valueToTree<JsonNode>(ruleSetData)
 	}
 

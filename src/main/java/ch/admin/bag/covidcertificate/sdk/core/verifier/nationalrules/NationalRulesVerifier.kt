@@ -13,7 +13,9 @@ package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState.*
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError.*
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
 import com.fasterxml.jackson.databind.JsonNode
@@ -30,7 +32,7 @@ internal class NationalRulesVerifier {
 	private val validityRangeCalculator = DisplayValidityRangeCalculator()
 
 	fun verify(dccCert: DccCert, ruleSet: RuleSet, certType: CertType, clock: Clock = Clock.systemUTC()): CheckNationalRulesState {
-		val ruleSetData = getCerlogicData(dccCert, ruleSet.valueSets, clock)
+		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
@@ -46,13 +48,13 @@ internal class NationalRulesVerifier {
 		val validityRange =
 			getValidityRange(ruleSet.displayRules, data, certType)
 		return if (validityRange != null) {
-			CheckNationalRulesState.SUCCESS(validityRange)
+			SUCCESS(validityRange)
 		} else {
-			CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND)
+			INVALID(VALIDITY_RANGE_NOT_FOUND)
 		}
 	}
 
-	fun getCerlogicData(dccCert: DccCert, valueSets: Map<String, Array<String>>, clock: Clock = Clock.systemUTC()): CertLogicData {
+	fun getCertlogicData(dccCert: DccCert, valueSets: Map<String, Array<String>>, clock: Clock = Clock.systemUTC()): CertLogicData {
 		val payload = CertLogicPayload(dccCert.pastInfections, dccCert.tests, dccCert.vaccinations)
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =
@@ -69,49 +71,48 @@ internal class NationalRulesVerifier {
 		certType: CertType,
 		clock: Clock = Clock.systemUTC()
 	): CheckNationalRulesState {
-
-		val ruleSetData = getCerlogicData(dccCert, valueSets, clock)
+		val ruleSetData = getCertlogicData(dccCert, valueSets, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
 		return when (rule.identifier) {
-			"GR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_DISEASE_TARGET, rule.identifier)
-			"VR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_VACCINE_ENTRIES, rule.identifier)
-			"VR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NOT_FULLY_PROTECTED, rule.identifier)
-			"VR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.identifier)
-			"VR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.identifier)
+			"GR-CH-0001" -> INVALID(WRONG_DISEASE_TARGET, rule.identifier)
+			"VR-CH-0000" -> INVALID(TOO_MANY_VACCINE_ENTRIES, rule.identifier)
+			"VR-CH-0001" -> INVALID(NOT_FULLY_PROTECTED, rule.identifier)
+			"VR-CH-0002" -> INVALID(NO_VALID_PRODUCT, rule.identifier)
+			"VR-CH-0003" -> INVALID(NO_VALID_DATE, rule.identifier)
 			"VR-CH-0004" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"VR-CH-0005" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"VR-CH-0006" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
-			"TR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_TEST_ENTRIES, rule.identifier)
-			"TR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.POSITIVE_RESULT, rule.identifier)
-			"TR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_TEST_TYPE, rule.identifier)
-			"TR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.identifier)
-			"TR-CH-0004" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.identifier)
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0000" -> INVALID(TOO_MANY_TEST_ENTRIES, rule.identifier)
+			"TR-CH-0001" -> INVALID(POSITIVE_RESULT, rule.identifier)
+			"TR-CH-0002" -> INVALID(WRONG_TEST_TYPE, rule.identifier)
+			"TR-CH-0003" -> INVALID(NO_VALID_PRODUCT, rule.identifier)
+			"TR-CH-0004" -> INVALID(NO_VALID_DATE, rule.identifier)
 			"TR-CH-0005" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"TR-CH-0006" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"TR-CH-0007" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
-			"RR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_RECOVERY_ENTRIES, rule.identifier)
-			"RR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.identifier)
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"RR-CH-0000" -> INVALID(TOO_MANY_RECOVERY_ENTRIES, rule.identifier)
+			"RR-CH-0001" -> INVALID(NO_VALID_DATE, rule.identifier)
 			"RR-CH-0002" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"RR-CH-0003" -> getValidityRange(displayRules, data, certType)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.identifier)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.identifier)
-			else -> CheckNationalRulesState.INVALID(NationalRulesError.UNKNOWN_RULE_FAILED, rule.identifier)
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			else -> INVALID(UNKNOWN_RULE_FAILED, rule.identifier)
 		}
 	}
 
