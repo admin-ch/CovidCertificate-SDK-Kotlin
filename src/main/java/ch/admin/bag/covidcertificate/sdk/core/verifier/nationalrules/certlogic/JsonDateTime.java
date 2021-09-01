@@ -13,21 +13,20 @@
  */
 package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic;
 
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ValueNode;
-
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A class to represent dates and date-time's with as a {@link com.fasterxml.jackson.databind.JsonNode JSON value}.
@@ -87,9 +86,14 @@ public class JsonDateTime extends ValueNode implements Comparable<JsonDateTime> 
 	}
 
 	public JsonDateTime plusTime(int amount, TimeUnit unit) {
+		if (amount == 0) {
+			return this;
+		}
 		switch (unit) {
-			case DAY: return new JsonDateTime(this._value.plusDays(amount));
-			case HOUR: return new JsonDateTime(this._value.plusHours(amount));
+			case day: return new JsonDateTime(this._value.plusDays(amount));
+			case hour: return new JsonDateTime(this._value.plusHours(amount));
+			case month: return new JsonDateTime(this._value.plusMonths(amount));
+			case year: return new JsonDateTime(this._value.plusYears(amount));
 			default: throw new RuntimeException(String.format("time unit \"%s\" not handled", unit));
 		}
 	}

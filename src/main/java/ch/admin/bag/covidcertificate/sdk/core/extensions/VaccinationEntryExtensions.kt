@@ -10,14 +10,11 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.extensions
 
-import ch.admin.bag.covidcertificate.sdk.core.models.products.Vaccine
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.AcceptanceCriterias
+import ch.admin.bag.covidcertificate.sdk.core.models.products.Vaccine
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -45,11 +42,6 @@ fun VaccinationEntry.isTargetDiseaseCorrect(): Boolean {
 fun VaccinationEntry.validFromDate(offsetInDays: Long): LocalDateTime? {
 	val vaccineDate = this.vaccineDate() ?: return null
 	return vaccineDate.plusDays(offsetInDays)
-}
-
-fun VaccinationEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {
-	val vaccinationImmunityEndDate = this.vaccineDate() ?: return null
-	return vaccinationImmunityEndDate.plusDays(acceptanceCriterias.vaccineImmunity.toLong())
 }
 
 fun VaccinationEntry.vaccineDate(): LocalDateTime? {

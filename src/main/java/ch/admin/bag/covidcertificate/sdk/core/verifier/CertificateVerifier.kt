@@ -11,20 +11,11 @@
 package ch.admin.bag.covidcertificate.sdk.core.verifier
 
 import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.Base45Service
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.DecompressionService
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.PrefixIdentifierService
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.RevokedHealthCertService
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.TimestampService
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.VerificationCoseService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.*
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.StateError
-import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.*
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificates
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
@@ -179,7 +170,7 @@ class CertificateVerifier {
 				}
 				certificateHolder.containsDccCert() -> {
 					val nationalRulesVerifier = NationalRulesVerifier()
-					nationalRulesVerifier.verify(certificateHolder.certificate as DccCert, ruleSet)
+					nationalRulesVerifier.verify(certificateHolder.certificate as DccCert, ruleSet, certificateHolder.certType!!)
 				}
 				else -> {
 					CheckNationalRulesState.ERROR(StateError(ErrorCodes.RULESET_UNKNOWN, certificateHolder = certificateHolder))

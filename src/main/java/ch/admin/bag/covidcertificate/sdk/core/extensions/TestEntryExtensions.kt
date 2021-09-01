@@ -11,12 +11,9 @@
 package ch.admin.bag.covidcertificate.sdk.core.extensions
 
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
-import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.AcceptanceCriterias
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -69,14 +66,5 @@ fun TestEntry.getCertificateIdentifier(): String {
 
 fun TestEntry.validFromDate(): LocalDateTime? {
 	return DateUtil.parseDateTime(this.timestampSample)
-}
-
-fun TestEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDateTime? {
-	val startDate = this.validFromDate() ?: return null
-	return when (type) {
-		TestType.PCR.code -> startDate.plusHours(acceptanceCriterias.pcrTestValidity.toLong())
-		TestType.RAT.code -> startDate.plusHours(acceptanceCriterias.ratTestValidity.toLong())
-		else -> null
-	}
 }
 

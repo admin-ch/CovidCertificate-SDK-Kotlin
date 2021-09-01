@@ -13,11 +13,7 @@ package ch.admin.bag.covidcertificate.sdk.core
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import java.time.Clock
-import java.time.Duration
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -74,6 +70,16 @@ object TestDataGenerator {
 	): DccCert {
 		val now = OffsetDateTime.now(clock)
 		val sampleCollectionTime = now + sampleCollectionWasAgo
+		return generateTestCertFromDate(testType, testResult, name, disease, sampleCollectionTime)
+	}
+
+	fun generateTestCertFromDate(
+		testType: String,
+		testResult: String,
+		name: String,
+		disease: String,
+		sampleCollectionTime: OffsetDateTime,
+	): DccCert {
 		val testResultTime = sampleCollectionTime + Duration.ofHours(10)
 		val testJson = """
               {

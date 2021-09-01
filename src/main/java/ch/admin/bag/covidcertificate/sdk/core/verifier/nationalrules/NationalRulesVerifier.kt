@@ -10,16 +10,12 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules
 
-import ch.admin.bag.covidcertificate.sdk.core.extensions.validFromDate
-import ch.admin.bag.covidcertificate.sdk.core.extensions.validUntilDate
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicData
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicExternalInfo
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicPayload
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Rule
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleValueSets
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState.*
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError.*
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
 import com.fasterxml.jackson.databind.JsonNode
@@ -33,115 +29,101 @@ import java.util.*
 
 internal class NationalRulesVerifier {
 
-	fun verify(dccCert: DccCert, ruleSet: RuleSet, clock: Clock = Clock.systemUTC()): CheckNationalRulesState {
-		val payload = CertLogicPayload(dccCert.pastInfections, dccCert.tests, dccCert.vaccinations)
-		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-		val validationClockAtStartOfDay =
-			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-		val externalInfo = CertLogicExternalInfo(ruleSet.valueSets, validationClock, validationClockAtStartOfDay)
-		val ruleSetData = CertLogicData(payload, externalInfo)
+	private val validityRangeCalculator = DisplayValidityRangeCalculator()
 
+	fun verify(dccCert: DccCert, ruleSet: RuleSet, certType: CertType, clock: Clock = Clock.systemUTC()): CheckNationalRulesState {
+		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
-
 		for (rule in ruleSet.rules) {
 			val ruleLogic = jacksonMapper.readTree(rule.logic)
 			val isSuccessful = isTruthy(evaluate(ruleLogic, data))
 
 			if (!isSuccessful) {
-				return getErrorStateForRule(rule, dccCert, ruleSetData.external.valueSets)
+				return getErrorStateForRule(rule, dccCert, ruleSet.displayRules, ruleSetData.external.valueSets, certType)
 			}
 		}
 
-		val validityRange = getValidityRange(dccCert, ruleSetData.external.valueSets)
+		val validityRange =
+			getValidityRange(ruleSet.displayRules, data, certType)
 		return if (validityRange != null) {
-			CheckNationalRulesState.SUCCESS(validityRange)
+			SUCCESS(validityRange)
 		} else {
-			CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND)
+			INVALID(VALIDITY_RANGE_NOT_FOUND)
 		}
+	}
+
+	fun getCertlogicData(dccCert: DccCert, valueSets: Map<String, Array<String>>, clock: Clock = Clock.systemUTC()): CertLogicData {
+		val payload = CertLogicPayload(dccCert.pastInfections, dccCert.tests, dccCert.vaccinations)
+		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+		val validationClockAtStartOfDay =
+			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+		val externalInfo = CertLogicExternalInfo(valueSets, validationClock, validationClockAtStartOfDay)
+		return CertLogicData(payload, externalInfo)
 	}
 
 	private fun getErrorStateForRule(
 		rule: Rule,
 		dccCert: DccCert,
-		ruleValueSets: RuleValueSets
+		displayRules: List<DisplayRule>,
+		valueSets: Map<String, Array<String>>,
+		certType: CertType,
+		clock: Clock = Clock.systemUTC()
 	): CheckNationalRulesState {
-		return when (rule.id) {
-			"GR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_DISEASE_TARGET, rule.id)
-			"VR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_VACCINE_ENTRIES, rule.id)
-			"VR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NOT_FULLY_PROTECTED, rule.id)
-			"VR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.id)
-			"VR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
-			"VR-CH-0004" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"VR-CH-0005" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"VR-CH-0006" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"TR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_TEST_ENTRIES, rule.id)
-			"TR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.POSITIVE_RESULT, rule.id)
-			"TR-CH-0002" -> CheckNationalRulesState.INVALID(NationalRulesError.WRONG_TEST_TYPE, rule.id)
-			"TR-CH-0003" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_PRODUCT, rule.id)
-			"TR-CH-0004" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
-			"TR-CH-0005" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"TR-CH-0006" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"TR-CH-0007" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"RR-CH-0000" -> CheckNationalRulesState.INVALID(NationalRulesError.TOO_MANY_RECOVERY_ENTRIES, rule.id)
-			"RR-CH-0001" -> CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_DATE, rule.id)
-			"RR-CH-0002" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_YET_VALID(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			"RR-CH-0003" -> getValidityRange(dccCert, ruleValueSets)?.let {
-				CheckNationalRulesState.NOT_VALID_ANYMORE(it, rule.id)
-			} ?: CheckNationalRulesState.INVALID(NationalRulesError.VALIDITY_RANGE_NOT_FOUND, rule.id)
-			else -> CheckNationalRulesState.INVALID(NationalRulesError.UNKNOWN_RULE_FAILED, rule.id)
+		val ruleSetData = getCertlogicData(dccCert, valueSets, clock)
+		val jacksonMapper = ObjectMapper()
+		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
+		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
+		return when (rule.identifier) {
+			"GR-CH-0001" -> INVALID(WRONG_DISEASE_TARGET, rule.identifier)
+			"VR-CH-0000" -> INVALID(TOO_MANY_VACCINE_ENTRIES, rule.identifier)
+			"VR-CH-0001" -> INVALID(NOT_FULLY_PROTECTED, rule.identifier)
+			"VR-CH-0002" -> INVALID(NO_VALID_PRODUCT, rule.identifier)
+			"VR-CH-0003" -> INVALID(NO_VALID_DATE, rule.identifier)
+			"VR-CH-0004" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"VR-CH-0005" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"VR-CH-0006" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0000" -> INVALID(TOO_MANY_TEST_ENTRIES, rule.identifier)
+			"TR-CH-0001" -> INVALID(POSITIVE_RESULT, rule.identifier)
+			"TR-CH-0002" -> INVALID(WRONG_TEST_TYPE, rule.identifier)
+			"TR-CH-0003" -> INVALID(NO_VALID_PRODUCT, rule.identifier)
+			"TR-CH-0004" -> INVALID(NO_VALID_DATE, rule.identifier)
+			"TR-CH-0005" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0006" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0007" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"RR-CH-0000" -> INVALID(TOO_MANY_RECOVERY_ENTRIES, rule.identifier)
+			"RR-CH-0001" -> INVALID(NO_VALID_DATE, rule.identifier)
+			"RR-CH-0002" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_YET_VALID(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"RR-CH-0003" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			else -> INVALID(UNKNOWN_RULE_FAILED, rule.identifier)
 		}
 	}
 
-	private fun getValidityRange(dccCert: DccCert, ruleValueSets: RuleValueSets): ValidityRange? {
-		return when {
-			!dccCert.vaccinations.isNullOrEmpty() -> {
-				val vaccination = dccCert.vaccinations.first()
-				val offset = when {
-					// Use the offset value from the acceptance criteria for single-dose vaccines
-					ruleValueSets.oneDoseVaccinesWithOffset?.contains(vaccination.medicinialProduct) == true -> {
-						ruleValueSets.acceptanceCriteria.singleVaccineValidityOffset
-					}
-					// Two-dose vaccines don't have an offset
-					ruleValueSets.twoDoseVaccines?.contains(vaccination.medicinialProduct) == true -> 0
-					else -> null
-				}
-
-				offset?.let {
-					ValidityRange(
-						vaccination.validFromDate(it.toLong()),
-						vaccination.validUntilDate(ruleValueSets.acceptanceCriteria)
-					)
-				}
-			}
-			!dccCert.tests.isNullOrEmpty() -> {
-				val test = dccCert.tests.first()
-				ValidityRange(test.validFromDate(), test.validUntilDate(ruleValueSets.acceptanceCriteria))
-			}
-			!dccCert.pastInfections.isNullOrEmpty() -> {
-				val recovery = dccCert.pastInfections.first()
-				ValidityRange(
-					recovery.validFromDate(ruleValueSets.acceptanceCriteria),
-					recovery.validUntilDate(ruleValueSets.acceptanceCriteria)
-				)
-			}
-			else -> null
-		}
+	private fun getValidityRange(
+		displayRules: List<DisplayRule>,
+		data: JsonNode,
+		certType: CertType
+	): ValidityRange? {
+		return validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(displayRules, data, certType)
 	}
+
+
 }
 
