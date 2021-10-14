@@ -28,7 +28,7 @@ fun VaccinationEntry.hadPastInfection(vaccine: Vaccine): Boolean {
 }
 
 fun VaccinationEntry.getNumberOverTotalDose(): String {
-	return " ${this.doseNumber()}/${this.totalDoses()}"
+	return "${this.doseNumber()}/${this.totalDoses()}"
 }
 
 fun VaccinationEntry.isNotFullyProtected(): Boolean {
