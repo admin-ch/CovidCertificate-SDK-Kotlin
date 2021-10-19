@@ -45,10 +45,6 @@ object ErrorCodes {
 	const val TOO_MANY_RECOVERY_ENTRIES = "N|TMR"
 	const val UNKNOWN_RULE_FAILED = "N|UNK"
 
-	/* Errors during in-app delivery */
-	const val INAPP_DELIVERY_KEYPAIR_GENERATION_FAILED = "I|KPG"
-	const val INAPP_DELIVERY_REGISTRATION_FAILED = "I|REG"
-
 	/* General errors */
 	const val GENERAL_NETWORK_FAILURE = "G|NWF"
 	const val GENERAL_OFFLINE = "G|OFF"
