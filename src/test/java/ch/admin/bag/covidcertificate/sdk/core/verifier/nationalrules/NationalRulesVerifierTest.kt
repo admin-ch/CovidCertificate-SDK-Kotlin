@@ -500,9 +500,11 @@ class NationalRulesVerifierTest {
 
 	@Test
 	fun testRecoveryUntilDatesSuccess() {
-		val firstTestResult = LocalDate.of(2021, 5, 8).atStartOfDay()
-		val validDateFrom = LocalDate.of(2021, 5, 18).atStartOfDay()
-		val validDateUntil = LocalDate.of(2021, 11, 3).atStartOfDay()
+		val firstTestResultClock = Clock.fixed(Instant.parse("2021-05-08T12:00:00Z"), ZoneId.systemDefault())
+		val firstTestResult = LocalDate.now(firstTestResultClock).atStartOfDay()
+		val validDateFrom = LocalDate.now(firstTestResultClock).plusDays(10).atStartOfDay()
+		val validDateUntil = LocalDate.now(firstTestResultClock).plusDays(364).atStartOfDay()
+
 		val validCert = TestDataGenerator.generateRecoveryCertFromDate(
 			validDateFrom = validDateFrom,
 			validDateUntil = validDateUntil,
@@ -528,15 +530,18 @@ class NationalRulesVerifierTest {
 		val dateFromString = DateUtil.parseDate((dateFrom as JsonDateTime).temporalValue().toString())?.atStartOfDay()
 		assertTrue(dateFromString == validDateFrom)
 
-		val todayBeforeUtil = Clock.fixed(Instant.parse("2021-11-02T12:00:00Z"), ZoneId.systemDefault())
-		val validResultBefore = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.RECOVERY, todayBeforeUtil)
+		val validResultBefore = nationalRulesVerifier.verify(
+			validCert,
+			nationalRuleSet,
+			CertType.RECOVERY,
+			Clock.fixed( validDateUntil.minusDays(1).toInstant(ZoneOffset.UTC), ZoneId.systemDefault()))
 		assertTrue(validResultBefore is CheckNationalRulesState.SUCCESS)
 
 		val validResultTodayEqualToUntilDate = nationalRulesVerifier.verify(
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(Instant.parse("2021-11-03T12:00:00Z"), ZoneId.systemDefault())
+			Clock.fixed(validDateUntil.toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
 		)
 		assertTrue(validResultTodayEqualToUntilDate is CheckNationalRulesState.SUCCESS)
 
@@ -544,7 +549,7 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(Instant.parse("2021-05-18T12:00:00Z"), ZoneId.systemDefault())
+			Clock.fixed(validDateFrom.toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
 		)
 		assertTrue(validResultTodayEqualToFromDate is CheckNationalRulesState.SUCCESS)
 
@@ -552,7 +557,7 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(Instant.parse("2021-11-04T12:00:00Z"), ZoneId.systemDefault())
+			Clock.fixed(validDateUntil.plusDays(1).toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
 		)
 		assertTrue(invalidResultTodayIsAfterUntilDate is CheckNationalRulesState.NOT_VALID_ANYMORE)
 
@@ -560,13 +565,13 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(Instant.parse("2021-05-17T12:00:00Z"), ZoneId.systemDefault())
+			Clock.fixed(validDateFrom.minusDays(1).toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
 		)
 		assertTrue(invalidResultTodayIsBeforeFromDate is CheckNationalRulesState.NOT_YET_VALID)
 	}
 
 	@Test
-	fun testCertificateIsValidFor180DaysAfter() {
+	fun testCertificateIsValidFor365DaysAfter() {
 		val validCert = TestDataGenerator.generateRecoveryCert(
 			Duration.ofDays(-10),
 			Duration.ofDays(0),
@@ -577,7 +582,7 @@ class NationalRulesVerifierTest {
 		val invalidCert = TestDataGenerator.generateRecoveryCert(
 			Duration.ofDays(-10),
 			Duration.ofDays(0),
-			Duration.ofDays(-180),
+			Duration.ofDays(-365),
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			utcClock
 		)
