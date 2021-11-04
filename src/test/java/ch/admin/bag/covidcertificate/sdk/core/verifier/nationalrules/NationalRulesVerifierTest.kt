@@ -474,7 +474,7 @@ class NationalRulesVerifierTest {
 	@Test
 	fun testSeroPositiv() {
 		var validSeroPostiv = TestDataGenerator.generateTestCert(
-			TestType.SERO_POSITIV.code,
+			TestType.SEROLOGICAL.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
@@ -482,7 +482,7 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 		var inValidSeroPostiv = TestDataGenerator.generateTestCert(
-			TestType.SERO_POSITIV.code,
+			TestType.SEROLOGICAL.code,
 			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
@@ -491,7 +491,7 @@ class NationalRulesVerifierTest {
 		)
 
 		var inValidBeforeSeroPostiv = TestDataGenerator.generateTestCert(
-			TestType.SERO_POSITIV.code,
+			TestType.SEROLOGICAL.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
@@ -500,7 +500,7 @@ class NationalRulesVerifierTest {
 		)
 
 		var inValidAfterSeroPostiv = TestDataGenerator.generateTestCert(
-			TestType.SERO_POSITIV.code,
+			TestType.SEROLOGICAL.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,

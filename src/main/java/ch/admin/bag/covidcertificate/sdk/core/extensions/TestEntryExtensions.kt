@@ -69,7 +69,7 @@ fun TestEntry.validFromDate(): LocalDateTime? {
 	return DateUtil.parseDateTime(this.timestampSample)
 }
 
-fun  TestEntry.isSeroPositiv(): Boolean {
-	return this.type == TestType.SERO_POSITIV.code
+fun  TestEntry.isSerologicalTest(): Boolean {
+	return this.type == TestType.SEROLOGICAL.code
 }
 

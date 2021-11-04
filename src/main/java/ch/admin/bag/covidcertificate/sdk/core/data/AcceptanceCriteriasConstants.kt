@@ -20,5 +20,5 @@ object AcceptanceCriteriasConstants {
 enum class TestType(val code: String) {
 	RAT("LP217198-3"),
 	PCR("LP6464-4"),
-	SERO_POSITIV("94504-8")
+	SEROLOGICAL("94504-8")
 }
