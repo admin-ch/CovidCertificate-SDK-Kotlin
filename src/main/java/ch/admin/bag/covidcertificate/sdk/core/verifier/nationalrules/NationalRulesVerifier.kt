@@ -107,6 +107,10 @@ internal class NationalRulesVerifier {
 			"TR-CH-0007" -> getValidityRange(displayRules, data, certType)?.let {
 				NOT_VALID_ANYMORE(it, rule.identifier)
 			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0008" -> INVALID(NEGATIVE_RESULT, rule.identifier)
+			"TR-CH-0009" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"RR-CH-0000" -> INVALID(TOO_MANY_RECOVERY_ENTRIES, rule.identifier)
 			"RR-CH-0001" -> INVALID(NO_VALID_DATE, rule.identifier)
 			"RR-CH-0002" -> getValidityRange(displayRules, data, certType)?.let {

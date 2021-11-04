@@ -38,6 +38,7 @@ object ErrorCodes {
 	const val WRONG_DISEASE_TARGET = "N|WDT"
 	const val WRONG_TEST_TYPE = "N|WTT"
 	const val POSITIVE_RESULT = "N|PR"
+	const val NEGATIVE_RESULT = "N|NR"
 	const val NOT_FULLY_PROTECTED = "N|NFP"
 	const val RULESET_UNKNOWN = "N|UNK"
 	const val TOO_MANY_VACCINE_ENTRIES = "N|TMV"

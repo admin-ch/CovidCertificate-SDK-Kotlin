@@ -369,9 +369,9 @@ class NationalRulesVerifierTest {
 	@Test
 	fun testPcrTestsAreAlwaysAccepted() {
 		var validTest = TestDataGenerator.generateTestCert(
-			TestType.RAT.code,
+			TestType.PCR.code,
 			AcceptanceCriteriasConstants.NEGATIVE_CODE,
-			"1097",
+			"1df097",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
 			utcClock
@@ -442,7 +442,7 @@ class NationalRulesVerifierTest {
 	fun testTestResultHasToBeNegative() {
 		var validRat = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
-			"positive",
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
@@ -450,7 +450,7 @@ class NationalRulesVerifierTest {
 		)
 		var validPcr = TestDataGenerator.generateTestCert(
 			TestType.PCR.code,
-			"positive",
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"Nucleic acid amplification with probe detection",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
@@ -459,12 +459,66 @@ class NationalRulesVerifierTest {
 
 		var invalidRat = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, utcClock)
 		var invalidPcr = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, utcClock)
-
 		if (invalidRat is CheckNationalRulesState.INVALID &&
 			invalidPcr is CheckNationalRulesState.INVALID
 		) {
 			assertTrue(invalidRat.nationalRulesError == NationalRulesError.POSITIVE_RESULT)
 			assertTrue(invalidPcr.nationalRulesError == NationalRulesError.POSITIVE_RESULT)
+		} else {
+			assertFalse(true)
+		}
+	}
+
+
+
+	@Test
+	fun testSeroPositiv() {
+		var validSeroPostiv = TestDataGenerator.generateTestCert(
+			TestType.SERO_POSITIV.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			utcClock
+		)
+		var inValidSeroPostiv = TestDataGenerator.generateTestCert(
+			TestType.SERO_POSITIV.code,
+			AcceptanceCriteriasConstants.NEGATIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			utcClock
+		)
+
+		var inValidBeforeSeroPostiv = TestDataGenerator.generateTestCert(
+			TestType.SERO_POSITIV.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(24),
+			utcClock
+		)
+
+		var inValidAfterSeroPostiv = TestDataGenerator.generateTestCert(
+			TestType.SERO_POSITIV.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-24*90),
+			utcClock
+		)
+
+
+		var valid = nationalRulesVerifier.verify(validSeroPostiv, nationalRuleSet, CertType.TEST, utcClock)
+		var invalid = nationalRulesVerifier.verify(inValidSeroPostiv, nationalRuleSet, CertType.TEST, utcClock)
+		var invalidBefore = nationalRulesVerifier.verify(inValidBeforeSeroPostiv, nationalRuleSet, CertType.TEST, utcClock)
+		var invalidAfter = nationalRulesVerifier.verify(inValidAfterSeroPostiv, nationalRuleSet, CertType.TEST, utcClock)
+
+		if (valid is CheckNationalRulesState.SUCCESS
+			&& (invalid is CheckNationalRulesState.INVALID && invalid.nationalRulesError == NationalRulesError.NEGATIVE_RESULT)
+			&& invalidBefore is CheckNationalRulesState.NOT_YET_VALID
+			&& invalidAfter is CheckNationalRulesState.NOT_VALID_ANYMORE) {
+			assertTrue(true)
 		} else {
 			assertFalse(true)
 		}

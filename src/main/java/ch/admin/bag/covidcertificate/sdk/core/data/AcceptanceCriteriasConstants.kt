@@ -13,10 +13,12 @@ package ch.admin.bag.covidcertificate.sdk.core.data
 object AcceptanceCriteriasConstants {
 
 	const val NEGATIVE_CODE: String = "260415000"
+	const val POSITIVE_CODE: String = "260373001"
 	const val TARGET_DISEASE = "840539006"
 }
 
 enum class TestType(val code: String) {
 	RAT("LP217198-3"),
-	PCR("LP6464-4")
+	PCR("LP6464-4"),
+	SERO_POSITIV("94504-8")
 }
