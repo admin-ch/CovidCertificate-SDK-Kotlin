@@ -19,6 +19,7 @@ enum class NationalRulesError(val message: String, val errorCode: String) {
 	WRONG_DISEASE_TARGET("Only SarsCov2 is a valid disease target", ErrorCodes.WRONG_DISEASE_TARGET),
 	WRONG_TEST_TYPE("Test type invalid", ErrorCodes.WRONG_TEST_TYPE),
 	POSITIVE_RESULT("Test result was positive", ErrorCodes.POSITIVE_RESULT),
+	NEGATIVE_RESULT("Test result was negative", ErrorCodes.NEGATIVE_RESULT),
 	NOT_FULLY_PROTECTED("Missing vaccine shots, only partially protected", ErrorCodes.NOT_FULLY_PROTECTED),
 	TOO_MANY_VACCINE_ENTRIES("Certificate contains more than one vaccine entries", ErrorCodes.TOO_MANY_VACCINE_ENTRIES),
 	TOO_MANY_TEST_ENTRIES("Certificate contains more than one test entries", ErrorCodes.TOO_MANY_TEST_ENTRIES),

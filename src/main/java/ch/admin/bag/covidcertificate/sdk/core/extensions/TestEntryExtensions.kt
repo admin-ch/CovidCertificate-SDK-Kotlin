@@ -11,6 +11,7 @@
 package ch.admin.bag.covidcertificate.sdk.core.extensions
 
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
+import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import java.time.LocalDateTime
@@ -66,5 +67,9 @@ fun TestEntry.getCertificateIdentifier(): String {
 
 fun TestEntry.validFromDate(): LocalDateTime? {
 	return DateUtil.parseDateTime(this.timestampSample)
+}
+
+fun  TestEntry.isSerologicalTest(): Boolean {
+	return this.type == TestType.SEROLOGICAL.code
 }
 

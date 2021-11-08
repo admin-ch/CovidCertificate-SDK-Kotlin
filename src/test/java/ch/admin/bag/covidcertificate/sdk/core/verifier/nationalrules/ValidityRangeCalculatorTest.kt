@@ -72,8 +72,38 @@ class ValidityRangeCalculatorTest {
 			CertType.VACCINATION
 		)
 		assertNotNull(validityRange)
-		assertEquals(LocalDate.of(2021, 6, 26), validityRange?.validFrom?.toLocalDate())
-		assertEquals(LocalDate.of(2022, 6, 4), validityRange?.validUntil?.toLocalDate())
+		val validFrom = vaccinationDate.plusDays(21)
+		val validUntil = vaccinationDate.plusDays(365+21)
+		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
+		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
+	}
+
+	@Test
+	fun testOneDoseWith2InjectionsVaccinationValidityRange() {
+		val clock = Clock.fixed(Instant.parse("2021-06-05T12:00:00Z"), ZoneId.systemDefault())
+		val vaccinationDate = LocalDate.now(clock).atStartOfDay()
+
+		val vaccine = Vaccine.JANSSEN
+		val vaccination = TestDataGenerator.generateVaccineCert(
+			2,
+			1,
+			vaccine.manufacturer,
+			vaccine.identifier,
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			vaccine.prophylaxis,
+			vaccinationDate,
+		)
+		val data = getJsonNodeData(vaccination, clock)
+		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+			nationalRuleSet.displayRules,
+			data,
+			CertType.VACCINATION
+		)
+		assertNotNull(validityRange)
+		val validFrom = vaccinationDate
+		val validUntil = vaccinationDate.plusDays(364)
+		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
+		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
 
 	@Test
@@ -98,8 +128,12 @@ class ValidityRangeCalculatorTest {
 			CertType.VACCINATION
 		)
 		assertNotNull(validityRange)
-		assertEquals(LocalDate.of(2021, 6, 5), validityRange?.validFrom?.toLocalDate())
-		assertEquals(LocalDate.of(2022, 6, 4), validityRange?.validUntil?.toLocalDate())
+
+
+		val validFrom = vaccinationDate
+		val validUntil = vaccinationDate.plusDays(364)
+		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
+		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
 
 	@Test
@@ -163,7 +197,7 @@ class ValidityRangeCalculatorTest {
 	fun testRecoveryValidityRange() {
 		val firstTestResult = LocalDate.now(utcClock).minusDays(20)
 		val validFrom = firstTestResult.plusDays(10)
-		val validUntil = firstTestResult.plusDays(179)
+		val validUntil = firstTestResult.plusDays(364)
 		val recovery = TestDataGenerator.generateRecoveryCertFromDate(
 			validFrom.atStartOfDay(),
 			validUntil.atStartOfDay(),
