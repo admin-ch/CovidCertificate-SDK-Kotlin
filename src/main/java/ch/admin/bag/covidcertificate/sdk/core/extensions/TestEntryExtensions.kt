@@ -76,6 +76,7 @@ fun TestEntry.validUntilDate(acceptanceCriterias: AcceptanceCriterias): LocalDat
 	return when (type) {
 		TestType.PCR.code -> startDate.plusHours(acceptanceCriterias.pcrTestValidity.toLong())
 		TestType.RAT.code -> startDate.plusHours(acceptanceCriterias.ratTestValidity.toLong())
+		"94504-8" -> startDate.plusDays(90)//VERY UGLY VERY TEMPORARY HOTFIX
 		else -> null
 	}
 }
