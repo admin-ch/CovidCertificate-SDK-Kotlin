@@ -48,6 +48,7 @@ object ErrorCodes {
 
 	/* General errors */
 	const val GENERAL_NETWORK_FAILURE = "G|NWF"
+	const val TIME_INCONSISTENCY = "NE|TI"
 	const val GENERAL_OFFLINE = "G|OFF"
 
 }
