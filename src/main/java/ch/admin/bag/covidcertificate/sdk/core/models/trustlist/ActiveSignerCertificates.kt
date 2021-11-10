@@ -15,5 +15,6 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ActiveSignerCertificates(
 	val activeKeyIds: List<String>,
-	val validDuration: Long
+	val validDuration: Long,
+	var upTo: Int?
 )
