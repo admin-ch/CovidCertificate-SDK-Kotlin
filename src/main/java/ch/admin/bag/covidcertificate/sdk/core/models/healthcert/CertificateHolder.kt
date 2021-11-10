@@ -10,6 +10,7 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
+import ch.admin.bag.covidcertificate.sdk.core.extensions.isSerologicalTest
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
 import java.io.Serializable
@@ -21,7 +22,7 @@ class CertificateHolder(
 	val expirationTime: Instant? = null,
 	val issuedAt: Instant? = null,
 	val issuer: String? = null,
-): Serializable {
+) : Serializable {
 
 	var certType: CertType? = null
 		internal set
@@ -29,6 +30,12 @@ class CertificateHolder(
 	fun containsDccCert() = certificate is DccCert
 
 	fun containsChLightCert() = certificate is ChLightCert
+
+	fun containsCertOnlyValidInCH(): Boolean {
+		val isSeroPositivTest =
+			certType == CertType.TEST && certificate is DccCert && certificate.tests?.firstOrNull()?.isSerologicalTest() ?: false
+		return containsChLightCert() || isSeroPositivTest
+	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true

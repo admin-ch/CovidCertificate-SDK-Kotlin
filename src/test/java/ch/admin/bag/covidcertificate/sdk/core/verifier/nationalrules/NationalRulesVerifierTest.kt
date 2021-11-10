@@ -554,10 +554,9 @@ class NationalRulesVerifierTest {
 
 	@Test
 	fun testRecoveryUntilDatesSuccess() {
-		val firstTestResultClock = Clock.fixed(Instant.parse("2021-05-08T12:00:00Z"), ZoneId.systemDefault())
-		val firstTestResult = LocalDate.now(firstTestResultClock).atStartOfDay()
-		val validDateFrom = LocalDate.now(firstTestResultClock).plusDays(10).atStartOfDay()
-		val validDateUntil = LocalDate.now(firstTestResultClock).plusDays(364).atStartOfDay()
+		val firstTestResult = LocalDate.of(2021, 5, 8).atStartOfDay()
+		val validDateFrom = firstTestResult.plusDays(10)
+		val validDateUntil = firstTestResult.plusDays(364)
 
 		val validCert = TestDataGenerator.generateRecoveryCertFromDate(
 			validDateFrom = validDateFrom,
@@ -581,7 +580,7 @@ class NationalRulesVerifierTest {
 		assert(displayFromDate != null)
 		val fromDateLogic = jacksonMapper.readTree(displayFromDate)
 		val dateFrom = evaluate(fromDateLogic, data)
-		val dateFromString = DateUtil.parseDate((dateFrom as JsonDateTime).temporalValue().toString())?.atStartOfDay()
+		val dateFromString = DateUtil.parseDate((dateFrom as JsonDateTime).temporalValue().toString(), ZoneId.of("UTC"))?.atStartOfDay()
 		assertTrue(dateFromString == validDateFrom)
 
 		val validResultBefore = nationalRulesVerifier.verify(
@@ -603,7 +602,7 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(validDateFrom.toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
+			Clock.fixed(validDateFrom.toInstant(ZoneOffset.UTC).plusMillis(1), ZoneId.of("UTC"))
 		)
 		assertTrue(validResultTodayEqualToFromDate is CheckNationalRulesState.SUCCESS)
 
@@ -611,7 +610,7 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(validDateUntil.plusDays(1).toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
+			Clock.fixed(validDateUntil.plusDays(1).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
 		)
 		assertTrue(invalidResultTodayIsAfterUntilDate is CheckNationalRulesState.NOT_VALID_ANYMORE)
 
@@ -619,7 +618,7 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			Clock.fixed(validDateFrom.minusDays(1).toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
+			Clock.fixed(validDateFrom.minusDays(1).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
 		)
 		assertTrue(invalidResultTodayIsBeforeFromDate is CheckNationalRulesState.NOT_YET_VALID)
 	}
