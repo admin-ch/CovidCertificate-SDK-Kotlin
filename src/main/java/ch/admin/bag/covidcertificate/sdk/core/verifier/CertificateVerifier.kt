@@ -59,15 +59,18 @@ class CertificateVerifier {
 			} else if (
 				checkSignatureState == CheckSignatureState.SUCCESS
 				&& (checkRevocationState == CheckRevocationState.SUCCESS || checkRevocationState == CheckRevocationState.SKIPPED)
-				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS) {
+				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
+			) {
 				val isLightCertificate = certificateHolder.certType == CertType.LIGHT
-				VerificationState.SUCCESS(isLightCertificate, checkNationalRulesState.validityRange)
+				val isValidOnlyInSwitzerland = certificateHolder.containsCertOnlyValidInCH()
+				VerificationState.SUCCESS(isLightCertificate, isValidOnlyInSwitzerland, checkNationalRulesState.validityRange)
 			} else if (
 				checkSignatureState is CheckSignatureState.INVALID
 				|| checkRevocationState is CheckRevocationState.INVALID
 				|| checkNationalRulesState is CheckNationalRulesState.INVALID
 				|| checkNationalRulesState is CheckNationalRulesState.NOT_YET_VALID
-				|| checkNationalRulesState is CheckNationalRulesState.NOT_VALID_ANYMORE) {
+				|| checkNationalRulesState is CheckNationalRulesState.NOT_VALID_ANYMORE
+			) {
 				VerificationState.INVALID(
 					checkSignatureState, checkRevocationState, checkNationalRulesState,
 					checkNationalRulesState.validityRange()
