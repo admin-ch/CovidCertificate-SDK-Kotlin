@@ -1390,101 +1390,58 @@
 		{
 			"id": "is-only-valid-in-ch",
 			"logic": {
-
-				"if": [
-
+				"!": [
 					{
-
-						"var": "payload.v.0"
-
-					},
-
-					{
-
-						"if": [
-
+						"and": [
 							{
-
-								"in": [
-
+								"!": [
 									{
-
-										"var": "payload.v.0.mp"
-
-									},
-
-									[
-
-										"BBIBP-CorV_T",
-
-										"CoronaVac_T",
-
-										"Covaxin_T"
-
-									]
-
-								]
-
-							},
-
-							true,
-
-							false
-
-						]
-
-					},
-
-					{
-
-						"if": [
-
-							{
-
-								"var": "payload.t.0"
-
-							},
-
-							{
-
-								"if": [
-
-									{
-
-										"in": [
-
+										"if": [
 											{
-
-												"var": "payload.t.0.tt"
-
+												"var": "payload.t.0"
 											},
-
-											[
-
-												"94504-8"
-
-											]
-
+											{
+												"in": [
+													{
+														"var": "payload.t.0.tt"
+													},
+													[
+														"94504-8"
+													]
+												]
+											},
+											false
 										]
-
-									},
-
-									true,
-
-									false
-
+									}
 								]
-
 							},
-
-							false
-
+							{
+								"!": [
+									{
+										"if": [
+											{
+												"var": "payload.v.0"
+											},
+											{
+												"in": [
+													{
+														"var": "payload.v.0.mp"
+													},
+													[
+														"BBIBP-CorV_T",
+														"CoronaVac_T",
+														"Covaxin_T"
+													]
+												]
+											},
+											false
+										]
+									}
+								]
+							}
 						]
-
 					}
-
 				]
-
 			}
 		},
 		{
