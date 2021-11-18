@@ -59,7 +59,10 @@ internal enum class Vaccine(val identifier: String, val manufacturer: String, va
 	BIONTECH("EU/1/20/1528", "ORG-100030215", "1119349007"),
 	MODERNA("EU/1/20/1507", "ORG-100031184", "1119349007"),
 	JANSSEN("EU/1/20/1525", "ORG-100001417", "J07BX03"),
-	ASTRA_ZENECA("EU/1/21/1529", "ORG-100001699", "J07BX03")
+	ASTRA_ZENECA("EU/1/21/1529", "ORG-100001699", "J07BX03"),
+	TOURIST_BBIBP_CORV_T("BBIBP-CorV_T", "ORG-100020693", "J07BX03"),
+	TOURIST_CORONAVAC_T("CoronaVac_T", "Sinovac-Biotech", "J07BX03"),
+	TOURIST_COVAXIN_T("Covaxin_T", "Bharat-Biotech", "J07BX03")
 }
 
 /* Certificate Light Test Key */

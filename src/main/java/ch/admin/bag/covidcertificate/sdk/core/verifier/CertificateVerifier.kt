@@ -16,10 +16,9 @@ import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificates
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.TrustList
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
+import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesVerifier
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 import kotlinx.coroutines.Dispatchers
@@ -62,8 +61,11 @@ class CertificateVerifier {
 				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
 			) {
 				val isLightCertificate = certificateHolder.certType == CertType.LIGHT
-				val isValidOnlyInSwitzerland = certificateHolder.containsCertOnlyValidInCH()
-				VerificationState.SUCCESS(isLightCertificate, isValidOnlyInSwitzerland, checkNationalRulesState.validityRange)
+				VerificationState.SUCCESS(
+					isLightCertificate,
+					checkNationalRulesState.isOnlyValidInCH,
+					checkNationalRulesState.validityRange
+				)
 			} else if (
 				checkSignatureState is CheckSignatureState.INVALID
 				|| checkRevocationState is CheckRevocationState.INVALID
@@ -167,11 +169,18 @@ class CertificateVerifier {
 					// In that case, the validity range is from the issuedAt date until the expiration date from the CWT headers
 					val issued = certificateHolder.issuedAt?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
 					val expiration = certificateHolder.expirationTime?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
-					CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration))
+					CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration), true)
 				}
 				certificateHolder.containsDccCert() -> {
 					val nationalRulesVerifier = NationalRulesVerifier()
-					nationalRulesVerifier.verify(certificateHolder.certificate as DccCert, ruleSet, certificateHolder.certType!!)
+					val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+					val expiredAt = certificateHolder.expirationTime?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+					nationalRulesVerifier.verify(
+						certificateHolder.certificate as DccCert,
+						ruleSet,
+						certificateHolder.certType!!,
+						CertLogicHeaders(issuedAt, expiredAt)
+					)
 				}
 				else -> {
 					CheckNationalRulesState.ERROR(StateError(ErrorCodes.RULESET_UNKNOWN, certificateHolder = certificateHolder))

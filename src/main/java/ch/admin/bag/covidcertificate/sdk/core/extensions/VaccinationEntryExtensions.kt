@@ -11,6 +11,8 @@
 package ch.admin.bag.covidcertificate.sdk.core.extensions
 
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
+import ch.admin.bag.covidcertificate.sdk.core.data.TestType
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.products.Vaccine
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
@@ -67,4 +69,8 @@ fun VaccinationEntry.getIssuer(): String {
 
 fun VaccinationEntry.getCertificateIdentifier(): String {
 	return this.certificateIdentifier
+}
+
+fun TestEntry.isTouristVaccine(): Boolean {
+	return this.type == TestType.SEROLOGICAL.code
 }

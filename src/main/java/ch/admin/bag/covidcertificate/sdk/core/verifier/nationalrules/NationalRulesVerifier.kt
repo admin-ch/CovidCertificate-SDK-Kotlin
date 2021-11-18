@@ -31,8 +31,10 @@ internal class NationalRulesVerifier {
 
 	private val validityRangeCalculator = DisplayValidityRangeCalculator()
 
-	fun verify(dccCert: DccCert, ruleSet: RuleSet, certType: CertType, clock: Clock = Clock.systemUTC()): CheckNationalRulesState {
-		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, clock)
+	fun verify(
+		dccCert: DccCert, ruleSet: RuleSet, certType: CertType, headers: CertLogicHeaders?, clock: Clock = Clock.systemUTC()
+	): CheckNationalRulesState {
+		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, headers, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
@@ -41,21 +43,27 @@ internal class NationalRulesVerifier {
 			val isSuccessful = isTruthy(evaluate(ruleLogic, data))
 
 			if (!isSuccessful) {
-				return getErrorStateForRule(rule, dccCert, ruleSet.displayRules, ruleSetData.external.valueSets, certType)
+				return getErrorStateForRule(rule, dccCert, ruleSet.displayRules, ruleSetData.external.valueSets, certType, headers)
 			}
 		}
 
 		val validityRange =
 			getValidityRange(ruleSet.displayRules, data, certType)
+		val isOnlyValidInSwitzerland = validityRangeCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
 		return if (validityRange != null) {
-			SUCCESS(validityRange)
+			SUCCESS(validityRange, isOnlyValidInSwitzerland)
 		} else {
 			INVALID(VALIDITY_RANGE_NOT_FOUND)
 		}
 	}
 
-	fun getCertlogicData(dccCert: DccCert, valueSets: Map<String, Array<String>>, clock: Clock = Clock.systemUTC()): CertLogicData {
-		val payload = CertLogicPayload(dccCert.pastInfections, dccCert.tests, dccCert.vaccinations)
+	fun getCertlogicData(
+		dccCert: DccCert,
+		valueSets: Map<String, Array<String>>,
+		headers: CertLogicHeaders?,
+		clock: Clock = Clock.systemUTC()
+	): CertLogicData {
+		val payload = CertLogicPayload(dccCert.pastInfections, dccCert.tests, dccCert.vaccinations, headers)
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =
 			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
@@ -69,9 +77,10 @@ internal class NationalRulesVerifier {
 		displayRules: List<DisplayRule>,
 		valueSets: Map<String, Array<String>>,
 		certType: CertType,
+		headers: CertLogicHeaders?,
 		clock: Clock = Clock.systemUTC()
 	): CheckNationalRulesState {
-		val ruleSetData = getCertlogicData(dccCert, valueSets, clock)
+		val ruleSetData = getCertlogicData(dccCert, valueSets, headers, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
