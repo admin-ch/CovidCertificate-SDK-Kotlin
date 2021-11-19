@@ -47,8 +47,7 @@ internal class NationalRulesVerifier {
 			}
 		}
 
-		val validityRange =
-			getValidityRange(ruleSet.displayRules, data, certType)
+		val validityRange = getValidityRange(ruleSet.displayRules, data, certType)
 		val isOnlyValidInSwitzerland = validityRangeCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
 		return if (validityRange != null) {
 			SUCCESS(validityRange, isOnlyValidInSwitzerland)

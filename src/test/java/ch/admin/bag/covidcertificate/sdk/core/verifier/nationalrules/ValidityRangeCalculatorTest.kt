@@ -177,6 +177,7 @@ class ValidityRangeCalculatorTest {
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
+
 	@Test
 	fun testCORONAVAC_TouristenZertifikateValidityRange() {
 		val iat = Instant.parse("2021-06-05T12:00:00Z")
@@ -337,9 +338,8 @@ class ValidityRangeCalculatorTest {
 		clock: Clock = Clock.systemUTC()
 	): JsonNode {
 		val ruleSetData = nationalRulesVerifier.getCertlogicData(vaccination, nationalRuleSet.valueSets, headers, clock)
-		return jacksonMapper.valueToTree<JsonNode>(ruleSetData)
+		return jacksonMapper.valueToTree(ruleSetData)
 	}
-
 
 
 	@Test
@@ -375,6 +375,28 @@ class ValidityRangeCalculatorTest {
 		assertTrue(isValidInSwizterland)
 
 	}
+
+	@Test
+	fun testChAusnahmeTestOnlyValidInCh() {
+		val validChAusnahmeTest = TestDataGenerator.generateTestCert(
+			TestType.CH_AUSNAHME.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			utcClock
+		)
+
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+
+		val data = getJsonNodeData(validChAusnahmeTest, null, clock)
+
+		val isValidInSwizterland = validityRangeCalculator.isOnlyValidInSwitzerland(nationalRuleSet.displayRules, data)
+
+		assertTrue(isValidInSwizterland)
+	}
+
 
 	@Test
 	fun testVaccineIsValidEveryWhere() {
