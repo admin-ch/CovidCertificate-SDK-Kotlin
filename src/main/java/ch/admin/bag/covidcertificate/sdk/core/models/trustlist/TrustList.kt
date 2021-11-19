@@ -12,6 +12,6 @@ package ch.admin.bag.covidcertificate.sdk.core.models.trustlist
 
 data class TrustList(
 	val signatures: Jwks,
-	val revokedCertificates: RevokedCertificates,
+	val revokedCertificates: RevokedCertificatesStore,
 	val ruleSet: RuleSet
 )

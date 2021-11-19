@@ -11,9 +11,9 @@
 package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificates
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificatesStore
 
-internal class RevokedHealthCertService(private val revokedList: RevokedCertificates) {
+internal class RevokedHealthCertService(private val revokedList: RevokedCertificatesStore) {
 
 	/**
 	 * Returns true if at least one of the test, vaccination or recovery entries in the certificate is revoked.
@@ -25,27 +25,23 @@ internal class RevokedHealthCertService(private val revokedList: RevokedCertific
 	 * For our purposes however, it suffices to consider them as opaque strings.
 	 */
 	fun isRevoked(dccCert: DccCert): Boolean {
-		for (entry in revokedList.revokedCerts) {
-			if (!dccCert.tests.isNullOrEmpty()) {
-				for (test in dccCert.tests) {
-					if (entry == test.certificateIdentifier) return true
-				}
-			}
-
-			if (!dccCert.vaccinations.isNullOrEmpty()) {
-				for (vaccination in dccCert.vaccinations) {
-					if (entry == vaccination.certificateIdentifier) return true
-				}
-			}
-
-			if (!dccCert.pastInfections.isNullOrEmpty()) {
-				for (recovery in dccCert.pastInfections) {
-					if (entry == recovery.certificateIdentifier) return true
-				}
+		if (!dccCert.tests.isNullOrEmpty()) {
+			for (test in dccCert.tests) {
+				return revokedList.containsCertificate(test.certificateIdentifier)
 			}
 		}
 
+		if (!dccCert.vaccinations.isNullOrEmpty()) {
+			for (vaccination in dccCert.vaccinations) {
+				return revokedList.containsCertificate(vaccination.certificateIdentifier)
+			}
+		}
+
+		if (!dccCert.pastInfections.isNullOrEmpty()) {
+			for (recovery in dccCert.pastInfections) {
+				return revokedList.containsCertificate(recovery.certificateIdentifier)
+			}
+		}
 		return false
 	}
-
 }

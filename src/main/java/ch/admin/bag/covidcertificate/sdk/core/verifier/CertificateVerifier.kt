@@ -16,10 +16,7 @@ import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificates
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.TrustList
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesVerifier
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 import kotlinx.coroutines.Dispatchers
@@ -130,7 +127,7 @@ class CertificateVerifier {
 	 */
 	private suspend fun checkRevocationStatus(
 		certificateHolder: CertificateHolder,
-		revokedCertificates: RevokedCertificates
+		revokedCertificates: RevokedCertificatesStore
 	) = withContext(Dispatchers.Default) {
 		// Revocation is not possible for light certificates, so this check returns the SKIPPED state
 		if (certificateHolder.containsChLightCert()) return@withContext CheckRevocationState.SKIPPED

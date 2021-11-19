@@ -13,11 +13,7 @@ import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwk
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificates
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.TrustList
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -196,7 +192,7 @@ class CertificateVerifierTest {
 	): TrustList {
 		return TrustList(
 			Jwks(signingKeys),
-			RevokedCertificates(revokedKeyIds, Long.MAX_VALUE),
+			RevokedCertificatesInMemoryImpl(revokedKeyIds),
 			nationalRuleSet.copy(rules = emptyList()) // Use national ruleset from test resources to access the validity offsets, but not process any rules
 		)
 	}

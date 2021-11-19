@@ -18,7 +18,7 @@ import com.squareup.moshi.JsonClass
  * See https://ec.europa.eu/health/sites/default/files/ehealth/docs/vaccination-proof_interoperability-guidelines_en.pdf#page=11
  */
 @JsonClass(generateAdapter = true)
-data class RevokedCertificates(
+data class RevokedCertificatesResponse(
 	val revokedCerts: List<String> = emptyList(),
 	val validDuration: Long
 )
