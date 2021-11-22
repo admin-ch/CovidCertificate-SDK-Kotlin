@@ -29,7 +29,7 @@ import java.util.*
 
 internal class NationalRulesVerifier {
 
-	private val validityRangeCalculator = DisplayValidityRangeCalculator()
+	private val displayValidityCalculator = DisplayValidityCalculator()
 
 	fun verify(
 		dccCert: DccCert, ruleSet: RuleSet, certType: CertType, headers: CertLogicHeaders?, clock: Clock = Clock.systemUTC()
@@ -49,7 +49,7 @@ internal class NationalRulesVerifier {
 
 		val validityRange =
 			getValidityRange(ruleSet.displayRules, data, certType)
-		val isOnlyValidInSwitzerland = validityRangeCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
+		val isOnlyValidInSwitzerland = displayValidityCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
 		return if (validityRange != null) {
 			SUCCESS(validityRange, isOnlyValidInSwitzerland)
 		} else {
@@ -140,7 +140,7 @@ internal class NationalRulesVerifier {
 		data: JsonNode,
 		certType: CertType
 	): ValidityRange? {
-		return validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(displayRules, data, certType)
+		return displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(displayRules, data, certType)
 	}
 
 
