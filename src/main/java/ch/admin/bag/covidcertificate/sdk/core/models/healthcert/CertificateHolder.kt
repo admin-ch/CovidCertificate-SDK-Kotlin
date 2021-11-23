@@ -31,12 +31,6 @@ class CertificateHolder(
 
 	fun containsChLightCert() = certificate is ChLightCert
 
-	fun containsCertOnlyValidInCH(): Boolean {
-		val isSeroPositivTest =
-			certType == CertType.TEST && certificate is DccCert && certificate.tests?.firstOrNull()?.isSerologicalTest() ?: false
-		return containsChLightCert() || isSeroPositivTest
-	}
-
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false

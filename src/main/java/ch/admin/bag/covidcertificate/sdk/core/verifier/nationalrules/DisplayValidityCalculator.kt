@@ -13,6 +13,7 @@ import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.DisplayRule
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.JsonDateTime
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
+import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDateTime
@@ -24,7 +25,7 @@ import java.util.*
 * This class is responsible to return a Validity Range to display in a view. The LocalDateTime is calculated for
 * the timezone of the device
 * */
-internal class DisplayValidityRangeCalculator {
+internal class DisplayValidityCalculator {
 
 	private val jacksonMapper = ObjectMapper().apply {
 		setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
@@ -35,18 +36,24 @@ internal class DisplayValidityRangeCalculator {
 		data: JsonNode,
 		certType: CertType
 	): ValidityRange? {
-		val displayFromDate: String = displayRules.find { it.id == "display-from-date" }?.logic ?: return null
-		val displayUntilDate: String = displayRules.find { it.id == "display-until-date" }?.logic ?: return null
-		val dateFromString = getValidity(displayFromDate, data, certType)
-		val dateUntilString = getValidity(displayUntilDate, data, certType)
+		val resultFromDate = evalRule(displayRules, "display-from-date", data) ?: return null
+		val resultUntilDate = evalRule(displayRules, "display-until-date", data) ?: return null
+		val dateFromString = getDateTime(resultFromDate, data, certType)
+		val dateUntilString = getDateTime(resultUntilDate, data, certType)
 		return ValidityRange(dateFromString, dateUntilString)
 	}
 
-	private fun getValidity(displayRule: String, data: JsonNode, certType: CertType): LocalDateTime? {
-		val displayLogic = jacksonMapper.readTree(displayRule)
-		val date = evaluate(displayLogic, data)
-		if (date is JsonDateTime) {
-			return getLocalDateTime(certType, date)
+	fun isOnlyValidInSwitzerland(
+		displayRules: List<DisplayRule>,
+		data: JsonNode
+	): Boolean {
+		val result = evalRule(displayRules, "is-only-valid-in-ch", data) ?: return false
+		return isTruthy(result)
+	}
+
+	private fun getDateTime(resultFromDisplayRule: JsonNode, data: JsonNode, certType: CertType): LocalDateTime? {
+		if (resultFromDisplayRule is JsonDateTime) {
+			return getLocalDateTime(certType, resultFromDisplayRule)
 		}
 		return null
 	}
@@ -59,6 +66,12 @@ internal class DisplayValidityRangeCalculator {
 			//is vaccine or recovery entry
 			return data.temporalValue().toLocalDate().atStartOfDay()
 		}
+	}
+
+	private fun evalRule(displayRules: List<DisplayRule>, ruleName: String, data: JsonNode): JsonNode? {
+		val displayRule: String = displayRules.find { it.id == ruleName }?.logic ?: return null
+		val displayLogic = jacksonMapper.readTree(displayRule)
+		return evaluate(displayLogic, data)
 	}
 
 }
