@@ -63,10 +63,16 @@ internal data class CertLogicPayload(
 	val r: List<RecoveryEntry>? = null,
 	val t: List<TestEntry>? = null,
 	val v: List<VaccinationEntry>? = null,
+	val h: CertLogicHeaders?= null
 )
 
 internal data class CertLogicExternalInfo(
 	val valueSets: Map<String, Array<String>>,
 	val validationClock: String, // ISO-8601 extended offset date-time format
 	val validationClockAtStartOfDay: String, // ISO-8601 date format
+)
+
+internal data class CertLogicHeaders(
+	val iat: String?,
+	val exp: String?
 )
