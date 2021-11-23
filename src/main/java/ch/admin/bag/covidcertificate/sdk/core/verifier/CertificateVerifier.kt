@@ -132,7 +132,7 @@ class CertificateVerifier {
 	 */
 	private suspend fun checkRevocationStatus(
 		certificateHolder: CertificateHolder,
-		revokedCertificates: RevokedCertificates
+		revokedCertificates: RevokedCertificatesStore
 	) = withContext(Dispatchers.Default) {
 		// Revocation is not possible for light certificates, so this check returns the SKIPPED state
 		if (certificateHolder.containsChLightCert()) return@withContext CheckRevocationState.SKIPPED
