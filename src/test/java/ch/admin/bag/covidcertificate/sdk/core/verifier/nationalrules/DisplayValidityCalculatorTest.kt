@@ -256,6 +256,42 @@ class DisplayValidityCalculatorTest {
 	}
 
 	@Test
+	fun testCOVAXINOldVersion_TouristenZertifikateValidityRange() {
+		//test without iat and exp
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+		val iatDate = LocalDate.now(clock).atStartOfDay()
+		val vaccinationDate = iatDate.minusDays(180)
+		val vaccine = Vaccine.TOURIST_COVAXIN_T
+		val vaccination = TestDataGenerator.generateVaccineCert(
+			2,
+			2,
+			vaccine.manufacturer,
+			vaccine.identifier,
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			vaccine.prophylaxis,
+			vaccinationDate,
+		)
+	//test without iat and exp
+		val data = getJsonNodeData(
+			vaccination,
+			null,
+			clock
+		)
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
+			nationalRuleSet.displayRules,
+			data,
+			CertType.VACCINATION
+		)
+		assertNotNull(validityRange)
+
+		val validFrom = iatDate
+		val validUntil = iatDate.plusDays(1)
+		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
+		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
+	}
+
+	@Test
 	fun testRatTestValidityRange() {
 		val now = OffsetDateTime.now(utcClock)
 		val duration = Duration.ofHours(10)
