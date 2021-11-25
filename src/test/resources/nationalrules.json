@@ -1513,7 +1513,13 @@
 												]
 											},
 											{
-												"var": "undefined"
+												"plusTime": [
+													{
+														"var": "external.validationClock"
+													},
+													0,
+													"day"
+												]
 											}
 										]
 									},
@@ -1625,19 +1631,95 @@
 									{
 										"if": [
 											{
-												"var": "payload.h.iat"
+												"var": "payload.h.exp"
 											},
 											{
-												"plusTime": [
+												"if": [
 													{
-														"var": "payload.h.iat"
+														"before": [
+															{
+																"plusTime": [
+																	{
+																		"var": "payload.v.0.dt"
+																	},
+																	364,
+																	"day"
+																]
+															},
+															{
+																"plusTime": [
+																	{
+																		"var": "payload.h.exp"
+																	},
+																	0,
+																	"day"
+																]
+															}
+														]
 													},
-													29,
-													"day"
+													{
+														"plusTime": [
+															{
+																"var": "payload.v.0.dt"
+															},
+															364,
+															"day"
+														]
+													},
+													{
+														"plusTime": [
+															{
+																"var": "payload.h.exp"
+															},
+															0,
+															"day"
+														]
+													}
 												]
 											},
 											{
-												"var": "undefined"
+												"if": [
+													{
+														"before": [
+															{
+																"plusTime": [
+																	{
+																		"var": "payload.v.0.dt"
+																	},
+																	364,
+																	"day"
+																]
+															},
+															{
+																"plusTime": [
+																	{
+																		"var": "external.validationClock"
+																	},
+																	0,
+																	"day"
+																]
+															}
+														]
+													},
+													{
+														"plusTime": [
+															{
+																"var": "payload.v.0.dt"
+															},
+															364,
+															"day"
+														]
+													},
+													{
+														"plusTime": [
+															{
+																"var": "external.validationClock"
+															},
+															1,
+															"day"
+														]
+													}
+												]
 											}
 										]
 									},
