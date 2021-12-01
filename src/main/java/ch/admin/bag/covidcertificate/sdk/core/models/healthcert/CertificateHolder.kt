@@ -10,7 +10,6 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
 
-import ch.admin.bag.covidcertificate.sdk.core.extensions.isSerologicalTest
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
 import java.io.Serializable

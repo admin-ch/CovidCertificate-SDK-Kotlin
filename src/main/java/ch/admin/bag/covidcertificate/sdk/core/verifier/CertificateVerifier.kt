@@ -14,11 +14,13 @@ import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.*
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CheckMode
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.*
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
 import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
+import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesVerifier
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 import kotlinx.coroutines.Dispatchers
@@ -37,12 +39,12 @@ class CertificateVerifier {
 	 * @param trustList The current applicable trust list, containing active public keys for signing, revoked certificate identifiers and the national rule set
 	 * @return Outcome state of the verification
 	 */
-	suspend fun verify(certificateHolder: CertificateHolder, trustList: TrustList): VerificationState =
+	suspend fun verify(certificateHolder: CertificateHolder, trustList: TrustList, mode: CheckMode): VerificationState =
 		withContext(Dispatchers.Default) {
 			// Execute all three checks in parallel...
 			val checkSignatureStateDeferred = async { checkSignature(certificateHolder, trustList.signatures) }
 			val checkRevocationStateDeferred = async { checkRevocationStatus(certificateHolder, trustList.revokedCertificates) }
-			val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, trustList.ruleSet) }
+			val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, mode, trustList.ruleSet) }
 
 			// ... but wait for all of them to finish
 			val checkSignatureState = checkSignatureStateDeferred.await()
@@ -160,6 +162,7 @@ class CertificateVerifier {
 	 */
 	private suspend fun checkNationalRules(
 		certificateHolder: CertificateHolder,
+		mode: CheckMode,
 		ruleSet: RuleSet
 	) = withContext(Dispatchers.Default) {
 		try {
@@ -169,7 +172,11 @@ class CertificateVerifier {
 					// In that case, the validity range is from the issuedAt date until the expiration date from the CWT headers
 					val issued = certificateHolder.issuedAt?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
 					val expiration = certificateHolder.expirationTime?.let { LocalDateTime.ofInstant(it, ZoneId.systemDefault()) }
-					CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration), true)
+					if (mode != CheckMode.NORMAL) {
+						CheckNationalRulesState.INVALID(NationalRulesError.CHECK_MODE_NOT_SUPPORTED)
+					} else {
+						CheckNationalRulesState.SUCCESS(ValidityRange(issued, expiration), true)
+					}
 				}
 				certificateHolder.containsDccCert() -> {
 					val nationalRulesVerifier = NationalRulesVerifier()
@@ -179,6 +186,7 @@ class CertificateVerifier {
 						certificateHolder.certificate as DccCert,
 						ruleSet,
 						certificateHolder.certType!!,
+						mode,
 						CertLogicHeaders(issuedAt, expiredAt)
 					)
 				}
