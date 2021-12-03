@@ -17,7 +17,6 @@ import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonStringAdapter
 import ch.admin.bag.covidcertificate.sdk.core.extensions.isTargetDiseaseCorrect
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CheckMode
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
@@ -72,7 +71,6 @@ class NationalRulesVerifierTest {
 			cert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			null,
 			clock
 		)
@@ -100,10 +98,11 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -124,10 +123,11 @@ class NationalRulesVerifierTest {
 			inValidCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -147,10 +147,11 @@ class NationalRulesVerifierTest {
 			inValidFutureCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -173,7 +174,7 @@ class NationalRulesVerifierTest {
 			vaccinationDate,
 		)
 
-		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.INVALID)
 	}
 
@@ -201,10 +202,10 @@ class NationalRulesVerifierTest {
 			vaccinationDate,
 		)
 
-		var result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		var result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 
-		result = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		result = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.INVALID && result.nationalRulesError == NationalRulesError.NO_VALID_PRODUCT)
 	}
 
@@ -223,7 +224,7 @@ class NationalRulesVerifierTest {
 			vaccinationDate,
 		)
 
-		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 	}
 
@@ -241,7 +242,7 @@ class NationalRulesVerifierTest {
 			"J07BX03",
 			vaccinationDate,
 		)
-		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		val result = nationalRulesVerifier.verify(cert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 	}
 
@@ -260,7 +261,7 @@ class NationalRulesVerifierTest {
 			nowDate.minusDays(21),
 		)
 
-		var result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		var result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 
 		val invalidCert = TestDataGenerator.generateVaccineCert(
@@ -274,7 +275,7 @@ class NationalRulesVerifierTest {
 		)
 		val expectedValidFrom = LocalDate.now(clock).plusDays(1).atStartOfDay()
 
-		result = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		result = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.NOT_YET_VALID)
 
 		result = result as CheckNationalRulesState.NOT_YET_VALID
@@ -318,7 +319,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(Instant.parse("2021-06-30T12:00:00Z"), ZoneId.systemDefault())
 		)
@@ -328,7 +328,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(Instant.parse("2021-07-01T12:00:00Z"), ZoneId.systemDefault())
 		)
@@ -338,7 +337,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(Instant.parse("2022-01-03T12:00:00Z"), ZoneId.systemDefault())
 		)
@@ -348,7 +346,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.VACCINATION,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(Instant.parse("2021-01-02T12:00:00Z"), ZoneId.systemDefault())
 		)
@@ -369,7 +366,7 @@ class NationalRulesVerifierTest {
 			"J07BX03",
 			nowDate,
 		)
-		var result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		var result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 
 		val invalidCert = TestDataGenerator.generateVaccineCert(
@@ -381,7 +378,7 @@ class NationalRulesVerifierTest {
 			"J07BX03",
 			nowDate,
 		)
-		result = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.VACCINATION, CheckMode.NORMAL, null, clock)
+		result = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.VACCINATION, null, clock)
 		assertTrue(result is CheckNationalRulesState.INVALID)
 
 		result = result as CheckNationalRulesState.INVALID
@@ -402,7 +399,7 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 		assertTrue(validCert.tests!!.first().isTargetDiseaseCorrect())
-		val result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null)
+		val result = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.TEST, null)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 
 		val invalidCert = TestDataGenerator.generateTestCert(
@@ -415,8 +412,7 @@ class NationalRulesVerifierTest {
 		)
 
 		assertFalse(invalidCert.tests!!.first().isTargetDiseaseCorrect())
-		val wrongResult =
-			nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val wrongResult = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.TEST, null, utcClock)
 		assertTrue(wrongResult is CheckNationalRulesState.INVALID)
 	}
 
@@ -447,17 +443,14 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 
-		val validRatResult =
-			nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val validRatResult = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, null, utcClock)
 
 		assertTrue(validRatResult is CheckNationalRulesState.SUCCESS)
 
-		val validPcrResult =
-			nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val validPcrResult = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, null, utcClock)
 		assertTrue(validPcrResult is CheckNationalRulesState.SUCCESS)
 
-		val invalidTestResult =
-			nationalRulesVerifier.verify(invalidTest, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val invalidTestResult = nationalRulesVerifier.verify(invalidTest, nationalRuleSet, CertType.TEST, null, utcClock)
 		if (invalidTestResult is CheckNationalRulesState.INVALID) {
 			assertTrue(invalidTestResult.nationalRulesError == NationalRulesError.WRONG_TEST_TYPE)
 		} else {
@@ -475,7 +468,7 @@ class NationalRulesVerifierTest {
 			Duration.ofHours(-10),
 			utcClock
 		)
-		val result = nationalRulesVerifier.verify(validTest, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val result = nationalRulesVerifier.verify(validTest, nationalRuleSet, CertType.TEST, null, utcClock)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 	}
 
@@ -489,7 +482,7 @@ class NationalRulesVerifierTest {
 			Duration.ofHours(-71),
 			utcClock
 		)
-		val result = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null)
+		val result = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, null)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 
 		val invalidPcr = TestDataGenerator.generateTestCert(
@@ -500,7 +493,7 @@ class NationalRulesVerifierTest {
 			Duration.ofHours(-72),
 			utcClock
 		)
-		val invalid = nationalRulesVerifier.verify(invalidPcr, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val invalid = nationalRulesVerifier.verify(invalidPcr, nationalRuleSet, CertType.TEST, null, utcClock)
 		if (invalid is CheckNationalRulesState.NOT_VALID_ANYMORE) {
 			assertTrue(true)
 		} else {
@@ -518,7 +511,7 @@ class NationalRulesVerifierTest {
 			Duration.ofHours(-47),
 			utcClock
 		)
-		val result = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null)
+		val result = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, null)
 		assertTrue(result is CheckNationalRulesState.SUCCESS)
 
 		val invalidPcr = TestDataGenerator.generateTestCert(
@@ -529,7 +522,7 @@ class NationalRulesVerifierTest {
 			Duration.ofHours(-48),
 			utcClock
 		)
-		val invalid = nationalRulesVerifier.verify(invalidPcr, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val invalid = nationalRulesVerifier.verify(invalidPcr, nationalRuleSet, CertType.TEST, null, utcClock)
 		if (invalid is CheckNationalRulesState.NOT_VALID_ANYMORE) {
 			assertTrue(true)
 		} else {
@@ -556,8 +549,8 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 
-		val invalidRat = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
-		val invalidPcr = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val invalidRat = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, null, utcClock)
+		val invalidPcr = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, null, utcClock)
 		if (invalidRat is CheckNationalRulesState.INVALID &&
 			invalidPcr is CheckNationalRulesState.INVALID
 		) {
@@ -607,13 +600,10 @@ class NationalRulesVerifierTest {
 		)
 
 
-		val valid = nationalRulesVerifier.verify(validSeroPostiv, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
-		val invalid =
-			nationalRulesVerifier.verify(inValidSeroPostiv, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
-		val invalidBefore =
-			nationalRulesVerifier.verify(inValidBeforeSeroPostiv, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
-		val invalidAfter =
-			nationalRulesVerifier.verify(inValidAfterSeroPostiv, nationalRuleSet, CertType.TEST, CheckMode.NORMAL, null, utcClock)
+		val valid = nationalRulesVerifier.verify(validSeroPostiv, nationalRuleSet, CertType.TEST, null, utcClock)
+		val invalid = nationalRulesVerifier.verify(inValidSeroPostiv, nationalRuleSet, CertType.TEST, null, utcClock)
+		val invalidBefore = nationalRulesVerifier.verify(inValidBeforeSeroPostiv, nationalRuleSet, CertType.TEST, null, utcClock)
+		val invalidAfter = nationalRulesVerifier.verify(inValidAfterSeroPostiv, nationalRuleSet, CertType.TEST, null, utcClock)
 
 		if (valid is CheckNationalRulesState.SUCCESS
 			&& (invalid is CheckNationalRulesState.INVALID && invalid.nationalRulesError == NationalRulesError.NEGATIVE_RESULT)
@@ -646,9 +636,9 @@ class NationalRulesVerifierTest {
 		)
 
 		val validRecoveryResult =
-			nationalRulesVerifier.verify(validRecovery, nationalRuleSet, CertType.RECOVERY, CheckMode.NORMAL, null, utcClock)
+			nationalRulesVerifier.verify(validRecovery, nationalRuleSet, CertType.RECOVERY, null, utcClock)
 		val invalidRecoveryResult =
-			nationalRulesVerifier.verify(invalidRecovery, nationalRuleSet, CertType.RECOVERY, CheckMode.NORMAL, null, utcClock)
+			nationalRulesVerifier.verify(invalidRecovery, nationalRuleSet, CertType.RECOVERY, null, utcClock)
 		assertTrue(validRecoveryResult is CheckNationalRulesState.SUCCESS)
 
 		if (invalidRecoveryResult is CheckNationalRulesState.INVALID) {
@@ -692,7 +682,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(validDateUntil.minusDays(1).toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
 		)
@@ -702,7 +691,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(validDateUntil.toInstant(ZoneOffset.UTC), ZoneId.systemDefault())
 		)
@@ -712,7 +700,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(validDateFrom.toInstant(ZoneOffset.UTC).plusMillis(1), ZoneId.of("UTC"))
 		)
@@ -722,7 +709,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(validDateUntil.plusDays(1).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
 		)
@@ -732,7 +718,6 @@ class NationalRulesVerifierTest {
 			validCert,
 			nationalRuleSet,
 			CertType.RECOVERY,
-			CheckMode.NORMAL,
 			null,
 			Clock.fixed(validDateFrom.minusDays(1).toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
 		)
@@ -756,10 +741,8 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 
-		val validResult =
-			nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.RECOVERY, CheckMode.NORMAL, null, utcClock)
-		val invalidResult =
-			nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.RECOVERY, CheckMode.NORMAL, null, utcClock)
+		val validResult = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.RECOVERY, null, utcClock)
+		val invalidResult = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.RECOVERY, null, utcClock)
 
 		assertTrue(validResult is CheckNationalRulesState.SUCCESS)
 		assertTrue(invalidResult is CheckNationalRulesState.NOT_VALID_ANYMORE)
@@ -782,10 +765,8 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 
-		val validResult =
-			nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.RECOVERY, CheckMode.NORMAL, null, utcClock)
-		val invalidResult =
-			nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.RECOVERY, CheckMode.NORMAL, null, utcClock)
+		val validResult = nationalRulesVerifier.verify(validCert, nationalRuleSet, CertType.RECOVERY, null, utcClock)
+		val invalidResult = nationalRulesVerifier.verify(invalidCert, nationalRuleSet, CertType.RECOVERY, null, utcClock)
 
 		assertTrue(validResult is CheckNationalRulesState.SUCCESS)
 		assertTrue(invalidResult is CheckNationalRulesState.NOT_YET_VALID)

@@ -11,7 +11,6 @@
 package ch.admin.bag.covidcertificate.sdk.core.models.trustlist
 
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonString
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CheckMode
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
@@ -21,17 +20,16 @@ import com.squareup.moshi.JsonClass
 data class RuleSet(
 	val displayRules: List<DisplayRule>,
 	val rules: List<Rule>,
-	val rulesGsm: List<Rule>,
+	val modeRules: ModeRules,
 	val valueSets: Map<String, Array<String>>,
 	val validDuration: Long,
-) {
-	fun getRulesForMode(mode: CheckMode): List<Rule> {
-		return when (mode) {
-			CheckMode.NORMAL -> rules
-			CheckMode.GSM -> rulesGsm
-		}
-	}
-}
+)
+
+@JsonClass(generateAdapter = true)
+data class ModeRules(
+	val activeModes: Set<String>,
+	@RawJsonString val logic: String,
+)
 
 @JsonClass(generateAdapter = true)
 data class DisplayRule(
@@ -83,5 +81,7 @@ internal data class CertLogicExternalInfo(
 
 internal data class CertLogicHeaders(
 	val iat: String?,
-	val exp: String?
+	val exp: String?,
+	val isIsLight: Boolean?, //Must be isIsLight because the Json Serializer strips one "is"
+	val mode: String?
 )

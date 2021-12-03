@@ -11,7 +11,6 @@
 package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules
 
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CheckMode
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState.*
@@ -33,18 +32,13 @@ internal class NationalRulesVerifier {
 	private val displayValidityCalculator = DisplayValidityCalculator()
 
 	fun verify(
-		dccCert: DccCert,
-		ruleSet: RuleSet,
-		certType: CertType,
-		mode: CheckMode,
-		headers: CertLogicHeaders?,
-		clock: Clock = Clock.systemUTC()
+		dccCert: DccCert, ruleSet: RuleSet, certType: CertType, headers: CertLogicHeaders?, clock: Clock = Clock.systemUTC()
 	): CheckNationalRulesState {
 		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, headers, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
-		for (rule in ruleSet.getRulesForMode(mode)) {
+		for (rule in ruleSet.rules) {
 			val ruleLogic = jacksonMapper.readTree(rule.logic)
 			val isSuccessful = isTruthy(evaluate(ruleLogic, data))
 
@@ -53,7 +47,8 @@ internal class NationalRulesVerifier {
 			}
 		}
 
-		val validityRange = getValidityRange(ruleSet.displayRules, data, certType)
+		val validityRange =
+			getValidityRange(ruleSet.displayRules, data, certType)
 		val isOnlyValidInSwitzerland = displayValidityCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
 		return if (validityRange != null) {
 			SUCCESS(validityRange, isOnlyValidInSwitzerland)

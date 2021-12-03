@@ -8,8 +8,11 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package ch.admin.bag.covidcertificate.sdk.core.models.healthcert
+package ch.admin.bag.covidcertificate.sdk.core.models.state
 
-enum class CheckMode {
-	NORMAL, GSM
+sealed class CheckModeRulesState {
+	data class SUCCESS(val modeValidities: List<ModeValidity>) : CheckModeRulesState()
+	data class ERROR(val error: StateError) : CheckModeRulesState()
 }
+
+data class ModeValidity(val mode: String, val isValid: Boolean)

@@ -8,7 +8,6 @@ import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
 import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.getHardcodedSigningKeys
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CheckMode
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
@@ -44,7 +43,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList()
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -65,7 +64,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("abn"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -89,7 +88,7 @@ class CertificateVerifierTest {
 		)
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -111,7 +110,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.SUCCESS)
 		}
 	}
@@ -122,7 +121,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList()
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -143,7 +142,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -164,7 +163,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(listOf(getCertificateLightTestKey()))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, CheckMode.NORMAL)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			val successState = verificationState as VerificationState.SUCCESS
