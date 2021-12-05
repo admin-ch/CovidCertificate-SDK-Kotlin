@@ -15,4 +15,4 @@ sealed class CheckModeRulesState {
 	data class ERROR(val error: StateError) : CheckModeRulesState()
 }
 
-data class ModeValidity(val mode: String, val isValid: Boolean)
+data class ModeValidity(val mode: String, val isModeValid: Boolean)

@@ -49,7 +49,7 @@ internal class ModeRulesVerifier {
 		return ModeValidity(mode, isSuccessful)
 	}
 
-	fun getCertlogicData(
+	private fun getCertlogicData(
 		certificate: CovidCertificate,
 		valueSets: Map<String, Array<String>>,
 		headers: CertLogicHeaders?,

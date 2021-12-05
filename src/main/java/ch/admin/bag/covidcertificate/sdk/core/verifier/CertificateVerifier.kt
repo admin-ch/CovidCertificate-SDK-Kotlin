@@ -41,7 +41,8 @@ class CertificateVerifier {
 	suspend fun verify(
 		certificateHolder: CertificateHolder,
 		trustList: TrustList,
-		verificationModes: Set<String>
+		verificationModes: Set<String>,
+		verificationType: VerificationType = VerificationType.VERIFIER
 	): VerificationState = withContext(Dispatchers.Default) {
 		// Execute all three checks in parallel...
 		val checkSignatureStateDeferred = async { checkSignature(certificateHolder, trustList.signatures) }
@@ -71,12 +72,18 @@ class CertificateVerifier {
 			&& checkModeRulesState is CheckModeRulesState.SUCCESS
 		) {
 			val isLightCertificate = certificateHolder.certType == CertType.LIGHT
-			VerificationState.SUCCESS(
-				isLightCertificate,
-				checkNationalRulesState.isOnlyValidInCH,
-				checkNationalRulesState.validityRange,
-				checkModeRulesState.modeValidities
-			)
+			if (verificationType == VerificationType.WALLET) {
+				val walletSuccessState = WalletSuccessState(
+					checkNationalRulesState.isOnlyValidInCH,
+					checkNationalRulesState.validityRange,
+					checkModeRulesState.modeValidities
+				)
+				VerificationState.SUCCESS(walletSuccessState)
+			} else {
+				val verificationSuccessState = VerifierSuccessState(modeValidity = checkModeRulesState.modeValidities.first())
+				verificationSuccessState.isLightCertificate = isLightCertificate
+				VerificationState.SUCCESS(verificationSuccessState)
+			}
 		} else if (
 			checkSignatureState is CheckSignatureState.INVALID
 			|| checkRevocationState is CheckRevocationState.INVALID

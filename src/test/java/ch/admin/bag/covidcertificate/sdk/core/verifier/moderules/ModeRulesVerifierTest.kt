@@ -20,16 +20,21 @@ import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.WalletSuccessState
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
 import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
 import ch.admin.bag.covidcertificate.sdk.core.verifier.CertificateVerifier
+import ch.admin.bag.covidcertificate.sdk.core.verifier.VerificationType
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.*
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
 
 class ModeRulesVerifierTest {
 
@@ -58,11 +63,12 @@ class ModeRulesVerifierTest {
 		val trustList = createTrustList(listOf(getCertificateLightTestKey()))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf(mode))
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf(mode), VerificationType.WALLET)
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			verificationState as VerificationState.SUCCESS
-			assertTrue(!verificationState.modeValidity.first().isValid)
+			val walletSuccessState = verificationState.successState as WalletSuccessState
+			assertTrue(!walletSuccessState.modeValidity.first().isModeValid)
 		}
 	}
 
@@ -108,9 +114,9 @@ class ModeRulesVerifierTest {
 		val modeValidityPcr = modeRulesVerifier.verify(validPcr, ruleSet, headers, mode, utcClock)
 		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostiv, ruleSet, headers, mode, utcClock)
 
-		assertFalse(modeValidityRat.isValid)
-		assertFalse(modeValidityPcr.isValid)
-		assertFalse(modeValiditySeroPositiv.isValid)
+		assertFalse(modeValidityRat.isModeValid)
+		assertFalse(modeValidityPcr.isModeValid)
+		assertFalse(modeValiditySeroPositiv.isModeValid)
 	}
 
 
@@ -153,9 +159,9 @@ class ModeRulesVerifierTest {
 		val modeValidityRat = modeRulesVerifier.verify(validRat, ruleSet, headers, mode, utcClock)
 		val modeValidityPcr = modeRulesVerifier.verify(validPcr, ruleSet, headers, mode, utcClock)
 		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostiv, ruleSet, headers, mode, utcClock)
-		assertTrue(modeValidityRat.isValid)
-		assertTrue(modeValidityPcr.isValid)
-		assertTrue(modeValiditySeroPositiv.isValid)
+		assertTrue(modeValidityRat.isModeValid)
+		assertTrue(modeValidityPcr.isModeValid)
+		assertTrue(modeValiditySeroPositiv.isModeValid)
 	}
 
 	private fun decodeCertificate(qrCodeData: String): CertificateHolder {

@@ -8,11 +8,7 @@ import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
 import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.getHardcodedSigningKeys
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.*
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
@@ -163,18 +159,20 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(listOf(getCertificateLightTestKey()))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
+			val verificationState =
+				certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"), VerificationType.WALLET)
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			val successState = verificationState as VerificationState.SUCCESS
+			val walletSuccessState = successState.successState as WalletSuccessState
 			certificateHolder.issuedAt?.let {
 				val expectedValidFrom = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
-				assertEquals(expectedValidFrom, successState.validityRange?.validFrom)
+				assertEquals(expectedValidFrom, walletSuccessState.validityRange?.validFrom)
 			}
 
 			certificateHolder.expirationTime?.let {
 				val expectedValidUntil = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
-				assertEquals(expectedValidUntil, successState.validityRange?.validUntil)
+				assertEquals(expectedValidUntil, walletSuccessState.validityRange?.validUntil)
 			}
 		}
 	}
