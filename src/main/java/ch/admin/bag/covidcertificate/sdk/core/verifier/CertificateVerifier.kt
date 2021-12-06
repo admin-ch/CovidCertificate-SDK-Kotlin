@@ -27,6 +27,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 class CertificateVerifier {
 
@@ -218,7 +219,7 @@ class CertificateVerifier {
 	 */
 	private suspend fun checkModeRules(
 		certificateHolder: CertificateHolder,
-		verificationModes: Set<String>,
+		verificationIdentifier: Set<String>,
 		ruleSet: RuleSet
 	): CheckModeRulesState = withContext(Dispatchers.Default) {
 		val modeRulesVerifier = ModeRulesVerifier()
@@ -232,7 +233,7 @@ class CertificateVerifier {
 			)
 
 		}
-		verificationModes.forEach { verificationMode ->
+		verificationIdentifier.forEach { verificationMode ->
 			try {
 				val isLight = certificateHolder.containsChLightCert()
 				val modeValidity = modeRulesVerifier.verify(

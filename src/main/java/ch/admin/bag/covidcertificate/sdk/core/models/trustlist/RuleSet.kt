@@ -15,6 +15,7 @@ import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
 import com.squareup.moshi.JsonClass
+import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class RuleSet(
@@ -27,8 +28,14 @@ data class RuleSet(
 
 @JsonClass(generateAdapter = true)
 data class ModeRules(
-	val activeModes: Set<String>,
+	val activeModes: List<ActiveModes>,
 	@RawJsonString val logic: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class ActiveModes(
+	val id: String,
+	val displayName: String
 )
 
 @JsonClass(generateAdapter = true)
