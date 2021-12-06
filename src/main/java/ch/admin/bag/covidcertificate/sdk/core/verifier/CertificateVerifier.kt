@@ -73,16 +73,16 @@ class CertificateVerifier {
 		) {
 			val isLightCertificate = certificateHolder.certType == CertType.LIGHT
 			if (verificationType == VerificationType.WALLET) {
-				val walletSuccessState = WalletSuccessState(
+				val walletSuccessState = SuccessState.WalletSuccessState(
 					checkNationalRulesState.isOnlyValidInCH,
 					checkNationalRulesState.validityRange,
 					checkModeRulesState.modeValidities
 				)
-				VerificationState.SUCCESS(walletSuccessState)
+				VerificationState.SUCCESS(walletSuccessState, isLightCertificate)
 			} else {
-				val verificationSuccessState = VerifierSuccessState(modeValidity = checkModeRulesState.modeValidities.first())
-				verificationSuccessState.isLightCertificate = isLightCertificate
-				VerificationState.SUCCESS(verificationSuccessState)
+				val verificationSuccessState =
+					SuccessState.VerifierSuccessState(modeValidity = checkModeRulesState.modeValidities.first())
+				VerificationState.SUCCESS(verificationSuccessState, isLightCertificate)
 			}
 		} else if (
 			checkSignatureState is CheckSignatureState.INVALID

@@ -15,4 +15,8 @@ sealed class CheckModeRulesState {
 	data class ERROR(val error: StateError) : CheckModeRulesState()
 }
 
-data class ModeValidity(val mode: String, val isModeValid: Boolean)
+data class ModeValidity(val mode: String, val isModeValid: ModeValidityState)
+
+enum class ModeValidityState {
+	SUCCESS, IS_LIGHT, INVALID, UNKNOWN_MODE, UNKNOWN
+}

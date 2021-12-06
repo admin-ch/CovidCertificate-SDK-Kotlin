@@ -14,7 +14,7 @@ import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRan
 
 sealed class VerificationState {
 
-	data class SUCCESS(val successState: SuccessState) : VerificationState()
+	data class SUCCESS(val successState: SuccessState, var isLightCertificate: Boolean) : VerificationState()
 
 	data class INVALID(
 		val signatureState: CheckSignatureState?,
@@ -27,16 +27,17 @@ sealed class VerificationState {
 	data class ERROR(val error: StateError, val validityRange: ValidityRange?) : VerificationState()
 }
 
-data class WalletSuccessState(
-	val isValidOnlyInSwitzerland: Boolean,
-	val validityRange: ValidityRange?,
-	val modeValidity: List<ModeValidity>
-) : SuccessState()
+sealed class SuccessState {
 
-data class VerifierSuccessState(
-	val modeValidity: ModeValidity
-) : SuccessState()
+	data class WalletSuccessState(
+		val isValidOnlyInSwitzerland: Boolean,
+		val validityRange: ValidityRange?,
+		val modeValidity: List<ModeValidity>
+	) : SuccessState()
 
-open class SuccessState {
-	var isLightCertificate: Boolean = false
+	data class VerifierSuccessState(
+		val modeValidity: ModeValidity
+	) : SuccessState()
+
 }
+

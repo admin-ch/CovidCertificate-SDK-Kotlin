@@ -14,15 +14,12 @@ import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CovidCertificate
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidity
+import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidityState
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicData
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicExternalInfo
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicHeaders
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicPayload
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
-import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.TextNode
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -44,9 +41,9 @@ internal class ModeRulesVerifier {
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
 		val ruleLogic = jacksonMapper.readTree(ruleSet.modeRules.logic)
-		val isSuccessful = isTruthy(evaluate(ruleLogic, data))
-
-		return ModeValidity(mode, isSuccessful)
+		val resultFromModeRule = evaluate(ruleLogic, data)
+		val state = getValidityState(resultFromModeRule)
+		return ModeValidity(mode, state)
 	}
 
 	private fun getCertlogicData(
@@ -65,6 +62,31 @@ internal class ModeRulesVerifier {
 			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val externalInfo = CertLogicExternalInfo(valueSets, validationClock, validationClockAtStartOfDay)
 		return CertLogicData(payload, externalInfo)
+	}
+
+	private fun getValidityState(resultFromModeRule: JsonNode): ModeValidityState {
+		if (resultFromModeRule is TextNode){
+			val modeValidityState = resultFromModeRule.textValue()
+			return when {
+				ModeValidityState.SUCCESS.name.equals(modeValidityState, true) -> {
+					ModeValidityState.SUCCESS
+				}
+				ModeValidityState.INVALID.name.equals(modeValidityState, true) -> {
+					ModeValidityState.INVALID
+				}
+				ModeValidityState.IS_LIGHT.name.equals(modeValidityState, true) -> {
+					ModeValidityState.IS_LIGHT
+				}
+				ModeValidityState.UNKNOWN_MODE.name.equals(modeValidityState, true) -> {
+					ModeValidityState.UNKNOWN_MODE
+				}
+				else -> {
+					ModeValidityState.UNKNOWN
+				}
+			}
+		}
+		return ModeValidityState.UNKNOWN
+
 	}
 
 }
