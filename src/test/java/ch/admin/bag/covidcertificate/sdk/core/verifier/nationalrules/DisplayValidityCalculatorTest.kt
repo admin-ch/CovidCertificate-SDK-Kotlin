@@ -322,7 +322,7 @@ class DisplayValidityCalculatorTest {
 			sampleCollectionTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
 		assertEquals(expectedValidFrom, validityRange?.validFrom)
 
-		val expectedValidUntil = sampleCollectionTime.plusHours(48).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+		val expectedValidUntil = sampleCollectionTime.plusHours(24).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 			.truncatedTo(ChronoUnit.MILLIS)
 		assertEquals(expectedValidUntil, validityRange?.validUntil)
 	}

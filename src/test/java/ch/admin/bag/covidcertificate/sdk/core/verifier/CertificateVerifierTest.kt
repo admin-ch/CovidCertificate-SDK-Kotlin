@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2021 Ubique Innovation AG <https://www.ubique.ch>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 package ch.admin.bag.covidcertificate.sdk.core.verifier
 
 import ch.admin.bag.covidcertificate.sdk.core.HC1_A
@@ -164,7 +174,7 @@ class CertificateVerifierTest {
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			val successState = verificationState as VerificationState.SUCCESS
-			val walletSuccessState = successState.successState as WalletSuccessState
+			val walletSuccessState = successState.successState as SuccessState.WalletSuccessState
 			certificateHolder.issuedAt?.let {
 				val expectedValidFrom = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
 				assertEquals(expectedValidFrom, walletSuccessState.validityRange?.validFrom)
