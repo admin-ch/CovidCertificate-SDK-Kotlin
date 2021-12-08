@@ -10,12 +10,14 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.state
 
+import java.io.Serializable
+
 sealed class CheckModeRulesState {
 	data class SUCCESS(val modeValidities: List<ModeValidity>) : CheckModeRulesState()
 	data class ERROR(val error: StateError) : CheckModeRulesState()
 }
 
-data class ModeValidity(val mode: String, val modeValidityState: ModeValidityState)
+data class ModeValidity(val mode: String, val modeValidityState: ModeValidityState): Serializable
 
 enum class ModeValidityState {
 	SUCCESS, IS_LIGHT, INVALID, UNKNOWN_MODE, UNKNOWN
