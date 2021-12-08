@@ -66,7 +66,7 @@ class ModeRulesVerifierTest {
 
 			verificationState as VerificationState.SUCCESS
 			val walletSuccessState = verificationState.successState as SuccessState.WalletSuccessState
-			assertTrue(walletSuccessState.modeValidity.first().isModeValid == ModeValidityState.IS_LIGHT)
+			assertTrue(walletSuccessState.modeValidity.first().modeValidityState == ModeValidityState.IS_LIGHT)
 		}
 	}
 
@@ -112,9 +112,9 @@ class ModeRulesVerifierTest {
 		val modeValidityPcr = modeRulesVerifier.verify(validPcr, ruleSet, headers, mode, utcClock)
 		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostiv, ruleSet, headers, mode, utcClock)
 
-		assertFalse(modeValidityRat.isModeValid == ModeValidityState.SUCCESS)
-		assertFalse(modeValidityPcr.isModeValid == ModeValidityState.SUCCESS)
-		assertFalse(modeValiditySeroPositiv.isModeValid == ModeValidityState.SUCCESS)
+		assertFalse(modeValidityRat.modeValidityState == ModeValidityState.SUCCESS)
+		assertFalse(modeValidityPcr.modeValidityState == ModeValidityState.SUCCESS)
+		assertFalse(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS)
 	}
 
 
@@ -157,9 +157,9 @@ class ModeRulesVerifierTest {
 		val modeValidityRat = modeRulesVerifier.verify(validRat, ruleSet, headers, mode, utcClock)
 		val modeValidityPcr = modeRulesVerifier.verify(validPcr, ruleSet, headers, mode, utcClock)
 		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostiv, ruleSet, headers, mode, utcClock)
-		assertTrue(modeValidityRat.isModeValid == ModeValidityState.SUCCESS)
-		assertTrue(modeValidityPcr.isModeValid == ModeValidityState.SUCCESS)
-		assertTrue(modeValiditySeroPositiv.isModeValid == ModeValidityState.SUCCESS)
+		assertTrue(modeValidityRat.modeValidityState == ModeValidityState.SUCCESS)
+		assertTrue(modeValidityPcr.modeValidityState == ModeValidityState.SUCCESS)
+		assertTrue(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS)
 	}
 
 	private fun decodeCertificate(qrCodeData: String): CertificateHolder {
