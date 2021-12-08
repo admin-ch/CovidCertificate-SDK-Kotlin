@@ -24,5 +24,6 @@ enum class NationalRulesError(val message: String, val errorCode: String) {
 	TOO_MANY_VACCINE_ENTRIES("Certificate contains more than one vaccine entries", ErrorCodes.TOO_MANY_VACCINE_ENTRIES),
 	TOO_MANY_TEST_ENTRIES("Certificate contains more than one test entries", ErrorCodes.TOO_MANY_TEST_ENTRIES),
 	TOO_MANY_RECOVERY_ENTRIES("Certificate contains more than one recovery entries", ErrorCodes.TOO_MANY_RECOVERY_ENTRIES),
-	UNKNOWN_RULE_FAILED("An unknown rule failed to verify", ErrorCodes.UNKNOWN_RULE_FAILED)
+	UNKNOWN_RULE_FAILED("An unknown rule failed to verify", ErrorCodes.UNKNOWN_RULE_FAILED),
+	CHECK_MODE_NOT_SUPPORTED("The provided check mode is not supported", ErrorCodes.TOO_MANY_RECOVERY_ENTRIES),
 }

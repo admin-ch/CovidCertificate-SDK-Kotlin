@@ -161,7 +161,9 @@ class DisplayValidityCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -177,6 +179,7 @@ class DisplayValidityCalculatorTest {
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
+
 	@Test
 	fun testCORONAVAC_TouristenZertifikateValidityRange() {
 		val iat = Instant.parse("2021-06-05T12:00:00Z")
@@ -199,7 +202,9 @@ class DisplayValidityCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -238,7 +243,9 @@ class DisplayValidityCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -272,7 +279,7 @@ class DisplayValidityCalculatorTest {
 			vaccine.prophylaxis,
 			vaccinationDate,
 		)
-	//test without iat and exp
+		//test without iat and exp
 		val data = getJsonNodeData(
 			vaccination,
 			null,
@@ -315,7 +322,7 @@ class DisplayValidityCalculatorTest {
 			sampleCollectionTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
 		assertEquals(expectedValidFrom, validityRange?.validFrom)
 
-		val expectedValidUntil = sampleCollectionTime.plusHours(48).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+		val expectedValidUntil = sampleCollectionTime.plusHours(24).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 			.truncatedTo(ChronoUnit.MILLIS)
 		assertEquals(expectedValidUntil, validityRange?.validUntil)
 	}
@@ -361,7 +368,11 @@ class DisplayValidityCalculatorTest {
 		)
 		val data = getJsonNodeData(recovery, null, utcClock)
 		val validityRange =
-			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.RECOVERY)
+			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
+				nationalRuleSet.displayRules,
+				data,
+				CertType.RECOVERY
+			)
 		assertNotNull(validityRange)
 		assertEquals(validFrom, validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil, validityRange?.validUntil?.toLocalDate())
@@ -375,7 +386,6 @@ class DisplayValidityCalculatorTest {
 		val ruleSetData = nationalRulesVerifier.getCertlogicData(vaccination, nationalRuleSet.valueSets, headers, clock)
 		return jacksonMapper.valueToTree<JsonNode>(ruleSetData)
 	}
-
 
 
 	@Test
@@ -400,7 +410,9 @@ class DisplayValidityCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -434,7 +446,9 @@ class DisplayValidityCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)

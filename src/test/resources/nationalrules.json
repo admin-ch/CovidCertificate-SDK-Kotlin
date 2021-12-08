@@ -1,26 +1,16 @@
 {
-	"validDuration": 172800000,
 	"rules": [
 		{
-			"affectedFields": [
-				"r.0",
-				"r.0.tg",
-				"t.0",
-				"t.0.tg",
-				"v.0",
-				"v.0.tg"
-			],
-			"certificateType": "General",
 			"country": "CH",
-			"description": [
-				{
-					"desc": "The targeted disease agent must be COVID-19 of the value set list.",
-					"lang": "en"
-				}
-			],
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "GR-CH-0001",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "General",
 			"logic": {
 				"and": [
 					{
@@ -79,30 +69,32 @@
 					}
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
+				"v.0.tg",
 				"r.0",
-				"r.1",
+				"t.0",
 				"v.0",
-				"t.0"
+				"r.0.tg",
+				"t.0.tg"
 			],
-			"certificateType": "Recovery",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "At most one r-event.",
+					"desc": "The targeted disease agent must be COVID-19 of the value set list.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "RR-CH-0000",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Recovery",
 			"logic": {
 				"if": [
 					{
@@ -142,28 +134,30 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
+				"r.1",
 				"r.0",
-				"r.0.fr"
+				"t.0",
+				"v.0"
 			],
-			"certificateType": "Recovery",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "Date of first positive test must exist",
+					"desc": "At most one r-event.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "RR-CH-0001",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Recovery",
 			"logic": {
 				"if": [
 					{
@@ -183,28 +177,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"r.0",
-				"r.0.fr"
+				"r.0.fr",
+				"r.0"
 			],
-			"certificateType": "Recovery",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "The validation date must be after the date of first positive test plus 10 days",
+					"desc": "Date of first positive test must exist",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "RR-CH-0002",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Recovery",
 			"logic": {
 				"if": [
 					{
@@ -235,28 +229,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"r.0",
-				"r.0.fr"
+				"r.0.fr",
+				"r.0"
 			],
-			"certificateType": "Recovery",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "The validation date must be before the date of first positive test plus 365 days",
+					"desc": "The validation date must be after the date of first positive test plus 10 day",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "RR-CH-0003",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Recovery",
 			"logic": {
 				"if": [
 					{
@@ -287,30 +281,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"t.0",
-				"t.1",
-				"r.0",
-				"v.0"
+				"r.0.fr",
+				"r.0"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "At most one t-event.",
+					"desc": "The validation date must be before the date of first positive test plus 365 days",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0000",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -350,29 +342,30 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
+				"r.0",
+				"t.1",
 				"t.0",
-				"t.0.tr",
-				"t.0.tt"
+				"v.0"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "For rapid or PCR test, the result must be negative (\"not detected\").",
+					"desc": "At most one t-event.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0001",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -404,28 +397,29 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
+				"t.0.tr",
 				"t.0",
 				"t.0.tt"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "The test type must be one of the value set list (RAT OR NAA or serum antibody).",
+					"desc": "For rapid or PCR test, the result must be negative (\\\"not detected\\\").",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0002",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -446,28 +440,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
 				"t.0",
-				"t.0.sc"
+				"t.0.tt"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "Date of sample collection must exist",
+					"desc": "The test type must be one of the value set list (RAT OR NAA or serum antibody).",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0004",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -487,28 +481,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
 				"t.0",
 				"t.0.sc"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "The date of sample collection must be before the validation date",
+					"desc": "Date of sample collection must exist",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0005",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -539,28 +533,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"t.0.tt",
+				"t.0",
 				"t.0.sc"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the test type is \"RAT\" then the validation date must be before the date of sample collection plus 48 hours",
+					"desc": "The date of sample collection must be before the validation date",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0006",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -587,7 +581,7 @@
 									{
 										"var": "payload.t.0.sc"
 									},
-									48,
+									24,
 									"hour"
 								]
 							}
@@ -596,28 +590,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
 				"t.0.tt",
 				"t.0.sc"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the test type is \"PCR\" then the validation date must be before the date of sample collection plus 72 hours",
+					"desc": "If the test type is \\\"RAT\\\" then the validation date must be before the date of sample collection plus 24 hours",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0007",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -653,29 +647,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"t.0",
-				"t.0.tr",
-				"t.0.tt"
+				"t.0.tt",
+				"t.0.sc"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "For serum antibody tests, the result must be positive.",
+					"desc": "If the test type is \\\"PCR\\\" then the validation date must be before the date of sample collection plus 72 hours",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0008",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -706,28 +699,29 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"t.0.tt",
-				"t.0.sc"
+				"t.0.tr",
+				"t.0",
+				"t.0.tt"
 			],
-			"certificateType": "Test",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the test is a serum antibody test, then the validation date must be before the date of sample collection plus 90 days",
+					"desc": "For serum antibody tests, the result must be positive.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "TR-CH-0009",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Test",
 			"logic": {
 				"if": [
 					{
@@ -763,30 +757,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"v.0",
-				"v.1",
-				"r.0",
-				"t.0"
+				"t.0.tt",
+				"t.0.sc"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "At most one v-event.",
+					"desc": "If the test is a serum antibody test, then the validation date must be before the date of sample collection plus 90 days",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0000",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -826,29 +818,30 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"v.0",
-				"v.0.dn",
-				"v.0.sd"
+				"r.0",
+				"t.0",
+				"v.1",
+				"v.0"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "Vaccination doses must be equal or greater than expected doses.",
+					"desc": "At most one v-event.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0001",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -867,28 +860,29 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
 				"v.0",
-				"v.0.mp"
+				"v.0.dn",
+				"v.0.sd"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "Only vaccines in the allowed valueset that have been approved by the EMA or are otherwise accepted in Switzerland are allowed.",
+					"desc": "Vaccination doses must be equal or greater than expected doses.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0002",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -908,6 +902,8 @@
 								"BBIBP-CorV",
 								"Covishield",
 								"Covaxin",
+								"COVI-R",
+								"Covid-19-recombinant",
 								"BBIBP-CorV_T",
 								"CoronaVac_T",
 								"Covaxin_T"
@@ -917,28 +913,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"v.0",
-				"v.0.dt"
+				"v.0.mp",
+				"v.0"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "Date of vaccination must exist",
+					"desc": "Only vaccines in the allowed valueset that have been approved by the EMA or are otherwise accepted in Switzerland are allowed.",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0003",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -958,29 +954,28 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
 				"v.0",
-				"v.0.mp",
 				"v.0.dt"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the vaccine requires two doses, the vaccination date must be before today",
+					"desc": "Date of vaccination must exist",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0004",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -1003,7 +998,9 @@
 										"Covaxin",
 										"BBIBP-CorV_T",
 										"CoronaVac_T",
-										"Covaxin_T"
+										"Covaxin_T",
+										"COVI-R",
+										"Covid-19-recombinant"
 									]
 								]
 							}
@@ -1034,30 +1031,29 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"v.0",
 				"v.0.mp",
-				"v.0.dn",
+				"v.0",
 				"v.0.dt"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the vaccine requires one dose, and only one dose was administered, it becomes valid after 21 days",
+					"desc": "If the vaccine requires two doses, the vaccination date must be before today",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0005",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -1115,29 +1111,30 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
+				"v.0.mp",
 				"v.0",
-				"v.0.dt",
-				"v.0.mp"
+				"v.0.dn",
+				"v.0.dt"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "For 2/2 doses, the current date and time must be before the vaccination date plus 365 days for 2-dose vaccines",
+					"desc": "If the vaccine requires one dose, and only one dose was administered, it becomes valid after 21 days",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0006",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -1160,7 +1157,9 @@
 										"Covaxin",
 										"BBIBP-CorV_T",
 										"CoronaVac_T",
-										"Covaxin_T"
+										"Covaxin_T",
+										"COVI-R",
+										"Covid-19-recombinant"
 									]
 								]
 							}
@@ -1191,30 +1190,29 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"v.0",
 				"v.0.mp",
-				"v.0.dn",
+				"v.0",
 				"v.0.dt"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the vaccine requires only one dose but more than one dose was administered, it is valid from today for 365 days",
+					"desc": "For 2/2 doses, the current date and time must be before the vaccination date plus 365 days for 2-dose vaccines",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0007",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -1298,30 +1296,30 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
-		},
-		{
 			"affectedFields": [
-				"v.0",
 				"v.0.mp",
+				"v.0",
 				"v.0.dn",
 				"v.0.dt"
 			],
-			"certificateType": "Vaccination",
-			"country": "CH",
 			"description": [
 				{
-					"desc": "If the vaccine requires one dose, and only one dose was administered, it is valid until 365+21=386 days",
+					"desc": "If the vaccine requires only one dose but more than one dose was administered, it is valid from today for 365 days",
 					"lang": "en"
 				}
-			],
+			]
+		},
+		{
+			"country": "CH",
 			"engine": "CertLogic",
 			"engineVersion": "0.7.5",
+			"schemaVersion": "1.0.0",
+			"type": "Acceptance",
+			"validTo": "2031-01-01T00:00:00Z",
 			"identifier": "VR-CH-0008",
+			"version": "1.0.6",
+			"validFrom": "2021-12-06T00:00:00Z",
+			"certificateType": "Vaccination",
 			"logic": {
 				"if": [
 					{
@@ -1379,71 +1377,76 @@
 					true
 				]
 			},
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validFrom": "2021-11-18T12:00:00Z",
-			"validTo": "2031-01-01T00:00:00Z",
-			"version": "1.0.4"
+			"affectedFields": [
+				"v.0.mp",
+				"v.0",
+				"v.0.dn",
+				"v.0.dt"
+			],
+			"description": [
+				{
+					"desc": "If the vaccine requires one dose, and only one dose was administered, it is valid until 365+21=386 days",
+					"lang": "en"
+				}
+			]
 		}
 	],
-	"displayRules": [
-		{
-			"id": "is-only-valid-in-ch",
-			"logic": {
-				"!": [
-					{
-						"and": [
-							{
-								"!": [
-									{
-										"if": [
-											{
-												"var": "payload.t.0"
-											},
-											{
-												"in": [
-													{
-														"var": "payload.t.0.tt"
-													},
-													[
-														"94504-8"
-													]
-												]
-											},
-											false
-										]
-									}
-								]
-							},
-							{
-								"!": [
-									{
-										"if": [
-											{
-												"var": "payload.v.0"
-											},
-											{
-												"in": [
-													{
-														"var": "payload.v.0.mp"
-													},
-													[
-														"BBIBP-CorV_T",
-														"CoronaVac_T",
-														"Covaxin_T"
-													]
-												]
-											},
-											false
-										]
-									}
-								]
-							}
-						]
-					}
-				]
+	"modeRules": {
+		"activeModes": [
+			{
+				"id": "THREE_G",
+				"displayName": "3G"
+			},
+			{
+				"id": "TWO_G",
+				"displayName": "2G"
 			}
-		},
+		],
+		"logic": {
+			"if": [
+				{
+					"===": [
+						{
+							"var": "payload.h.mode"
+						},
+						"THREE_G"
+					]
+				},
+				"SUCCESS",
+				{
+					"if": [
+						{
+							"===": [
+								{
+									"var": "payload.h.mode"
+								},
+								"TWO_G"
+							]
+						},
+						{
+							"if": [
+								{
+									"var": "payload.h.isLight"
+								},
+								"IS_LIGHT",
+								{
+									"if": [
+										{
+											"var": "payload.t.0"
+										},
+										"INVALID",
+										"SUCCESS"
+									]
+								}
+							]
+						},
+						"UNKNOWN_MODE"
+					]
+				}
+			]
+		}
+	},
+	"displayRules": [
 		{
 			"id": "display-from-date",
 			"logic": {
@@ -1586,13 +1589,11 @@
 							{
 								"and": [
 									{
-										"in": [
+										"===": [
 											{
 												"var": "payload.v.0.mp"
 											},
-											[
-												"EU/1/20/1525"
-											]
+											"EU/1/20/1525"
 										]
 									},
 									{
@@ -1617,26 +1618,77 @@
 							{
 								"if": [
 									{
-										"in": [
+										"and": [
 											{
-												"var": "payload.v.0.mp"
+												"===": [
+													{
+														"var": "payload.v.0.mp"
+													},
+													"EU/1/20/1525"
+												]
 											},
-											[
-												"BBIBP-CorV_T",
-												"CoronaVac_T",
-												"Covaxin_T"
-											]
+											{
+												"===": [
+													{
+														"var": "payload.v.0.dn"
+													},
+													2
+												]
+											}
+										]
+									},
+									{
+										"plusTime": [
+											{
+												"var": "payload.v.0.dt"
+											},
+											364,
+											"day"
 										]
 									},
 									{
 										"if": [
 											{
-												"var": "payload.h.exp"
+												"in": [
+													{
+														"var": "payload.v.0.mp"
+													},
+													[
+														"BBIBP-CorV_T",
+														"CoronaVac_T",
+														"Covaxin_T"
+													]
+												]
 											},
 											{
 												"if": [
 													{
-														"before": [
+														"var": "payload.h.exp"
+													},
+													{
+														"if": [
+															{
+																"before": [
+																	{
+																		"plusTime": [
+																			{
+																				"var": "payload.v.0.dt"
+																			},
+																			364,
+																			"day"
+																		]
+																	},
+																	{
+																		"plusTime": [
+																			{
+																				"var": "payload.h.exp"
+																			},
+																			0,
+																			"day"
+																		]
+																	}
+																]
+															},
 															{
 																"plusTime": [
 																	{
@@ -1658,29 +1710,29 @@
 														]
 													},
 													{
-														"plusTime": [
+														"if": [
 															{
-																"var": "payload.v.0.dt"
+																"before": [
+																	{
+																		"plusTime": [
+																			{
+																				"var": "payload.v.0.dt"
+																			},
+																			364,
+																			"day"
+																		]
+																	},
+																	{
+																		"plusTime": [
+																			{
+																				"var": "external.validationClock"
+																			},
+																			0,
+																			"day"
+																		]
+																	}
+																]
 															},
-															364,
-															"day"
-														]
-													},
-													{
-														"plusTime": [
-															{
-																"var": "payload.h.exp"
-															},
-															0,
-															"day"
-														]
-													}
-												]
-											},
-											{
-												"if": [
-													{
-														"before": [
 															{
 																"plusTime": [
 																	{
@@ -1695,8 +1747,44 @@
 																	{
 																		"var": "external.validationClock"
 																	},
-																	0,
+																	1,
 																	"day"
+																]
+															}
+														]
+													}
+												]
+											},
+											{
+												"if": [
+													{
+														"and": [
+															{
+																"in": [
+																	{
+																		"var": "payload.v.0.mp"
+																	},
+																	[
+																		"EU/1/20/1528",
+																		"EU/1/20/1507",
+																		"EU/1/21/1529",
+																		"CoronaVac",
+																		"BBIBP-CorV",
+																		"Covishield",
+																		"Covaxin",
+																		"COVI-R",
+																		"Covid-19-recombinant"
+																	]
+																]
+															},
+															{
+																">=": [
+																	{
+																		"var": "payload.v.0.dn"
+																	},
+																	{
+																		"var": "payload.v.0.sd"
+																	}
 																]
 															}
 														]
@@ -1711,25 +1799,10 @@
 														]
 													},
 													{
-														"plusTime": [
-															{
-																"var": "external.validationClock"
-															},
-															1,
-															"day"
-														]
+														"var": "undefined"
 													}
 												]
 											}
-										]
-									},
-									{
-										"plusTime": [
-											{
-												"var": "payload.v.0.dt"
-											},
-											364,
-											"day"
 										]
 									}
 								]
@@ -1775,7 +1848,7 @@
 													{
 														"var": "payload.t.0.sc"
 													},
-													48,
+													24,
 													"hour"
 												]
 											},
@@ -1830,8 +1903,66 @@
 					}
 				]
 			}
+		},
+		{
+			"id": "is-only-valid-in-ch",
+			"logic": {
+				"!": [
+					{
+						"and": [
+							{
+								"!": [
+									{
+										"if": [
+											{
+												"var": "payload.t.0"
+											},
+											{
+												"in": [
+													{
+														"var": "payload.t.0.tt"
+													},
+													[
+														"94504-8"
+													]
+												]
+											},
+											false
+										]
+									}
+								]
+							},
+							{
+								"!": [
+									{
+										"if": [
+											{
+												"var": "payload.v.0"
+											},
+											{
+												"in": [
+													{
+														"var": "payload.v.0.mp"
+													},
+													[
+														"BBIBP-CorV_T",
+														"CoronaVac_T",
+														"Covaxin_T"
+													]
+												]
+											},
+											false
+										]
+									}
+								]
+							}
+						]
+					}
+				]
+			}
 		}
 	],
+	"validDuration": 172800000,
 	"valueSets": {
 		"country-2-codes": [
 			"AD",
@@ -2104,7 +2235,9 @@
 			"Fiocruz",
 			"ORG-100007893",
 			"Chumakov-Federal-Scientific-Center",
-			"ORG-100023050"
+			"ORG-100023050",
+			"CIGB",
+			"Sinopharm-WIBP"
 		],
 		"disease-agent-targeted": [
 			"840539006"
@@ -2136,7 +2269,9 @@
 			"R-COVI",
 			"CoviVac",
 			"Sputnik-Light",
-			"Hayat-Vax"
+			"Hayat-Vax",
+			"Abdala",
+			"WIBP-CorV"
 		],
 		"covid-19-lab-test-type": [
 			"LP6464-4",

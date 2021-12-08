@@ -19,6 +19,7 @@ import ch.admin.bag.covidcertificate.sdk.core.models.state.*
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
 import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
+import ch.admin.bag.covidcertificate.sdk.core.verifier.moderules.ModeRulesVerifier
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesVerifier
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +27,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 class CertificateVerifier {
 
@@ -37,50 +39,67 @@ class CertificateVerifier {
 	 * @param trustList The current applicable trust list, containing active public keys for signing, revoked certificate identifiers and the national rule set
 	 * @return Outcome state of the verification
 	 */
-	suspend fun verify(certificateHolder: CertificateHolder, trustList: TrustList): VerificationState =
-		withContext(Dispatchers.Default) {
-			// Execute all three checks in parallel...
-			val checkSignatureStateDeferred = async { checkSignature(certificateHolder, trustList.signatures) }
-			val checkRevocationStateDeferred = async { checkRevocationStatus(certificateHolder, trustList.revokedCertificates) }
-			val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, trustList.ruleSet) }
+	suspend fun verify(
+		certificateHolder: CertificateHolder,
+		trustList: TrustList,
+		verificationModes: Set<String>,
+		verificationType: VerificationType = VerificationType.VERIFIER
+	): VerificationState = withContext(Dispatchers.Default) {
+		// Execute all three checks in parallel...
+		val checkSignatureStateDeferred = async { checkSignature(certificateHolder, trustList.signatures) }
+		val checkRevocationStateDeferred = async { checkRevocationStatus(certificateHolder, trustList.revokedCertificates) }
+		val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, trustList.ruleSet) }
+		val checkModeRulesStateDeferred = async { checkModeRules(certificateHolder, verificationModes, trustList.ruleSet) }
 
-			// ... but wait for all of them to finish
-			val checkSignatureState = checkSignatureStateDeferred.await()
-			val checkRevocationState = checkRevocationStateDeferred.await()
-			val checkNationalRulesState = checkNationalRulesStateDeferred.await()
 
-			if (checkSignatureState is CheckSignatureState.ERROR) {
-				VerificationState.ERROR(checkSignatureState.error, checkNationalRulesState.validityRange())
-			} else if (checkRevocationState is CheckRevocationState.ERROR) {
-				VerificationState.ERROR(checkRevocationState.error, checkNationalRulesState.validityRange())
-			} else if (checkNationalRulesState is CheckNationalRulesState.ERROR) {
-				VerificationState.ERROR(checkNationalRulesState.error, null)
-			} else if (
-				checkSignatureState == CheckSignatureState.SUCCESS
-				&& (checkRevocationState == CheckRevocationState.SUCCESS || checkRevocationState == CheckRevocationState.SKIPPED)
-				&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
-			) {
-				val isLightCertificate = certificateHolder.certType == CertType.LIGHT
-				VerificationState.SUCCESS(
-					isLightCertificate,
+		// ... but wait for all of them to finish
+		val checkSignatureState = checkSignatureStateDeferred.await()
+		val checkRevocationState = checkRevocationStateDeferred.await()
+		val checkNationalRulesState = checkNationalRulesStateDeferred.await()
+		val checkModeRulesState = checkModeRulesStateDeferred.await()
+
+		if (checkSignatureState is CheckSignatureState.ERROR) {
+			VerificationState.ERROR(checkSignatureState.error, checkNationalRulesState.validityRange())
+		} else if (checkRevocationState is CheckRevocationState.ERROR) {
+			VerificationState.ERROR(checkRevocationState.error, checkNationalRulesState.validityRange())
+		} else if (checkNationalRulesState is CheckNationalRulesState.ERROR) {
+			VerificationState.ERROR(checkNationalRulesState.error, null)
+		} else if (checkModeRulesState is CheckModeRulesState.ERROR) {
+			VerificationState.ERROR(checkModeRulesState.error, null)
+		} else if (
+			checkSignatureState == CheckSignatureState.SUCCESS
+			&& (checkRevocationState == CheckRevocationState.SUCCESS || checkRevocationState == CheckRevocationState.SKIPPED)
+			&& checkNationalRulesState is CheckNationalRulesState.SUCCESS
+			&& checkModeRulesState is CheckModeRulesState.SUCCESS
+		) {
+			val isLightCertificate = certificateHolder.certType == CertType.LIGHT
+			if (verificationType == VerificationType.WALLET) {
+				val walletSuccessState = SuccessState.WalletSuccessState(
 					checkNationalRulesState.isOnlyValidInCH,
-					checkNationalRulesState.validityRange
+					checkNationalRulesState.validityRange,
+					checkModeRulesState.modeValidities
 				)
-			} else if (
-				checkSignatureState is CheckSignatureState.INVALID
-				|| checkRevocationState is CheckRevocationState.INVALID
-				|| checkNationalRulesState is CheckNationalRulesState.INVALID
-				|| checkNationalRulesState is CheckNationalRulesState.NOT_YET_VALID
-				|| checkNationalRulesState is CheckNationalRulesState.NOT_VALID_ANYMORE
-			) {
-				VerificationState.INVALID(
-					checkSignatureState, checkRevocationState, checkNationalRulesState,
-					checkNationalRulesState.validityRange()
-				)
+				VerificationState.SUCCESS(walletSuccessState, isLightCertificate)
 			} else {
-				VerificationState.LOADING
+				val verificationSuccessState =
+					SuccessState.VerifierSuccessState(modeValidity = checkModeRulesState.modeValidities.first())
+				VerificationState.SUCCESS(verificationSuccessState, isLightCertificate)
 			}
+		} else if (
+			checkSignatureState is CheckSignatureState.INVALID
+			|| checkRevocationState is CheckRevocationState.INVALID
+			|| checkNationalRulesState is CheckNationalRulesState.INVALID
+			|| checkNationalRulesState is CheckNationalRulesState.NOT_YET_VALID
+			|| checkNationalRulesState is CheckNationalRulesState.NOT_VALID_ANYMORE
+		) {
+			VerificationState.INVALID(
+				checkSignatureState, checkRevocationState, checkNationalRulesState,
+				checkNationalRulesState.validityRange()
+			)
+		} else {
+			VerificationState.LOADING
 		}
+	}
 
 	/**
 	 * Checks whether a certificate has a valid signature.
@@ -161,7 +180,7 @@ class CertificateVerifier {
 	private suspend fun checkNationalRules(
 		certificateHolder: CertificateHolder,
 		ruleSet: RuleSet
-	) = withContext(Dispatchers.Default) {
+	): CheckNationalRulesState = withContext(Dispatchers.Default) {
 		try {
 			when {
 				certificateHolder.containsChLightCert() -> {
@@ -179,7 +198,7 @@ class CertificateVerifier {
 						certificateHolder.certificate as DccCert,
 						ruleSet,
 						certificateHolder.certType!!,
-						CertLogicHeaders(issuedAt, expiredAt)
+						CertLogicHeaders(issuedAt, expiredAt, false, null)
 					)
 				}
 				else -> {
@@ -190,5 +209,49 @@ class CertificateVerifier {
 			CheckNationalRulesState.ERROR(StateError(ErrorCodes.RULESET_UNKNOWN, e.message.toString(), certificateHolder))
 		}
 	}
+
+	/**
+	 * Checks whether a certificate conforms to a set of mode rules
+	 *
+	 * @param certificateHolder The object returned from the decoder
+	 * @param ruleSet The national rule set from the trust list
+	 * @return Outcome state of the mode rules check
+	 */
+	private suspend fun checkModeRules(
+		certificateHolder: CertificateHolder,
+		verificationIdentifier: Set<String>,
+		ruleSet: RuleSet
+	): CheckModeRulesState = withContext(Dispatchers.Default) {
+		val modeRulesVerifier = ModeRulesVerifier()
+		val modeValidities = mutableListOf<ModeValidity>()
+
+		val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+		val expiredAt = certificateHolder.expirationTime?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+		if (!certificateHolder.containsChLightCert() && !certificateHolder.containsDccCert()) {
+			return@withContext CheckModeRulesState.ERROR(
+				StateError(ErrorCodes.RULESET_UNKNOWN, certificateHolder = certificateHolder)
+			)
+
+		}
+		verificationIdentifier.forEach { verificationMode ->
+			try {
+				val isLight = certificateHolder.containsChLightCert()
+				val modeValidity = modeRulesVerifier.verify(
+					certificateHolder.certificate,
+					ruleSet,
+					CertLogicHeaders(issuedAt, expiredAt, isLight, verificationMode),
+					verificationMode
+				)
+				modeValidities.add(modeValidity)
+
+			} catch (e: Exception) {
+				return@withContext CheckModeRulesState.ERROR(
+					StateError(ErrorCodes.RULESET_UNKNOWN, e.message.toString(), certificateHolder)
+				)
+			}
+		}
+		return@withContext CheckModeRulesState.SUCCESS(modeValidities)
+	}
+
 
 }

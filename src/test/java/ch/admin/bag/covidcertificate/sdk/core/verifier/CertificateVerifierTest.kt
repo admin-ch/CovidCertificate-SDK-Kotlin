@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2021 Ubique Innovation AG <https://www.ubique.ch>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 package ch.admin.bag.covidcertificate.sdk.core.verifier
 
 import ch.admin.bag.covidcertificate.sdk.core.HC1_A
@@ -8,11 +18,7 @@ import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
 import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.getHardcodedSigningKeys
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
-import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.*
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
@@ -43,7 +49,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList()
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -64,7 +70,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("abn"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -88,7 +94,7 @@ class CertificateVerifierTest {
 		)
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -110,7 +116,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.SUCCESS)
 		}
 	}
@@ -121,7 +127,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList()
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -142,7 +148,7 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
 			assertTrue(verificationState is VerificationState.INVALID)
 
 			val invalidState = verificationState as VerificationState.INVALID
@@ -163,18 +169,20 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(listOf(getCertificateLightTestKey()))
 
 		runBlocking {
-			val verificationState = certificateVerifier.verify(certificateHolder, trustList)
+			val verificationState =
+				certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"), VerificationType.WALLET)
 			assertTrue(verificationState is VerificationState.SUCCESS)
 
 			val successState = verificationState as VerificationState.SUCCESS
+			val walletSuccessState = successState.successState as SuccessState.WalletSuccessState
 			certificateHolder.issuedAt?.let {
 				val expectedValidFrom = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
-				assertEquals(expectedValidFrom, successState.validityRange?.validFrom)
+				assertEquals(expectedValidFrom, walletSuccessState.validityRange?.validFrom)
 			}
 
 			certificateHolder.expirationTime?.let {
 				val expectedValidUntil = LocalDateTime.ofInstant(it, ZoneId.systemDefault())
-				assertEquals(expectedValidUntil, successState.validityRange?.validUntil)
+				assertEquals(expectedValidUntil, walletSuccessState.validityRange?.validUntil)
 			}
 		}
 	}
