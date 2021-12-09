@@ -902,7 +902,7 @@
 								"BBIBP-CorV",
 								"Covishield",
 								"Covaxin",
-								"COVI-R",
+								"R-COVI",
 								"Covid-19-recombinant",
 								"BBIBP-CorV_T",
 								"CoronaVac_T",
@@ -999,7 +999,7 @@
 										"BBIBP-CorV_T",
 										"CoronaVac_T",
 										"Covaxin_T",
-										"COVI-R",
+										"R-COVI",
 										"Covid-19-recombinant"
 									]
 								]
@@ -1158,7 +1158,7 @@
 										"BBIBP-CorV_T",
 										"CoronaVac_T",
 										"Covaxin_T",
-										"COVI-R",
+										"R-COVI",
 										"Covid-19-recombinant"
 									]
 								]
@@ -1434,7 +1434,23 @@
 										{
 											"var": "payload.t.0"
 										},
-										"INVALID",
+										{
+											"if": [
+												{
+													"in": [
+														{
+															"var": "payload.t.0.tt"
+														},
+														[
+															"LP6464-4",
+															"LP217198-3"
+														]
+													]
+												},
+												"INVALID",
+												"SUCCESS"
+											]
+										},
 										"SUCCESS"
 									]
 								}
@@ -1772,7 +1788,7 @@
 																		"BBIBP-CorV",
 																		"Covishield",
 																		"Covaxin",
-																		"COVI-R",
+																		"R-COVI",
 																		"Covid-19-recombinant"
 																	]
 																]
