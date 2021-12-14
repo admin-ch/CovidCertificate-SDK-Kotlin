@@ -65,7 +65,7 @@ internal class ModeRulesVerifier {
 	}
 
 	private fun getValidityState(resultFromModeRule: JsonNode): ModeValidityState {
-		if (resultFromModeRule is TextNode){
+		if (resultFromModeRule is TextNode) {
 			val modeValidityState = resultFromModeRule.textValue()
 			return when {
 				ModeValidityState.SUCCESS.name.equals(modeValidityState, true) -> {
@@ -76,6 +76,13 @@ internal class ModeRulesVerifier {
 				}
 				ModeValidityState.IS_LIGHT.name.equals(modeValidityState, true) -> {
 					ModeValidityState.IS_LIGHT
+				}
+				ModeValidityState.SUCCESS_2G.name.equals(modeValidityState, true) -> {
+					ModeValidityState.SUCCESS_2G
+				}
+
+				ModeValidityState.SUCCESS_2G_PLUS.name.equals(modeValidityState, true) -> {
+					ModeValidityState.SUCCESS_2G_PLUS
 				}
 				ModeValidityState.UNKNOWN_MODE.name.equals(modeValidityState, true) -> {
 					ModeValidityState.UNKNOWN_MODE

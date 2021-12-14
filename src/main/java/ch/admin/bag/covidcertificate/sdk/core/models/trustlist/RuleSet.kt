@@ -28,7 +28,9 @@ data class RuleSet(
 @JsonClass(generateAdapter = true)
 data class ModeRules(
 	val activeModes: List<ActiveModes>,
-	@RawJsonString val logic: String,
+	val verifierActiveModes: List<ActiveModes>,
+	@RawJsonString
+	val logic: String,
 )
 
 @JsonClass(generateAdapter = true)
