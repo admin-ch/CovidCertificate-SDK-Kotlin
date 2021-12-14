@@ -20,5 +20,5 @@ sealed class CheckModeRulesState {
 data class ModeValidity(val mode: String, val modeValidityState: ModeValidityState): Serializable
 
 enum class ModeValidityState {
-	SUCCESS, IS_LIGHT, INVALID, UNKNOWN_MODE, UNKNOWN
+	SUCCESS, IS_LIGHT, INVALID, UNKNOWN_MODE, UNKNOWN, SUCCESS_2G, SUCCESS_2G_PLUS
 }

@@ -18,7 +18,10 @@ import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonStringAdapter
 import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
 import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
-import ch.admin.bag.covidcertificate.sdk.core.models.state.*
+import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidityState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.SuccessState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
 import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
@@ -30,9 +33,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
+import java.time.*
 
 class ModeRulesVerifierTest {
 
@@ -75,13 +76,18 @@ class ModeRulesVerifierTest {
 
 		val mode = "TWO_G"
 
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+		val iatDate = LocalDate.now(clock).atStartOfDay()
+
 		val validRat = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
-			utcClock
+			clock
 		)
 		val validPcr = TestDataGenerator.generateTestCert(
 			TestType.PCR.code,
@@ -89,7 +95,7 @@ class ModeRulesVerifierTest {
 			"Nucleic acid amplification with probe detection",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
-			utcClock
+			clock
 		)
 		val validSeroPostiv = TestDataGenerator.generateTestCert(
 			TestType.SEROLOGICAL.code,
@@ -97,11 +103,9 @@ class ModeRulesVerifierTest {
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
-			utcClock
+			clock
 		)
 
-		val iat = Instant.parse("2021-06-05T12:00:00Z")
-		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
 		val headers = CertLogicHeaders(
 			iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
 			exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
@@ -114,20 +118,92 @@ class ModeRulesVerifierTest {
 
 		assertFalse(modeValidityRat.modeValidityState == ModeValidityState.SUCCESS)
 		assertFalse(modeValidityPcr.modeValidityState == ModeValidityState.SUCCESS)
-		assertFalse(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS)
+		assertTrue(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS)
+	}
+
+	@Test
+	fun testTwoGPlusValid() {
+
+		val mode = "TWO_G_PLUS"
+
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+		val iatDate = LocalDate.now(clock).atStartOfDay()
+		val vaccinationDate = iatDate.minusDays(180)
+
+		val validRatPlus = TestDataGenerator.generateTestCert(
+			TestType.RAT.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			clock
+		)
+		val validPcrPlus = TestDataGenerator.generateTestCert(
+			TestType.PCR.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"Nucleic acid amplification with probe detection",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			clock
+		)
+		val validSeroPostivBase = TestDataGenerator.generateTestCert(
+			TestType.SEROLOGICAL.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			clock
+		)
+
+		val validVaccine = TestDataGenerator.generateVaccineCert(
+			2,
+			2,
+			"ORG-100001699",
+			"EU/1/21/1529",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			"J07BX03",
+			vaccinationDate,
+		)
+
+
+		val headers = CertLogicHeaders(
+			iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+			exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+			false,
+			mode
+		)
+		val modeValidityRat = modeRulesVerifier.verify(validRatPlus, ruleSet, headers, mode, utcClock)
+		val modeValidityPcr = modeRulesVerifier.verify(validPcrPlus, ruleSet, headers, mode, utcClock)
+		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostivBase, ruleSet, headers, mode, utcClock)
+		val modeValidityBase = modeRulesVerifier.verify(validVaccine, ruleSet, headers, mode, utcClock)
+
+		assertTrue(modeValidityRat.modeValidityState == ModeValidityState.SUCCESS_2G_PLUS)
+		assertTrue(modeValidityPcr.modeValidityState == ModeValidityState.SUCCESS_2G_PLUS)
+		assertTrue(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS_2G)
+		assertTrue(modeValidityBase.modeValidityState == ModeValidityState.SUCCESS_2G)
 	}
 
 
 	@Test
 	fun testThreeGValidForTests() {
+
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+		val iatDate = LocalDate.now(clock).atStartOfDay()
+		val vaccinationDate = iatDate.minusDays(180)
+
 		val mode = "THREE_G"
+
 		val validRat = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
-			utcClock
+			clock
 		)
 		val validPcr = TestDataGenerator.generateTestCert(
 			TestType.PCR.code,
@@ -135,7 +211,7 @@ class ModeRulesVerifierTest {
 			"Nucleic acid amplification with probe detection",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
-			utcClock
+			clock
 		)
 		val validSeroPostiv = TestDataGenerator.generateTestCert(
 			TestType.SEROLOGICAL.code,
@@ -143,11 +219,10 @@ class ModeRulesVerifierTest {
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
-			utcClock
+			clock
 		)
 
-		val iat = Instant.parse("2021-06-05T12:00:00Z")
-		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
+
 		val headers = CertLogicHeaders(
 			iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
 			exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
@@ -160,6 +235,39 @@ class ModeRulesVerifierTest {
 		assertTrue(modeValidityRat.modeValidityState == ModeValidityState.SUCCESS)
 		assertTrue(modeValidityPcr.modeValidityState == ModeValidityState.SUCCESS)
 		assertTrue(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS)
+	}
+
+	@Test
+	fun testUnkownMode() {
+
+		val mode = "Neuer Mode"
+
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+		val iatDate = LocalDate.now(clock).atStartOfDay()
+		val vaccinationDate = iatDate.minusDays(180)
+
+
+		val validSeroPostivBase = TestDataGenerator.generateTestCert(
+			TestType.SEROLOGICAL.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			clock
+		)
+
+
+		val headers = CertLogicHeaders(
+			iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+			exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+			false,
+			mode
+		)
+		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostivBase, ruleSet, headers, mode, utcClock)
+
+		assertTrue(modeValiditySeroPositiv.modeValidityState == ModeValidityState.UNKNOWN_MODE)
 	}
 
 	private fun decodeCertificate(qrCodeData: String): CertificateHolder {
