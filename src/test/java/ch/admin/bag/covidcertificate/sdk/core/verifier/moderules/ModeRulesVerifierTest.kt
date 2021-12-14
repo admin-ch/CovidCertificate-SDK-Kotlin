@@ -80,7 +80,6 @@ class ModeRulesVerifierTest {
 		val exp = iat.plusSeconds(30 * 24 * 60 * 60L)
 		val clock = Clock.fixed(iat, ZoneId.systemDefault())
 		val iatDate = LocalDate.now(clock).atStartOfDay()
-		val vaccinationDate = iatDate.minusDays(180)
 
 		val validRat = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
