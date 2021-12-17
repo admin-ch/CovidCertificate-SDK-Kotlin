@@ -384,7 +384,7 @@ class DisplayValidityCalculatorTest {
 		clock: Clock = Clock.systemUTC()
 	): JsonNode {
 		val ruleSetData = nationalRulesVerifier.getCertlogicData(vaccination, nationalRuleSet.valueSets, headers, clock)
-		return jacksonMapper.valueToTree<JsonNode>(ruleSetData)
+		return jacksonMapper.valueToTree(ruleSetData)
 	}
 
 
@@ -423,6 +423,28 @@ class DisplayValidityCalculatorTest {
 		assertTrue(isValidInSwizterland)
 
 	}
+
+	@Test
+	fun testChAusnahmeTestOnlyValidInCh() {
+		val validChAusnahmeTest = TestDataGenerator.generateTestCert(
+			TestType.MEDICAL_EXEMPTION.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofHours(-10),
+			utcClock
+		)
+
+		val iat = Instant.parse("2021-06-05T12:00:00Z")
+		val clock = Clock.fixed(iat, ZoneId.systemDefault())
+
+		val data = getJsonNodeData(validChAusnahmeTest, null, clock)
+
+		val isValidInSwizterland = displayValidityCalculator.isOnlyValidInSwitzerland(nationalRuleSet.displayRules, data)
+
+		assertTrue(isValidInSwizterland)
+	}
+
 
 	@Test
 	fun testVaccineIsValidEveryWhere() {
