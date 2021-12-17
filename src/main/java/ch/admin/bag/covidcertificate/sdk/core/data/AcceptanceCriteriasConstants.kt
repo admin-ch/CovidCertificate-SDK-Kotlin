@@ -21,7 +21,6 @@ enum class TestType(val code: String) {
 	RAT("LP217198-3"),
 	PCR("LP6464-4"),
 	SEROLOGICAL("94504-8"),
-	//TODO: Replace with correct code
-	CH_AUSNAHME("CH_AUSNAHME")
+	MEDICAL_EXEMPTION("me")
 
 }

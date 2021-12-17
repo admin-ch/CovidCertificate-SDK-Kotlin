@@ -427,7 +427,7 @@ class DisplayValidityCalculatorTest {
 	@Test
 	fun testChAusnahmeTestOnlyValidInCh() {
 		val validChAusnahmeTest = TestDataGenerator.generateTestCert(
-			TestType.CH_AUSNAHME.code,
+			TestType.MEDICAL_EXEMPTION.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
@@ -440,7 +440,7 @@ class DisplayValidityCalculatorTest {
 
 		val data = getJsonNodeData(validChAusnahmeTest, null, clock)
 
-		val isValidInSwizterland = validityRangeCalculator.isOnlyValidInSwitzerland(nationalRuleSet.displayRules, data)
+		val isValidInSwizterland = displayValidityCalculator.isOnlyValidInSwitzerland(nationalRuleSet.displayRules, data)
 
 		assertTrue(isValidInSwizterland)
 	}

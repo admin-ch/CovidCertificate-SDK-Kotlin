@@ -74,6 +74,6 @@ fun TestEntry.isSerologicalTest(): Boolean {
 }
 
 fun TestEntry.isChAusnahmeTest(): Boolean {
-	return this.type == TestType.CH_AUSNAHME.code
+	return this.type == TestType.MEDICAL_EXEMPTION.code
 }
 
