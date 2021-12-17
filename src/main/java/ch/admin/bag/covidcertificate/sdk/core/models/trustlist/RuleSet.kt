@@ -20,8 +20,23 @@ import com.squareup.moshi.JsonClass
 data class RuleSet(
 	val displayRules: List<DisplayRule>,
 	val rules: List<Rule>,
+	val modeRules: ModeRules,
 	val valueSets: Map<String, Array<String>>,
 	val validDuration: Long,
+)
+
+@JsonClass(generateAdapter = true)
+data class ModeRules(
+	val activeModes: List<ActiveModes>,
+	val verifierActiveModes: List<ActiveModes>?,
+	@RawJsonString
+	val logic: String,
+)
+
+@JsonClass(generateAdapter = true)
+data class ActiveModes(
+	val id: String,
+	val displayName: String
 )
 
 @JsonClass(generateAdapter = true)
@@ -63,7 +78,7 @@ internal data class CertLogicPayload(
 	val r: List<RecoveryEntry>? = null,
 	val t: List<TestEntry>? = null,
 	val v: List<VaccinationEntry>? = null,
-	val h: CertLogicHeaders?= null
+	val h: CertLogicHeaders? = null
 )
 
 internal data class CertLogicExternalInfo(
@@ -74,5 +89,7 @@ internal data class CertLogicExternalInfo(
 
 internal data class CertLogicHeaders(
 	val iat: String?,
-	val exp: String?
+	val exp: String?,
+	val isIsLight: Boolean?, //Must be isIsLight because the Json Serializer strips one "is"
+	val mode: String?
 )

@@ -25,7 +25,7 @@ import java.util.*
 * This class is responsible to return a Validity Range to display in a view. The LocalDateTime is calculated for
 * the timezone of the device
 * */
-internal class DisplayValidityRangeCalculator {
+internal class DisplayValidityCalculator {
 
 	private val jacksonMapper = ObjectMapper().apply {
 		setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))

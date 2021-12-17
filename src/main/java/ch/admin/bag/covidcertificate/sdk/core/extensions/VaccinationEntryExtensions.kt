@@ -70,7 +70,3 @@ fun VaccinationEntry.getIssuer(): String {
 fun VaccinationEntry.getCertificateIdentifier(): String {
 	return this.certificateIdentifier
 }
-
-fun TestEntry.isTouristVaccine(): Boolean {
-	return this.type == TestType.SEROLOGICAL.code
-}

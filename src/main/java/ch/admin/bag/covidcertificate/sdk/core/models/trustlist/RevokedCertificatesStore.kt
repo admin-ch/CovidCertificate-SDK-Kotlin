@@ -8,10 +8,12 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
+
 package ch.admin.bag.covidcertificate.sdk.core.models.trustlist
 
-data class TrustList(
-	val signatures: Jwks,
-	val revokedCertificates: RevokedCertificatesStore,
-	val ruleSet: RuleSet
-)
+interface RevokedCertificatesStore {
+
+	fun containsCertificate(certificate: String): Boolean
+
+	fun addCertificates(certificates: List<String>)
+}

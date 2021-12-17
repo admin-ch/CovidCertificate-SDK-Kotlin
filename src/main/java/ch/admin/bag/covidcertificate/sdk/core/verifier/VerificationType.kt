@@ -8,10 +8,8 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-package ch.admin.bag.covidcertificate.sdk.core.models.trustlist
+package ch.admin.bag.covidcertificate.sdk.core.verifier
 
-data class TrustList(
-	val signatures: Jwks,
-	val revokedCertificates: RevokedCertificatesStore,
-	val ruleSet: RuleSet
-)
+enum class VerificationType {
+	VERIFIER, WALLET
+}

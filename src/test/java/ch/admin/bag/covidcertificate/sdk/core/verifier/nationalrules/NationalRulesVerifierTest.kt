@@ -100,7 +100,9 @@ class NationalRulesVerifierTest {
 			CertType.VACCINATION,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -123,7 +125,9 @@ class NationalRulesVerifierTest {
 			CertType.VACCINATION,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -145,7 +149,9 @@ class NationalRulesVerifierTest {
 			CertType.VACCINATION,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
@@ -502,7 +508,7 @@ class NationalRulesVerifierTest {
 			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			Duration.ofHours(-47),
+			Duration.ofHours(-23),
 			utcClock
 		)
 		val result = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, null)
@@ -513,7 +519,7 @@ class NationalRulesVerifierTest {
 			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			Duration.ofHours(-48),
+			Duration.ofHours(-24),
 			utcClock
 		)
 		val invalid = nationalRulesVerifier.verify(invalidPcr, nationalRuleSet, CertType.TEST, null, utcClock)

@@ -32,9 +32,9 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ValidityRangeCalculatorTest {
+class DisplayValidityCalculatorTest {
 
-	private lateinit var validityRangeCalculator: DisplayValidityRangeCalculator
+	private lateinit var displayValidityCalculator: DisplayValidityCalculator
 	private lateinit var nationalRulesVerifier: NationalRulesVerifier
 	private lateinit var nationalRuleSet: RuleSet
 	private lateinit var utcClock: Clock
@@ -48,7 +48,7 @@ class ValidityRangeCalculatorTest {
 		val nationalRulesString = this::class.java.classLoader.getResource("nationalrules.json")!!.readText()
 		nationalRuleSet = moshi.adapter(RuleSet::class.java).fromJson(nationalRulesString)!!
 
-		validityRangeCalculator = DisplayValidityRangeCalculator()
+		displayValidityCalculator = DisplayValidityCalculator()
 		nationalRulesVerifier = NationalRulesVerifier()
 		utcClock = Clock.systemUTC()
 	}
@@ -69,7 +69,7 @@ class ValidityRangeCalculatorTest {
 			vaccinationDate,
 		)
 		val data = getJsonNodeData(vaccination, null, clock)
-		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
 			nationalRuleSet.displayRules,
 			data,
 			CertType.VACCINATION
@@ -97,7 +97,7 @@ class ValidityRangeCalculatorTest {
 			vaccinationDate,
 		)
 		val data = getJsonNodeData(vaccination, null, clock)
-		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
 			nationalRuleSet.displayRules,
 			data,
 			CertType.VACCINATION
@@ -125,7 +125,7 @@ class ValidityRangeCalculatorTest {
 			vaccinationDate,
 		)
 		val data = getJsonNodeData(vaccination, null, clock)
-		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
 			nationalRuleSet.displayRules,
 			data,
 			CertType.VACCINATION
@@ -161,11 +161,13 @@ class ValidityRangeCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
-		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
 			nationalRuleSet.displayRules,
 			data,
 			CertType.VACCINATION
@@ -173,7 +175,7 @@ class ValidityRangeCalculatorTest {
 		assertNotNull(validityRange)
 
 		val validFrom = iatDate
-		val validUntil = iatDate.plusDays(29)
+		val validUntil = iatDate.plusDays(30)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -200,11 +202,13 @@ class ValidityRangeCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
-		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
 			nationalRuleSet.displayRules,
 			data,
 			CertType.VACCINATION
@@ -212,7 +216,7 @@ class ValidityRangeCalculatorTest {
 		assertNotNull(validityRange)
 
 		val validFrom = iatDate
-		val validUntil = iatDate.plusDays(29)
+		val validUntil = iatDate.plusDays(30)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -239,11 +243,13 @@ class ValidityRangeCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
-		val validityRange = validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
 			nationalRuleSet.displayRules,
 			data,
 			CertType.VACCINATION
@@ -251,9 +257,45 @@ class ValidityRangeCalculatorTest {
 		assertNotNull(validityRange)
 
 		val validFrom = iatDate
-		val validUntil = iatDate.plusDays(29)
+		val validUntil = iatDate.plusDays(30)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
+	}
+
+	@Test
+	fun testCOVAXINOldVersion_TouristenZertifikateValidityRange() {
+		//test without iat and exp
+		val today = Instant.parse("2021-06-05T12:00:00Z")
+		val clock = Clock.fixed(today, ZoneId.systemDefault())
+		val iatDate = LocalDate.now(clock).atStartOfDay()
+		val vaccinationDate = iatDate.minusDays(180)
+		val vaccine = Vaccine.TOURIST_COVAXIN_T
+		val vaccination = TestDataGenerator.generateVaccineCert(
+			2,
+			2,
+			vaccine.manufacturer,
+			vaccine.identifier,
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			vaccine.prophylaxis,
+			vaccinationDate,
+		)
+		//test without iat and exp
+		val data = getJsonNodeData(
+			vaccination,
+			null,
+			clock
+		)
+		val validityRange = displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
+			nationalRuleSet.displayRules,
+			data,
+			CertType.VACCINATION
+		)
+		assertNotNull(validityRange)
+
+		val validFrom = iatDate
+		val validUntil = iatDate.plusDays(1)
+		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
+		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 	}
 
 	@Test
@@ -271,7 +313,7 @@ class ValidityRangeCalculatorTest {
 
 		val data = getJsonNodeData(test, null, utcClock)
 		val validityRange =
-			validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.TEST)
+			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.TEST)
 		assertNotNull(validityRange)
 
 		// The expected values need to be truncated to milliseconds because the JsonDateTime class reformats the timestamp string
@@ -280,7 +322,7 @@ class ValidityRangeCalculatorTest {
 			sampleCollectionTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
 		assertEquals(expectedValidFrom, validityRange?.validFrom)
 
-		val expectedValidUntil = sampleCollectionTime.plusHours(48).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+		val expectedValidUntil = sampleCollectionTime.plusHours(24).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 			.truncatedTo(ChronoUnit.MILLIS)
 		assertEquals(expectedValidUntil, validityRange?.validUntil)
 	}
@@ -299,7 +341,7 @@ class ValidityRangeCalculatorTest {
 		)
 		val data = getJsonNodeData(test, null, utcClock)
 		val validityRange =
-			validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.TEST)
+			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.TEST)
 		assertNotNull(validityRange)
 
 		// The expected values need to be truncated to milliseconds because the JsonDateTime class reformats the timestamp string
@@ -326,7 +368,11 @@ class ValidityRangeCalculatorTest {
 		)
 		val data = getJsonNodeData(recovery, null, utcClock)
 		val validityRange =
-			validityRangeCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.RECOVERY)
+			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(
+				nationalRuleSet.displayRules,
+				data,
+				CertType.RECOVERY
+			)
 		assertNotNull(validityRange)
 		assertEquals(validFrom, validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil, validityRange?.validUntil?.toLocalDate())
@@ -364,11 +410,13 @@ class ValidityRangeCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
-		val isValidInSwizterland = validityRangeCalculator.isOnlyValidInSwitzerland(
+		val isValidInSwizterland = displayValidityCalculator.isOnlyValidInSwitzerland(
 			nationalRuleSet.displayRules,
 			data
 		)
@@ -420,11 +468,13 @@ class ValidityRangeCalculatorTest {
 			vaccination,
 			CertLogicHeaders(
 				iat.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
-				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				exp.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER),
+				false,
+				null
 			),
 			clock
 		)
-		val isValidInSwizterland = validityRangeCalculator.isOnlyValidInSwitzerland(
+		val isValidInSwizterland = displayValidityCalculator.isOnlyValidInSwitzerland(
 			nationalRuleSet.displayRules,
 			data
 		)
