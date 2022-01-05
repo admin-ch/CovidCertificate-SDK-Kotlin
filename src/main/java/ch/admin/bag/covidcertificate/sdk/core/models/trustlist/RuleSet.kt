@@ -27,7 +27,8 @@ data class RuleSet(
 
 @JsonClass(generateAdapter = true)
 data class ModeRules(
-	val activeModes: List<ActiveModes>,
+	val activeModes: List<ActiveModes>, // Legacy property when there was only one list for both apps
+	val walletActiveModes: List<ActiveModes>?,
 	val verifierActiveModes: List<ActiveModes>?,
 	@RawJsonString
 	val logic: String,
