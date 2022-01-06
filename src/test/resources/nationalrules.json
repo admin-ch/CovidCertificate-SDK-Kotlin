@@ -1,27 +1,27 @@
 {
-	"rules": [
+	"rules":[
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "GR-CH-0001",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "General",
-			"logic": {
-				"and": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"GR-CH-0001",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"General",
+			"logic":{
+				"and":[
 					{
-						"if": [
+						"if":[
 							{
-								"var": "payload.r.0"
+								"var":"payload.r.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.r.0.tg"
+										"var":"payload.r.0.tg"
 									},
 									[
 										"840539006"
@@ -32,14 +32,14 @@
 						]
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"var": "payload.t.0"
+								"var":"payload.t.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.t.0.tg"
+										"var":"payload.t.0.tg"
 									},
 									[
 										"840539006"
@@ -50,14 +50,14 @@
 						]
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"var": "payload.v.0"
+								"var":"payload.v.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.v.0.tg"
+										"var":"payload.v.0.tg"
 									},
 									[
 										"840539006"
@@ -69,7 +69,7 @@
 					}
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.tg",
 				"r.0",
 				"t.0",
@@ -77,51 +77,51 @@
 				"r.0.tg",
 				"t.0.tg"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "The targeted disease agent must be COVID-19 of the value set list.",
-					"lang": "en"
+					"desc":"The targeted disease agent must be COVID-19 of the value set list.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "RR-CH-0000",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Recovery",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"RR-CH-0000",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Recovery",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.r.0"
+						"var":"payload.r.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.r.1"
+												"var":"payload.r.1"
 											}
 										]
 									},
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.v.0"
+												"var":"payload.v.0"
 											}
 										]
 									},
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.t.0"
+												"var":"payload.t.0"
 											}
 										]
 									}
@@ -134,41 +134,41 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"r.1",
 				"r.0",
 				"t.0",
 				"v.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "At most one r-event.",
-					"lang": "en"
+					"desc":"At most one r-event.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "RR-CH-0001",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Recovery",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"RR-CH-0001",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Recovery",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.r.0"
+						"var":"payload.r.0"
 					},
 					{
-						"!": [
+						"!":[
 							{
-								"!": [
+								"!":[
 									{
-										"var": "payload.r.0.fr"
+										"var":"payload.r.0.fr"
 									}
 								]
 							}
@@ -177,48 +177,48 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"r.0.fr",
 				"r.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "Date of first positive test must exist",
-					"lang": "en"
+					"desc":"Date of first positive test must exist",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "RR-CH-0002",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Recovery",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"RR-CH-0002",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Recovery",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.r.0"
+						"var":"payload.r.0"
 					},
 					{
-						"after": [
+						"after":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.r.0.fr"
+										"var":"payload.r.0.fr"
 									},
 									10,
 									"day"
@@ -229,48 +229,48 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"r.0.fr",
 				"r.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "The validation date must be after the date of first positive test plus 10 day",
-					"lang": "en"
+					"desc":"The validation date must be after the date of first positive test plus 10 day",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "RR-CH-0003",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Recovery",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"RR-CH-0003",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Recovery",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.r.0"
+						"var":"payload.r.0"
 					},
 					{
-						"before": [
+						"before":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.r.0.fr"
+										"var":"payload.r.0.fr"
 									},
 									365,
 									"day"
@@ -281,55 +281,55 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"r.0.fr",
 				"r.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "The validation date must be before the date of first positive test plus 365 days",
-					"lang": "en"
+					"desc":"The validation date must be before the date of first positive test plus 365 days",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0000",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0000",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.t.0"
+						"var":"payload.t.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.t.1"
+												"var":"payload.t.1"
 											}
 										]
 									},
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.r.0"
+												"var":"payload.r.0"
 											}
 										]
 									},
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.v.0"
+												"var":"payload.v.0"
 											}
 										]
 									}
@@ -342,41 +342,41 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"r.0",
 				"t.1",
 				"t.0",
 				"v.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "At most one t-event.",
-					"lang": "en"
+					"desc":"At most one t-event.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0001",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0001",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"and": [
+						"and":[
 							{
-								"var": "payload.t.0"
+								"var":"payload.t.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.t.0.tt"
+										"var":"payload.t.0.tt"
 									},
 									[
 										"LP217198-3",
@@ -387,9 +387,9 @@
 						]
 					},
 					{
-						"===": [
+						"===":[
 							{
-								"var": "payload.t.0.tr"
+								"var":"payload.t.0.tr"
 							},
 							"260415000"
 						]
@@ -397,82 +397,83 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0.tr",
 				"t.0",
 				"t.0.tt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "For rapid or PCR test, the result must be negative (\\\"not detected\\\").",
-					"lang": "en"
+					"desc":"For rapid or PCR test, the result must be negative (\\\"not detected\\\").",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0002",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0002",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.t.0"
+						"var":"payload.t.0"
 					},
 					{
-						"in": [
+						"in":[
 							{
-								"var": "payload.t.0.tt"
+								"var":"payload.t.0.tt"
 							},
 							[
 								"LP217198-3",
 								"LP6464-4",
-								"94504-8"
+								"94504-8",
+								"medical-exemption"
 							]
 						]
 					},
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0",
 				"t.0.tt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "The test type must be one of the value set list (RAT OR NAA or serum antibody).",
-					"lang": "en"
+					"desc":"The test type must be one of the value set list (RAT OR NAA or serum antibody).",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0004",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0004",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.t.0"
+						"var":"payload.t.0"
 					},
 					{
-						"!": [
+						"!":[
 							{
-								"!": [
+								"!":[
 									{
-										"var": "payload.t.0.sc"
+										"var":"payload.t.0.sc"
 									}
 								]
 							}
@@ -481,48 +482,48 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0",
 				"t.0.sc"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "Date of sample collection must exist",
-					"lang": "en"
+					"desc":"Date of sample collection must exist",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0005",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0005",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.t.0"
+						"var":"payload.t.0"
 					},
 					{
-						"before": [
+						"before":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.t.0.sc"
+										"var":"payload.t.0.sc"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
@@ -533,53 +534,53 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0",
 				"t.0.sc"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "The date of sample collection must be before the validation date",
-					"lang": "en"
+					"desc":"The date of sample collection must be before the validation date",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0006",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0006",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"===": [
+						"===":[
 							{
-								"var": "payload.t.0.tt"
+								"var":"payload.t.0.tt"
 							},
 							"LP217198-3"
 						]
 					},
 					{
-						"before": [
+						"before":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.t.0.sc"
+										"var":"payload.t.0.sc"
 									},
 									24,
 									"hour"
@@ -590,53 +591,53 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0.tt",
 				"t.0.sc"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the test type is \\\"RAT\\\" then the validation date must be before the date of sample collection plus 24 hours",
-					"lang": "en"
+					"desc":"If the test type is \\\"RAT\\\" then the validation date must be before the date of sample collection plus 24 hours",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0007",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0007",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"===": [
+						"===":[
 							{
-								"var": "payload.t.0.tt"
+								"var":"payload.t.0.tt"
 							},
 							"LP6464-4"
 						]
 					},
 					{
-						"before": [
+						"before":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.t.0.sc"
+										"var":"payload.t.0.sc"
 									},
 									72,
 									"hour"
@@ -647,51 +648,52 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0.tt",
 				"t.0.sc"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the test type is \\\"PCR\\\" then the validation date must be before the date of sample collection plus 72 hours",
-					"lang": "en"
+					"desc":"If the test type is \\\"PCR\\\" then the validation date must be before the date of sample collection plus 72 hours",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0008",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0008",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"and": [
+						"and":[
 							{
-								"var": "payload.t.0"
+								"var":"payload.t.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.t.0.tt"
+										"var":"payload.t.0.tt"
 									},
 									[
-										"94504-8"
+										"94504-8",
+										"medical-exemption"
 									]
 								]
 							}
 						]
 					},
 					{
-						"===": [
+						"===":[
 							{
-								"var": "payload.t.0.tr"
+								"var":"payload.t.0.tr"
 							},
 							"260373001"
 						]
@@ -699,54 +701,54 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0.tr",
 				"t.0",
 				"t.0.tt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "For serum antibody tests, the result must be positive.",
-					"lang": "en"
+					"desc":"For serum antibody tests and exemption certificates, the result must be positive.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "TR-CH-0009",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Test",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0009",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"===": [
+						"===":[
 							{
-								"var": "payload.t.0.tt"
+								"var":"payload.t.0.tt"
 							},
 							"94504-8"
 						]
 					},
 					{
-						"before": [
+						"before":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.t.0.sc"
+										"var":"payload.t.0.sc"
 									},
 									90,
 									"day"
@@ -757,55 +759,112 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"t.0.tt",
 				"t.0.sc"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the test is a serum antibody test, then the validation date must be before the date of sample collection plus 90 days",
-					"lang": "en"
+					"desc":"If the test is a serum antibody test, then the validation date must be before the date of sample collection plus 90 days",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0000",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"TR-CH-0010",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Test",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"===":[
+							{
+								"var":"payload.t.0.tt"
+							},
+							"medical-exemption"
+						]
 					},
 					{
-						"if": [
+						"before":[
 							{
-								"and": [
+								"plusTime":[
 									{
-										"!": [
+										"var":"external.validationClock"
+									},
+									0,
+									"day"
+								]
+							},
+							{
+								"plusTime":[
+									{
+										"var":"payload.t.0.sc"
+									},
+									365,
+									"day"
+								]
+							}
+						]
+					},
+					true
+				]
+			},
+			"affectedFields":[
+				"t.0.tt",
+				"t.0.sc"
+			],
+			"description":[
+				{
+					"desc":"Exemption certificates are valid for 365 days",
+					"lang":"en"
+				}
+			]
+		},
+		{
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0000",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
+					{
+						"var":"payload.v.0"
+					},
+					{
+						"if":[
+							{
+								"and":[
+									{
+										"!":[
 											{
-												"var": "payload.v.1"
+												"var":"payload.v.1"
 											}
 										]
 									},
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.r.0"
+												"var":"payload.r.0"
 											}
 										]
 									},
 									{
-										"!": [
+										"!":[
 											{
-												"var": "payload.t.0"
+												"var":"payload.t.0"
 											}
 										]
 									}
@@ -818,80 +877,80 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"r.0",
 				"t.0",
 				"v.1",
 				"v.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "At most one v-event.",
-					"lang": "en"
+					"desc":"At most one v-event.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0001",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0001",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						">=": [
+						">=":[
 							{
-								"var": "payload.v.0.dn"
+								"var":"payload.v.0.dn"
 							},
 							{
-								"var": "payload.v.0.sd"
+								"var":"payload.v.0.sd"
 							}
 						]
 					},
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0",
 				"v.0.dn",
 				"v.0.sd"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "Vaccination doses must be equal or greater than expected doses.",
-					"lang": "en"
+					"desc":"Vaccination doses must be equal or greater than expected doses.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0002",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0002",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"in": [
+						"in":[
 							{
-								"var": "payload.v.0.mp"
+								"var":"payload.v.0.mp"
 							},
 							[
 								"EU/1/20/1528",
@@ -913,39 +972,39 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.mp",
 				"v.0"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "Only vaccines in the allowed valueset that have been approved by the EMA or are otherwise accepted in Switzerland are allowed.",
-					"lang": "en"
+					"desc":"Only vaccines in the allowed valueset that have been approved by the EMA or are otherwise accepted in Switzerland are allowed.",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0003",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0003",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"!": [
+						"!":[
 							{
-								"!": [
+								"!":[
 									{
-										"var": "payload.v.0.dt"
+										"var":"payload.v.0.dt"
 									}
 								]
 							}
@@ -954,39 +1013,39 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0",
 				"v.0.dt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "Date of vaccination must exist",
-					"lang": "en"
+					"desc":"Date of vaccination must exist",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0004",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0004",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"and": [
+						"and":[
 							{
-								"var": "payload.v.0"
+								"var":"payload.v.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.v.0.mp"
+										"var":"payload.v.0.mp"
 									},
 									[
 										"EU/1/20/1528",
@@ -1007,20 +1066,20 @@
 						]
 					},
 					{
-						"not-after": [
+						"not-after":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.v.0.dt"
+										"var":"payload.v.0.dt"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
@@ -1031,42 +1090,42 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.mp",
 				"v.0",
 				"v.0.dt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the vaccine requires two doses, the vaccination date must be before today",
-					"lang": "en"
+					"desc":"If the vaccine requires two doses, the vaccination date must be before today",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0005",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0005",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"in": [
+										"in":[
 											{
-												"var": "payload.v.0.mp"
+												"var":"payload.v.0.mp"
 											},
 											[
 												"EU/1/20/1525"
@@ -1074,9 +1133,9 @@
 										]
 									},
 									{
-										"===": [
+										"===":[
 											{
-												"var": "payload.v.0.dn"
+												"var":"payload.v.0.dn"
 											},
 											1
 										]
@@ -1084,20 +1143,20 @@
 								]
 							},
 							{
-								"not-before": [
+								"not-before":[
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "external.validationClock"
+												"var":"external.validationClock"
 											},
 											0,
 											"day"
 										]
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.v.0.dt"
+												"var":"payload.v.0.dt"
 											},
 											21,
 											"day"
@@ -1111,41 +1170,41 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.mp",
 				"v.0",
 				"v.0.dn",
 				"v.0.dt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the vaccine requires one dose, and only one dose was administered, it becomes valid after 21 days",
-					"lang": "en"
+					"desc":"If the vaccine requires one dose, and only one dose was administered, it becomes valid after 21 days",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0006",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0006",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"and": [
+						"and":[
 							{
-								"var": "payload.v.0"
+								"var":"payload.v.0"
 							},
 							{
-								"in": [
+								"in":[
 									{
-										"var": "payload.v.0.mp"
+										"var":"payload.v.0.mp"
 									},
 									[
 										"EU/1/20/1528",
@@ -1166,20 +1225,20 @@
 						]
 					},
 					{
-						"before": [
+						"before":[
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "external.validationClock"
+										"var":"external.validationClock"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.v.0.dt"
+										"var":"payload.v.0.dt"
 									},
 									365,
 									"day"
@@ -1190,42 +1249,42 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.mp",
 				"v.0",
 				"v.0.dt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "For 2/2 doses, the current date and time must be before the vaccination date plus 365 days for 2-dose vaccines",
-					"lang": "en"
+					"desc":"For 2/2 doses, the current date and time must be before the vaccination date plus 365 days for 2-dose vaccines",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0007",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0007",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"in": [
+										"in":[
 											{
-												"var": "payload.v.0.mp"
+												"var":"payload.v.0.mp"
 											},
 											[
 												"EU/1/20/1525"
@@ -1233,9 +1292,9 @@
 										]
 									},
 									{
-										">": [
+										">":[
 											{
-												"var": "payload.v.0.dn"
+												"var":"payload.v.0.dn"
 											},
 											1
 										]
@@ -1243,22 +1302,22 @@
 								]
 							},
 							{
-								"and": [
+								"and":[
 									{
-										"not-before": [
+										"not-before":[
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "external.validationClock"
+														"var":"external.validationClock"
 													},
 													0,
 													"day"
 												]
 											},
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "payload.v.0.dt"
+														"var":"payload.v.0.dt"
 													},
 													0,
 													"day"
@@ -1267,20 +1326,20 @@
 										]
 									},
 									{
-										"before": [
+										"before":[
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "external.validationClock"
+														"var":"external.validationClock"
 													},
 													0,
 													"day"
 												]
 											},
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "payload.v.0.dt"
+														"var":"payload.v.0.dt"
 													},
 													365,
 													"day"
@@ -1296,43 +1355,43 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.mp",
 				"v.0",
 				"v.0.dn",
 				"v.0.dt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the vaccine requires only one dose but more than one dose was administered, it is valid from today for 365 days",
-					"lang": "en"
+					"desc":"If the vaccine requires only one dose but more than one dose was administered, it is valid from today for 365 days",
+					"lang":"en"
 				}
 			]
 		},
 		{
-			"country": "CH",
-			"engine": "CertLogic",
-			"engineVersion": "0.7.5",
-			"schemaVersion": "1.0.0",
-			"type": "Acceptance",
-			"validTo": "2031-01-01T00:00:00Z",
-			"identifier": "VR-CH-0008",
-			"version": "1.0.7",
-			"validFrom": "2021-12-17T00:00:00Z",
-			"certificateType": "Vaccination",
-			"logic": {
-				"if": [
+			"country":"CH",
+			"engine":"CertLogic",
+			"engineVersion":"0.7.5",
+			"schemaVersion":"1.0.0",
+			"type":"Acceptance",
+			"validTo":"2031-01-01T00:00:00Z",
+			"identifier":"VR-CH-0008",
+			"version":"1.0.7",
+			"validFrom":"2021-12-17T00:00:00Z",
+			"certificateType":"Vaccination",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"in": [
+										"in":[
 											{
-												"var": "payload.v.0.mp"
+												"var":"payload.v.0.mp"
 											},
 											[
 												"EU/1/20/1525"
@@ -1340,9 +1399,9 @@
 										]
 									},
 									{
-										"===": [
+										"===":[
 											{
-												"var": "payload.v.0.dn"
+												"var":"payload.v.0.dn"
 											},
 											1
 										]
@@ -1350,20 +1409,20 @@
 								]
 							},
 							{
-								"before": [
+								"before":[
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "external.validationClock"
+												"var":"external.validationClock"
 											},
 											0,
 											"day"
 										]
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.v.0.dt"
+												"var":"payload.v.0.dt"
 											},
 											386,
 											"day"
@@ -1377,215 +1436,472 @@
 					true
 				]
 			},
-			"affectedFields": [
+			"affectedFields":[
 				"v.0.mp",
 				"v.0",
 				"v.0.dn",
 				"v.0.dt"
 			],
-			"description": [
+			"description":[
 				{
-					"desc": "If the vaccine requires one dose, and only one dose was administered, it is valid until 365+21=386 days",
-					"lang": "en"
+					"desc":"If the vaccine requires one dose, and only one dose was administered, it is valid until 365+21=386 days",
+					"lang":"en"
 				}
 			]
 		}
 	],
-	"modeRules": {
-		"activeModes": [
+	"modeRules":{
+		"activeModes":[
 			{
-				"id": "THREE_G",
-				"displayName": "3G"
+				"id":"THREE_G",
+				"displayName":"3G"
 			},
 			{
-				"id": "TWO_G",
-				"displayName": "2G"
+				"id":"TWO_G",
+				"displayName":"2G"
 			}
 		],
-		"verifierActiveModes": [
+		"walletActiveModes":[
 			{
-				"id": "THREE_G",
-				"displayName": "3G"
+				"id":"THREE_G",
+				"displayName":"3G"
 			},
 			{
-				"id": "TWO_G",
-				"displayName": "2G"
+				"id":"TWO_G",
+				"displayName":"2G"
 			},
 			{
-				"id": "TWO_G_PLUS",
-				"displayName": "2G+"
+				"id":"TWO_G_PLUS",
+				"displayName":"2G+"
 			}
 		],
-		"logic": {
-			"if": [
+		"verifierActiveModes":[
+			{
+				"id":"THREE_G",
+				"displayName":"3G"
+			},
+			{
+				"id":"TWO_G",
+				"displayName":"2G"
+			},
+			{
+				"id":"TWO_G_PLUS",
+				"displayName":"2G+"
+			},
+			{
+				"id":"TEST_CERT",
+				"displayName":"Testzertifikat"
+			}
+		],
+		"logic":{
+			"if":[
 				{
-					"===": [
+					"and":[
 						{
-							"var": "payload.h.mode"
+							"===":[
+								{
+									"var":"payload.h.mode"
+								},
+								"THREE_G"
+							]
 						},
-						"THREE_G"
+						{
+							"var":"payload.t.0"
+						},
+						{
+							"in":[
+								{
+									"var":"payload.t.0.tt"
+								},
+								[
+									"medical-exemption"
+								]
+							]
+						}
 					]
 				},
 				"SUCCESS",
 				{
-					"if": [
+					"if":[
 						{
-							"===": [
+							"===":[
 								{
-									"var": "payload.h.mode"
+									"var":"payload.h.mode"
 								},
-								"TWO_G"
+								"THREE_G"
 							]
 						},
+						"SUCCESS",
 						{
-							"if": [
+							"if":[
 								{
-									"var": "payload.h.isLight"
-								},
-								"IS_LIGHT",
-								{
-									"if": [
+									"and":[
 										{
-											"var": "payload.t.0"
-										},
-										{
-											"if": [
+											"===":[
 												{
-													"in": [
-														{
-															"var": "payload.t.0.tt"
-														},
-														[
-															"LP6464-4",
-															"LP217198-3"
-														]
-													]
+													"var":"payload.h.mode"
 												},
-												"INVALID",
-												"SUCCESS"
-											]
-										},
-										"SUCCESS"
-									]
-								}
-							]
-						},
-						{
-							"if": [
-								{
-									"and": [
-										{
-											"===": [
-												{
-													"var": "payload.h.mode"
-												},
-												"TWO_G_PLUS"
+												"TWO_G"
 											]
 										},
 										{
-											"var": "payload.h.isLight"
+											"var":"payload.t.0"
+										},
+										{
+											"in":[
+												{
+													"var":"payload.t.0.tt"
+												},
+												[
+													"medical-exemption"
+												]
+											]
 										}
 									]
 								},
-								"IS_LIGHT",
+								"SUCCESS",
 								{
-									"if": [
+									"if":[
 										{
-											"and": [
+											"===":[
 												{
-													"===": [
+													"var":"payload.h.mode"
+												},
+												"TWO_G"
+											]
+										},
+										{
+											"if":[
+												{
+													"var":"payload.h.isLight"
+												},
+												"IS_LIGHT",
+												{
+													"if":[
 														{
-															"var": "payload.h.mode"
+															"var":"payload.t.0"
 														},
-														"TWO_G_PLUS"
+														{
+															"if":[
+																{
+																	"in":[
+																		{
+																			"var":"payload.t.0.tt"
+																		},
+																		[
+																			"LP6464-4",
+																			"LP217198-3"
+																		]
+																	]
+																},
+																"INVALID",
+																"SUCCESS"
+															]
+														},
+														"SUCCESS"
+													]
+												}
+											]
+										},
+										{
+											"if":[
+												{
+													"and":[
+														{
+															"===":[
+																{
+																	"var":"payload.h.mode"
+																},
+																"TWO_G_PLUS"
+															]
+														},
+														{
+															"var":"payload.t.0"
+														},
+														{
+															"in":[
+																{
+																	"var":"payload.t.0.tt"
+																},
+																[
+																	"medical-exemption"
+																]
+															]
+														}
 													]
 												},
+												"SUCCESS",
 												{
-													"!": [
+													"if":[
 														{
-															"and": [
+															"and":[
 																{
-																	"!": [
+																	"===":[
 																		{
-																			"var": "payload.v.0"
+																			"var":"payload.h.mode"
+																		},
+																		"TWO_G_PLUS"
+																	]
+																},
+																{
+																	"var":"payload.h.isLight"
+																}
+															]
+														},
+														"IS_LIGHT",
+														{
+															"if":[
+																{
+																	"and":[
+																		{
+																			"===":[
+																				{
+																					"var":"payload.h.mode"
+																				},
+																				"TWO_G_PLUS"
+																			]
+																		},
+																		{
+																			"var":"payload.v.0"
 																		}
 																	]
 																},
 																{
-																	"!": [
+																	"if":[
 																		{
-																			"var": "payload.r.0"
+																			"before":[
+																				{
+																					"plusTime":[
+																						{
+																							"var":"external.validationClock"
+																						},
+																						0,
+																						"day"
+																					]
+																				},
+																				{
+																					"plusTime":[
+																						{
+																							"var":"payload.v.0.dt"
+																						},
+																						121,
+																						"day"
+																					]
+																				}
+																			]
+																		},
+																		"SUCCESS",
+																		"SUCCESS_2G"
+																	]
+																},
+																{
+																	"if":[
+																		{
+																			"and":[
+																				{
+																					"===":[
+																						{
+																							"var":"payload.h.mode"
+																						},
+																						"TWO_G_PLUS"
+																					]
+																				},
+																				{
+																					"var":"payload.r.0"
+																				}
+																			]
+																		},
+																		{
+																			"if":[
+																				{
+																					"before":[
+																						{
+																							"plusTime":[
+																								{
+																									"var":"external.validationClock"
+																								},
+																								0,
+																								"day"
+																							]
+																						},
+																						{
+																							"plusTime":[
+																								{
+																									"var":"payload.r.0.fr"
+																								},
+																								131,
+																								"day"
+																							]
+																						}
+																					]
+																				},
+																				"SUCCESS",
+																				"SUCCESS_2G"
+																			]
+																		},
+																		{
+																			"if":[
+																				{
+																					"and":[
+																						{
+																							"===":[
+																								{
+																									"var":"payload.h.mode"
+																								},
+																								"TWO_G_PLUS"
+																							]
+																						},
+																						{
+																							"var":"payload.t.0"
+																						}
+																					]
+																				},
+																				{
+																					"if":[
+																						{
+																							"in":[
+																								{
+																									"var":"payload.t.0.tt"
+																								},
+																								[
+																									"LP6464-4",
+																									"LP217198-3"
+																								]
+																							]
+																						},
+																						"SUCCESS_2G_PLUS",
+																						{
+																							"if":[
+																								{
+																									"in":[
+																										{
+																											"var":"payload.t.0.tt"
+																										},
+																										[
+																											"94504-8"
+																										]
+																									]
+																								},
+																								"SUCCESS_2G",
+																								"INVALID"
+																							]
+																						}
+																					]
+																				},
+																				{
+																					"if":[
+																						{
+																							"===":[
+																								{
+																									"var":"payload.h.mode"
+																								},
+																								"TWO_G_PLUS"
+																							]
+																						},
+																						"INVALID",
+																						{
+																							"if":[
+																								{
+																									"and":[
+																										{
+																											"===":[
+																												{
+																													"var":"payload.h.mode"
+																												},
+																												"TEST_CERT"
+																											]
+																										},
+																										{
+																											"var":"payload.t.0"
+																										},
+																										{
+																											"in":[
+																												{
+																													"var":"payload.t.0.tt"
+																												},
+																												[
+																													"medical-exemption"
+																												]
+																											]
+																										}
+																									]
+																								},
+																								"SUCCESS",
+																								{
+																									"if":[
+																										{
+																											"and":[
+																												{
+																													"===":[
+																														{
+																															"var":"payload.h.mode"
+																														},
+																														"TEST_CERT"
+																													]
+																												},
+																												{
+																													"var":"payload.h.isLight"
+																												}
+																											]
+																										},
+																										"IS_LIGHT",
+																										{
+																											"if":[
+																												{
+																													"and":[
+																														{
+																															"===":[
+																																{
+																																	"var":"payload.h.mode"
+																																},
+																																"TEST_CERT"
+																															]
+																														},
+																														{
+																															"var":"payload.t.0"
+																														},
+																														{
+																															"in":[
+																																{
+																																	"var":"payload.t.0.tt"
+																																},
+																																[
+																																	"LP6464-4",
+																																	"LP217198-3"
+																																]
+																															]
+																														}
+																													]
+																												},
+																												"SUCCESS",
+																												{
+																													"if":[
+																														{
+																															"===":[
+																																{
+																																	"var":"payload.h.mode"
+																																},
+																																"TEST_CERT"
+																															]
+																														},
+																														"INVALID",
+																														"UNKNOWN_MODE"
+																													]
+																												}
+																											]
+																										}
+																									]
+																								}
+																							]
+																						}
+																					]
+																				}
+																			]
 																		}
 																	]
 																}
 															]
 														}
-													]
-												}
-											]
-										},
-										"SUCCESS_2G",
-										{
-											"if": [
-												{
-													"and": [
-														{
-															"===": [
-																{
-																	"var": "payload.h.mode"
-																},
-																"TWO_G_PLUS"
-															]
-														},
-														{
-															"var": "payload.t.0"
-														}
-													]
-												},
-												{
-													"if": [
-														{
-															"in": [
-																{
-																	"var": "payload.t.0.tt"
-																},
-																[
-																	"LP6464-4",
-																	"LP217198-3"
-																]
-															]
-														},
-														"SUCCESS_2G_PLUS",
-														{
-															"if": [
-																{
-																	"in": [
-																		{
-																			"var": "payload.t.0.tt"
-																		},
-																		[
-																			"94504-8"
-																		]
-																	]
-																},
-																"SUCCESS_2G",
-																"INVALID"
-															]
-														}
-													]
-												},
-												{
-													"if": [
-														{
-															"===": [
-																{
-																	"var": "payload.h.mode"
-																},
-																"TWO_G_PLUS"
-															]
-														},
-														"INVALID",
-														"UNKNOWN_MODE"
 													]
 												}
 											]
@@ -1599,22 +1915,22 @@
 			]
 		}
 	},
-	"displayRules": [
+	"displayRules":[
 		{
-			"id": "display-from-date",
-			"logic": {
-				"if": [
+			"id":"display-from-date",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"in": [
+										"in":[
 											{
-												"var": "payload.v.0.mp"
+												"var":"payload.v.0.mp"
 											},
 											[
 												"EU/1/20/1525"
@@ -1622,9 +1938,9 @@
 										]
 									},
 									{
-										"===": [
+										"===":[
 											{
-												"var": "payload.v.0.dn"
+												"var":"payload.v.0.dn"
 											},
 											1
 										]
@@ -1632,20 +1948,20 @@
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.v.0.dt"
+										"var":"payload.v.0.dt"
 									},
 									21,
 									"day"
 								]
 							},
 							{
-								"if": [
+								"if":[
 									{
-										"in": [
+										"in":[
 											{
-												"var": "payload.v.0.mp"
+												"var":"payload.v.0.mp"
 											},
 											[
 												"BBIBP-CorV_T",
@@ -1655,23 +1971,23 @@
 										]
 									},
 									{
-										"if": [
+										"if":[
 											{
-												"var": "payload.h.iat"
+												"var":"payload.h.iat"
 											},
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "payload.h.iat"
+														"var":"payload.h.iat"
 													},
 													0,
 													"day"
 												]
 											},
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "external.validationClock"
+														"var":"external.validationClock"
 													},
 													0,
 													"day"
@@ -1680,9 +1996,9 @@
 										]
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.v.0.dt"
+												"var":"payload.v.0.dt"
 											},
 											0,
 											"day"
@@ -1693,35 +2009,35 @@
 						]
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"var": "payload.t.0"
+								"var":"payload.t.0"
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.t.0.sc"
+										"var":"payload.t.0.sc"
 									},
 									0,
 									"day"
 								]
 							},
 							{
-								"if": [
+								"if":[
 									{
-										"var": "payload.r.0"
+										"var":"payload.r.0"
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.r.0.fr"
+												"var":"payload.r.0.fr"
 											},
 											10,
 											"day"
 										]
 									},
 									{
-										"var": "undefined"
+										"var":"undefined"
 									}
 								]
 							}
@@ -1731,28 +2047,28 @@
 			}
 		},
 		{
-			"id": "display-until-date",
-			"logic": {
-				"if": [
+			"id":"display-until-date",
+			"logic":{
+				"if":[
 					{
-						"var": "payload.v.0"
+						"var":"payload.v.0"
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"and": [
+								"and":[
 									{
-										"===": [
+										"===":[
 											{
-												"var": "payload.v.0.mp"
+												"var":"payload.v.0.mp"
 											},
 											"EU/1/20/1525"
 										]
 									},
 									{
-										"===": [
+										"===":[
 											{
-												"var": "payload.v.0.dn"
+												"var":"payload.v.0.dn"
 											},
 											1
 										]
@@ -1760,30 +2076,30 @@
 								]
 							},
 							{
-								"plusTime": [
+								"plusTime":[
 									{
-										"var": "payload.v.0.dt"
+										"var":"payload.v.0.dt"
 									},
 									386,
 									"day"
 								]
 							},
 							{
-								"if": [
+								"if":[
 									{
-										"and": [
+										"and":[
 											{
-												"===": [
+												"===":[
 													{
-														"var": "payload.v.0.mp"
+														"var":"payload.v.0.mp"
 													},
 													"EU/1/20/1525"
 												]
 											},
 											{
-												"===": [
+												"===":[
 													{
-														"var": "payload.v.0.dn"
+														"var":"payload.v.0.dn"
 													},
 													2
 												]
@@ -1791,20 +2107,20 @@
 										]
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.v.0.dt"
+												"var":"payload.v.0.dt"
 											},
 											364,
 											"day"
 										]
 									},
 									{
-										"if": [
+										"if":[
 											{
-												"in": [
+												"in":[
 													{
-														"var": "payload.v.0.mp"
+														"var":"payload.v.0.mp"
 													},
 													[
 														"BBIBP-CorV_T",
@@ -1814,27 +2130,27 @@
 												]
 											},
 											{
-												"if": [
+												"if":[
 													{
-														"var": "payload.h.exp"
+														"var":"payload.h.exp"
 													},
 													{
-														"if": [
+														"if":[
 															{
-																"before": [
+																"before":[
 																	{
-																		"plusTime": [
+																		"plusTime":[
 																			{
-																				"var": "payload.v.0.dt"
+																				"var":"payload.v.0.dt"
 																			},
 																			364,
 																			"day"
 																		]
 																	},
 																	{
-																		"plusTime": [
+																		"plusTime":[
 																			{
-																				"var": "payload.h.exp"
+																				"var":"payload.h.exp"
 																			},
 																			0,
 																			"day"
@@ -1843,18 +2159,18 @@
 																]
 															},
 															{
-																"plusTime": [
+																"plusTime":[
 																	{
-																		"var": "payload.v.0.dt"
+																		"var":"payload.v.0.dt"
 																	},
 																	364,
 																	"day"
 																]
 															},
 															{
-																"plusTime": [
+																"plusTime":[
 																	{
-																		"var": "payload.h.exp"
+																		"var":"payload.h.exp"
 																	},
 																	0,
 																	"day"
@@ -1863,22 +2179,22 @@
 														]
 													},
 													{
-														"if": [
+														"if":[
 															{
-																"before": [
+																"before":[
 																	{
-																		"plusTime": [
+																		"plusTime":[
 																			{
-																				"var": "payload.v.0.dt"
+																				"var":"payload.v.0.dt"
 																			},
 																			364,
 																			"day"
 																		]
 																	},
 																	{
-																		"plusTime": [
+																		"plusTime":[
 																			{
-																				"var": "external.validationClock"
+																				"var":"external.validationClock"
 																			},
 																			0,
 																			"day"
@@ -1887,18 +2203,18 @@
 																]
 															},
 															{
-																"plusTime": [
+																"plusTime":[
 																	{
-																		"var": "payload.v.0.dt"
+																		"var":"payload.v.0.dt"
 																	},
 																	364,
 																	"day"
 																]
 															},
 															{
-																"plusTime": [
+																"plusTime":[
 																	{
-																		"var": "external.validationClock"
+																		"var":"external.validationClock"
 																	},
 																	1,
 																	"day"
@@ -1909,13 +2225,13 @@
 												]
 											},
 											{
-												"if": [
+												"if":[
 													{
-														"and": [
+														"and":[
 															{
-																"in": [
+																"in":[
 																	{
-																		"var": "payload.v.0.mp"
+																		"var":"payload.v.0.mp"
 																	},
 																	[
 																		"EU/1/20/1528",
@@ -1931,28 +2247,28 @@
 																]
 															},
 															{
-																">=": [
+																">=":[
 																	{
-																		"var": "payload.v.0.dn"
+																		"var":"payload.v.0.dn"
 																	},
 																	{
-																		"var": "payload.v.0.sd"
+																		"var":"payload.v.0.sd"
 																	}
 																]
 															}
 														]
 													},
 													{
-														"plusTime": [
+														"plusTime":[
 															{
-																"var": "payload.v.0.dt"
+																"var":"payload.v.0.dt"
 															},
 															364,
 															"day"
 														]
 													},
 													{
-														"var": "undefined"
+														"var":"undefined"
 													}
 												]
 											}
@@ -1963,69 +2279,90 @@
 						]
 					},
 					{
-						"if": [
+						"if":[
 							{
-								"var": "payload.t.0"
+								"var":"payload.t.0"
 							},
 							{
-								"if": [
+								"if":[
 									{
-										"===": [
+										"===":[
 											{
-												"var": "payload.t.0.tt"
+												"var":"payload.t.0.tt"
 											},
 											"LP6464-4"
 										]
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.t.0.sc"
+												"var":"payload.t.0.sc"
 											},
 											72,
 											"hour"
 										]
 									},
 									{
-										"if": [
+										"if":[
 											{
-												"===": [
+												"===":[
 													{
-														"var": "payload.t.0.tt"
+														"var":"payload.t.0.tt"
 													},
 													"LP217198-3"
 												]
 											},
 											{
-												"plusTime": [
+												"plusTime":[
 													{
-														"var": "payload.t.0.sc"
+														"var":"payload.t.0.sc"
 													},
 													24,
 													"hour"
 												]
 											},
 											{
-												"if": [
+												"if":[
 													{
-														"===": [
+														"===":[
 															{
-																"var": "payload.t.0.tt"
+																"var":"payload.t.0.tt"
 															},
 															"94504-8"
 														]
 													},
 													{
-														"plusTime": [
+														"plusTime":[
 															{
-																"var": "payload.t.0.sc"
+																"var":"payload.t.0.sc"
 															},
 															90,
 															"day"
 														]
 													},
 													{
-														"var": "undefined"
+														"if":[
+															{
+																"===":[
+																	{
+																		"var":"payload.t.0.tt"
+																	},
+																	"medical-exemption"
+																]
+															},
+															{
+																"plusTime":[
+																	{
+																		"var":"payload.t.0.sc"
+																	},
+																	365,
+																	"day"
+																]
+															},
+															{
+																"var":"undefined"
+															}
+														]
 													}
 												]
 											}
@@ -2034,21 +2371,21 @@
 								]
 							},
 							{
-								"if": [
+								"if":[
 									{
-										"var": "payload.r.0"
+										"var":"payload.r.0"
 									},
 									{
-										"plusTime": [
+										"plusTime":[
 											{
-												"var": "payload.r.0.fr"
+												"var":"payload.r.0.fr"
 											},
 											364,
 											"day"
 										]
 									},
 									{
-										"var": "undefined"
+										"var":"undefined"
 									}
 								]
 							}
@@ -2058,26 +2395,25 @@
 			}
 		},
 		{
-			"id": "is-only-valid-in-ch",
-			"logic": {
-				"!": [
+			"id":"is-only-valid-in-ch",
+			"logic":{
+				"!":[
 					{
-						"and": [
+						"and":[
 							{
-								"!": [
+								"!":[
 									{
-										"if": [
+										"if":[
 											{
-												"var": "payload.t.0"
+												"var":"payload.t.0"
 											},
 											{
-												"in": [
+												"in":[
 													{
-														"var": "payload.t.0.tt"
+														"var":"payload.t.0.tt"
 													},
 													[
-														"94504-8",
-                                                        "medical-exemption"
+														"medical-exemption"
 													]
 												]
 											},
@@ -2087,16 +2423,38 @@
 								]
 							},
 							{
-								"!": [
+								"!":[
 									{
-										"if": [
+										"if":[
 											{
-												"var": "payload.v.0"
+												"var":"payload.t.0"
 											},
 											{
-												"in": [
+												"in":[
 													{
-														"var": "payload.v.0.mp"
+														"var":"payload.t.0.tt"
+													},
+													[
+														"94504-8"
+													]
+												]
+											},
+											false
+										]
+									}
+								]
+							},
+							{
+								"!":[
+									{
+										"if":[
+											{
+												"var":"payload.v.0"
+											},
+											{
+												"in":[
+													{
+														"var":"payload.v.0.mp"
 													},
 													[
 														"BBIBP-CorV_T",
@@ -2116,9 +2474,9 @@
 			}
 		}
 	],
-	"validDuration": 172800000,
-	"valueSets": {
-		"country-2-codes": [
+	"validDuration":172800000,
+	"valueSets":{
+		"country-2-codes":[
 			"AD",
 			"AE",
 			"AF",
@@ -2370,7 +2728,7 @@
 			"ZW",
 			"XK"
 		],
-		"vaccines-covid-19-auth-holders": [
+		"vaccines-covid-19-auth-holders":[
 			"ORG-100001699",
 			"ORG-100030215",
 			"ORG-100001417",
@@ -2391,26 +2749,28 @@
 			"Chumakov-Federal-Scientific-Center",
 			"ORG-100023050",
 			"CIGB",
-			"Sinopharm-WIBP"
+			"Sinopharm-WIBP",
+			"ORG-100033914"
 		],
-		"disease-agent-targeted": [
+		"disease-agent-targeted":[
 			"840539006"
 		],
-		"covid-19-lab-result": [
+		"covid-19-lab-result":[
 			"260415000",
 			"260373001"
 		],
-		"sct-vaccines-covid-19": [
+		"sct-vaccines-covid-19":[
 			"1119349007",
 			"1119305005",
 			"J07BX03"
 		],
-		"vaccines-covid-19-names": [
+		"vaccines-covid-19-names":[
 			"EU/1/20/1528",
 			"EU/1/20/1507",
 			"EU/1/21/1529",
 			"EU/1/20/1525",
 			"CVnCoV",
+			"NVX-CoV2373",
 			"Sputnik-V",
 			"Convidecia",
 			"EpiVacCorona",
@@ -2425,13 +2785,14 @@
 			"Sputnik-Light",
 			"Hayat-Vax",
 			"Abdala",
-			"WIBP-CorV"
+			"WIBP-CorV",
+			"MVC-COV1901"
 		],
-		"covid-19-lab-test-type": [
+		"covid-19-lab-test-type":[
 			"LP6464-4",
 			"LP217198-3"
 		],
-		"covid-19-lab-test-manufacturer-and-name": [
+		"covid-19-lab-test-manufacturer-and-name":[
 			"1341",
 			"1065",
 			"1581",
@@ -2610,7 +2971,18 @@
 			"1228",
 			"1347",
 			"2256",
-			"2684"
+			"2684",
+			"1778",
+			"2696",
+			"2746",
+			"2695",
+			"2629",
+			"1353",
+			"2741",
+			"2754",
+			"2097",
+			"2584",
+			"2100"
 		]
 	}
 }

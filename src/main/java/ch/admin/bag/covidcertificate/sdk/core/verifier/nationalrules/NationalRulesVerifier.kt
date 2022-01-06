@@ -14,7 +14,13 @@ import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicData
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicExternalInfo
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicHeaders
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicPayload
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.DisplayRule
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Rule
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError.*
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
@@ -121,6 +127,9 @@ internal class NationalRulesVerifier {
 			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"TR-CH-0008" -> INVALID(NEGATIVE_RESULT, rule.identifier)
 			"TR-CH-0009" -> getValidityRange(displayRules, data, certType)?.let {
+				NOT_VALID_ANYMORE(it, rule.identifier)
+			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
+			"TR-CH-0010" -> getValidityRange(displayRules, data, certType)?.let {
 				NOT_VALID_ANYMORE(it, rule.identifier)
 			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, rule.identifier)
 			"RR-CH-0000" -> INVALID(TOO_MANY_RECOVERY_ENTRIES, rule.identifier)
