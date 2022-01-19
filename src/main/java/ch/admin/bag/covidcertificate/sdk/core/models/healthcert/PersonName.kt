@@ -20,4 +20,14 @@ data class PersonName(
 	@Json(name = "fnt") val standardizedFamilyName: String,
 	@Json(name = "gn") val givenName: String?,
 	@Json(name = "gnt") val standardizedGivenName: String?,
-) : Serializable
+) : Serializable {
+
+	fun prettyFamilyName(): String = familyName ?: standardizedFamilyName
+
+	fun prettyGivenName(): String = givenName ?: (standardizedGivenName ?: "")
+
+	fun prettyName(): String = "${prettyFamilyName()} ${prettyGivenName()}"
+
+	// Don't fall back to the givenName if the standardizedGivenName is null, since the givenName can reasonably contain non-standard characters.
+	fun prettyStandardizedName(): String = "${standardizedFamilyName}<<${standardizedGivenName ?: ""}"
+}
