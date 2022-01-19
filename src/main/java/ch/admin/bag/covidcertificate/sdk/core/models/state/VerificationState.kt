@@ -32,7 +32,8 @@ sealed class SuccessState {
 	data class WalletSuccessState(
 		val isValidOnlyInSwitzerland: Boolean,
 		val validityRange: ValidityRange?,
-		val modeValidity: List<ModeValidity>
+		val modeValidity: List<ModeValidity>,
+		val eolBannerIdentifier: String?,
 	) : SuccessState()
 
 	data class VerifierSuccessState(

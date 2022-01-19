@@ -27,7 +27,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
 
 class CertificateVerifier {
 
@@ -77,7 +76,8 @@ class CertificateVerifier {
 				val walletSuccessState = SuccessState.WalletSuccessState(
 					checkNationalRulesState.isOnlyValidInCH,
 					checkNationalRulesState.validityRange,
-					checkModeRulesState.modeValidities
+					checkModeRulesState.modeValidities,
+					checkNationalRulesState.eolBannerIdentifier,
 				)
 				VerificationState.SUCCESS(walletSuccessState, isLightCertificate)
 			} else {
