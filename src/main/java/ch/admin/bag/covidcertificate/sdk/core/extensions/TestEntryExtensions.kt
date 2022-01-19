@@ -77,3 +77,7 @@ fun TestEntry.isChAusnahmeTest(): Boolean {
 	return this.type == TestType.MEDICAL_EXEMPTION.code
 }
 
+fun TestEntry.isPositiveRatTest(): Boolean {
+	return this.type == TestType.RAT.code && this.result == AcceptanceCriteriasConstants.POSITIVE_CODE
+}
+
