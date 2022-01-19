@@ -27,6 +27,13 @@ import java.util.*
 * */
 internal class DisplayValidityCalculator {
 
+	companion object {
+		private const val RULE_DISPLAY_DATE_FROM = "display-from-date"
+		private const val RULE_DISPLAY_DATE_UNTIL = "display-until-date"
+		private const val RULE_CH_ONLY = "is-only-valid-in-ch"
+		private const val RULE_EOL_BANNER = "eol-banner"
+	}
+
 	private val jacksonMapper = ObjectMapper().apply {
 		setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 	}
@@ -36,8 +43,8 @@ internal class DisplayValidityCalculator {
 		data: JsonNode,
 		certType: CertType
 	): ValidityRange? {
-		val resultFromDate = evalRule(displayRules, "display-from-date", data) ?: return null
-		val resultUntilDate = evalRule(displayRules, "display-until-date", data) ?: return null
+		val resultFromDate = evalRule(displayRules, RULE_DISPLAY_DATE_FROM, data) ?: return null
+		val resultUntilDate = evalRule(displayRules, RULE_DISPLAY_DATE_UNTIL, data) ?: return null
 		val dateFromString = getDateTime(resultFromDate, data, certType)
 		val dateUntilString = getDateTime(resultUntilDate, data, certType)
 		return ValidityRange(dateFromString, dateUntilString)
@@ -47,8 +54,15 @@ internal class DisplayValidityCalculator {
 		displayRules: List<DisplayRule>,
 		data: JsonNode
 	): Boolean {
-		val result = evalRule(displayRules, "is-only-valid-in-ch", data) ?: return false
+		val result = evalRule(displayRules, RULE_CH_ONLY, data) ?: return false
 		return isTruthy(result)
+	}
+
+	fun getEolBannerIdentifier(
+		displayRules: List<DisplayRule>,
+		data: JsonNode
+	): String? {
+		return evalRule(displayRules, RULE_EOL_BANNER, data)?.asText(null)
 	}
 
 	private fun getDateTime(resultFromDisplayRule: JsonNode, data: JsonNode, certType: CertType): LocalDateTime? {
