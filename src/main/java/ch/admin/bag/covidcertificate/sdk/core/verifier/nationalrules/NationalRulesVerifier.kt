@@ -10,26 +10,19 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules
 
+import ch.admin.bag.covidcertificate.sdk.core.extensions.isPositiveRatTest
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicData
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicExternalInfo
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicHeaders
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicPayload
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.DisplayRule
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Rule
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError.*
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.time.Clock
-import java.time.LocalDate
-import java.time.ZoneOffset
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -70,7 +63,22 @@ internal class NationalRulesVerifier {
 		headers: CertLogicHeaders?,
 		clock: Clock = Clock.systemUTC()
 	): CertLogicData {
-		val payload = CertLogicPayload(dccCert.pastInfections, dccCert.tests, dccCert.vaccinations, headers)
+		val tests = dccCert.tests?.map {
+			if (it.isPositiveRatTest()) {
+				val offsetTime = OffsetDateTime.parse(it.timestampSample).toOffsetTime()
+				val timestampSample = DateUtil.parseDateTime(it.timestampSample)
+					?.withHour(0)
+					?.withMinute(0)
+					?.withSecond(0)
+					?.atOffset(offsetTime.offset)
+					?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+					?: it.timestampSample
+				it.copy(timestampSample = timestampSample)
+			} else {
+				it
+			}
+		}
+		val payload = CertLogicPayload(dccCert.pastInfections, tests, dccCert.vaccinations, headers)
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =
 			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
