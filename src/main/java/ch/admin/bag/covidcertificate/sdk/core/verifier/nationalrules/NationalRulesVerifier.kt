@@ -66,11 +66,11 @@ internal class NationalRulesVerifier {
 		val tests = dccCert.tests?.map {
 			if (it.isPositiveRatTest()) {
 				val offsetTime = OffsetDateTime.parse(it.timestampSample).toOffsetTime()
-				val timestampSample = DateUtil.parseDateTime(it.timestampSample)
+				val timestampSample = DateUtil.parseDateTime(it.timestampSample, offsetTime.offset)
 					?.withHour(0)
 					?.withMinute(0)
 					?.withSecond(0)
-					?.atOffset(offsetTime.offset)
+					?.atZone(ZoneId.systemDefault())
 					?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 					?: it.timestampSample
 				it.copy(timestampSample = timestampSample)
