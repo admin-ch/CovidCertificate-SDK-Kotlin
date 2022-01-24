@@ -76,7 +76,7 @@ class DisplayValidityCalculatorTest {
 		)
 		assertNotNull(validityRange)
 		val validFrom = vaccinationDate.plusDays(21)
-		val validUntil = vaccinationDate.plusDays(365 + 21)
+		val validUntil = vaccinationDate.plusDays(364 + 21)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}

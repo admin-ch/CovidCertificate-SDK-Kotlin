@@ -83,7 +83,7 @@ class ModeRulesVerifierTest {
 
 		val validRat = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
-			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
@@ -91,7 +91,7 @@ class ModeRulesVerifierTest {
 		)
 		val validPcr = TestDataGenerator.generateTestCert(
 			TestType.PCR.code,
-			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"Nucleic acid amplification with probe detection",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
@@ -132,9 +132,18 @@ class ModeRulesVerifierTest {
 		val iatDate = LocalDate.now(clock).atStartOfDay()
 		val vaccinationDate = iatDate.minusDays(180)
 
-		val validRatPlus = TestDataGenerator.generateTestCert(
+		val validRatRecovery = TestDataGenerator.generateTestCert(
 			TestType.RAT.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofDays(11),
+			clock
+		)
+
+		val validRatPlus = TestDataGenerator.generateTestCert(
+			TestType.RAT.code,
+			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"1232",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
@@ -142,7 +151,7 @@ class ModeRulesVerifierTest {
 		)
 		val validPcrPlus = TestDataGenerator.generateTestCert(
 			TestType.PCR.code,
-			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			AcceptanceCriteriasConstants.NEGATIVE_CODE,
 			"Nucleic acid amplification with probe detection",
 			AcceptanceCriteriasConstants.TARGET_DISEASE,
 			Duration.ofHours(-10),
@@ -174,11 +183,13 @@ class ModeRulesVerifierTest {
 			false,
 			mode
 		)
+		val modeValidityRatRecovery = modeRulesVerifier.verify(validRatRecovery, ruleSet, headers, mode, utcClock)
 		val modeValidityRat = modeRulesVerifier.verify(validRatPlus, ruleSet, headers, mode, utcClock)
 		val modeValidityPcr = modeRulesVerifier.verify(validPcrPlus, ruleSet, headers, mode, utcClock)
 		val modeValiditySeroPositiv = modeRulesVerifier.verify(validSeroPostivBase, ruleSet, headers, mode, utcClock)
 		val modeValidityBase = modeRulesVerifier.verify(validVaccine, ruleSet, headers, mode, utcClock)
 
+		assertTrue(modeValidityRatRecovery.modeValidityState == ModeValidityState.SUCCESS_2G)
 		assertTrue(modeValidityRat.modeValidityState == ModeValidityState.SUCCESS_2G_PLUS)
 		assertTrue(modeValidityPcr.modeValidityState == ModeValidityState.SUCCESS_2G_PLUS)
 		assertTrue(modeValiditySeroPositiv.modeValidityState == ModeValidityState.SUCCESS_2G)

@@ -532,14 +532,7 @@ class NationalRulesVerifierTest {
 
 	@Test
 	fun testTestResultHasToBeNegative() {
-		val validRat = TestDataGenerator.generateTestCert(
-			TestType.RAT.code,
-			AcceptanceCriteriasConstants.POSITIVE_CODE,
-			"1232",
-			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			Duration.ofHours(-10),
-			utcClock
-		)
+
 		val validPcr = TestDataGenerator.generateTestCert(
 			TestType.PCR.code,
 			AcceptanceCriteriasConstants.POSITIVE_CODE,
@@ -549,12 +542,8 @@ class NationalRulesVerifierTest {
 			utcClock
 		)
 
-		val invalidRat = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, null, utcClock)
 		val invalidPcr = nationalRulesVerifier.verify(validPcr, nationalRuleSet, CertType.TEST, null, utcClock)
-		if (invalidRat is CheckNationalRulesState.INVALID &&
-			invalidPcr is CheckNationalRulesState.INVALID
-		) {
-			assertTrue(invalidRat.nationalRulesError == NationalRulesError.POSITIVE_RESULT)
+		if (invalidPcr is CheckNationalRulesState.INVALID) {
 			assertTrue(invalidPcr.nationalRulesError == NationalRulesError.POSITIVE_RESULT)
 		} else {
 			assertFalse(true)
