@@ -13,7 +13,7 @@
  */
 package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 
-import ch.admin.bag.covidcertificate.sdk.core.utils.Base45
+import ch.admin.bag.covidcertificate.sdk.core.utils.base45.Base45Decoder
 
 internal object Base45Service {
 
@@ -22,7 +22,7 @@ internal object Base45Service {
 		// "The Alphanumeric Mode [...] MUST be used in conjunction with Base45"
 		// => data that is not compressed is invalid
 		return try {
-			Base45.getDecoder().decode(input)
+			Base45Decoder().decode(input)
 		} catch (e: Throwable) {
 			null
 		}
