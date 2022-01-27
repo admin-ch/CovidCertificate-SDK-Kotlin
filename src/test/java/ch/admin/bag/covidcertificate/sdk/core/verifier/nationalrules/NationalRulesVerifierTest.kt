@@ -285,7 +285,7 @@ class NationalRulesVerifierTest {
 	@Test
 	fun testVaccineUntilDatesSuccess() {
 		val validDateFrom = LocalDate.of(2021, 1, 3).atStartOfDay()
-		val validDateUntil = LocalDate.of(2022, 1, 2).atStartOfDay()
+		val validDateUntil = validDateFrom.plusDays(269)
 
 		val validCert = TestDataGenerator.generateVaccineCert(
 			2,
@@ -639,7 +639,7 @@ class NationalRulesVerifierTest {
 	fun testRecoveryUntilDatesSuccess() {
 		val firstTestResult = LocalDate.of(2021, 5, 8).atStartOfDay()
 		val validDateFrom = firstTestResult.plusDays(10)
-		val validDateUntil = firstTestResult.plusDays(364)
+		val validDateUntil = firstTestResult.plusDays(269)
 
 		val validCert = TestDataGenerator.generateRecoveryCertFromDate(
 			validDateFrom = validDateFrom,

@@ -76,7 +76,7 @@ class DisplayValidityCalculatorTest {
 		)
 		assertNotNull(validityRange)
 		val validFrom = vaccinationDate.plusDays(21)
-		val validUntil = vaccinationDate.plusDays(364 + 21)
+		val validUntil = vaccinationDate.plusDays(269 + 21)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -104,7 +104,7 @@ class DisplayValidityCalculatorTest {
 		)
 		assertNotNull(validityRange)
 		val validFrom = vaccinationDate
-		val validUntil = vaccinationDate.plusDays(364)
+		val validUntil = vaccinationDate.plusDays(269)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -134,7 +134,7 @@ class DisplayValidityCalculatorTest {
 
 
 		val validFrom = vaccinationDate
-		val validUntil = vaccinationDate.plusDays(364)
+		val validUntil = vaccinationDate.plusDays(269)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -359,7 +359,7 @@ class DisplayValidityCalculatorTest {
 	fun testRecoveryValidityRange() {
 		val firstTestResult = LocalDate.now(utcClock).minusDays(20)
 		val validFrom = firstTestResult.plusDays(10)
-		val validUntil = firstTestResult.plusDays(364)
+		val validUntil = firstTestResult.plusDays(269)
 		val recovery = TestDataGenerator.generateRecoveryCertFromDate(
 			validFrom.atStartOfDay(),
 			validUntil.atStartOfDay(),

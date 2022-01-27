@@ -42,75 +42,6 @@ class EOLBannerTests {
 		utcClock = Clock.systemUTC()
 	}
 
-	@Test
-	fun testinvalidFromFirstFebruary() {
-		val clockToday = Clock.fixed(Instant.parse("2022-01-20T12:00:00Z"), ZoneId.systemDefault())
-		val clockFirstFeb = Clock.fixed(Instant.parse("2022-02-01T12:00:00Z"), ZoneId.systemDefault())
-
-		//vaccine case with 2/2
-		var vaccinationDate = LocalDate.now(clockFirstFeb).atStartOfDay().minusDays(270)
-		var vaccine = Vaccine.BIONTECH
-		var vaccination = TestDataGenerator.generateVaccineCert(
-			2,
-			2,
-			vaccine.manufacturer,
-			vaccine.identifier,
-			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			vaccine.prophylaxis,
-			vaccinationDate,
-		)
-		var data = getJsonNodeData(vaccination, null, clockToday)
-		var bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
-		Assertions.assertEquals(bannerID, "invalidFromFirstFebruary")
-
-		//vaccine case with Jansen
-		vaccinationDate = LocalDate.now(clockFirstFeb).atStartOfDay().minusDays(270).minusDays(21)
-		vaccine = Vaccine.JANSSEN
-		vaccination = TestDataGenerator.generateVaccineCert(
-			1,
-			1,
-			vaccine.manufacturer,
-			vaccine.identifier,
-			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			vaccine.prophylaxis,
-			vaccinationDate,
-		)
-		data = getJsonNodeData(vaccination, null, clockToday)
-		bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
-		Assertions.assertEquals(bannerID, "invalidFromFirstFebruary")
-
-		//recovery
-		val firstTestResult = LocalDate.now(clockFirstFeb).minusDays(270)
-		val validFrom = firstTestResult.plusDays(10)
-		val validUntil = firstTestResult.plusDays(364)
-		val recovery = TestDataGenerator.generateRecoveryCertFromDate(
-			validFrom.atStartOfDay(),
-			validUntil.atStartOfDay(),
-			firstTestResult.atStartOfDay(),
-			AcceptanceCriteriasConstants.TARGET_DISEASE
-
-		)
-
-		data = getJsonNodeData(recovery, null, clockToday)
-		bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
-		Assertions.assertEquals(bannerID, "invalidFromFirstFebruary")
-
-		//antigen
-		val now = OffsetDateTime.now(clockFirstFeb).minusDays(270)
-		val sampleCollectionTime = now
-		val test = TestDataGenerator.generateTestCertFromDate(
-			TestType.RAT.code,
-			AcceptanceCriteriasConstants.POSITIVE_CODE,
-			"Nucleic acid amplification with probe detection",
-			AcceptanceCriteriasConstants.TARGET_DISEASE,
-			sampleCollectionTime
-		)
-
-		data = getJsonNodeData(test, null, clockToday)
-		bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
-		Assertions.assertEquals(bannerID, "invalidFromFirstFebruary")
-
-	}
 
 	@Test
 	fun testinvalidInThreeWeeks() {
@@ -195,9 +126,8 @@ class EOLBannerTests {
 
 	@Test
 	fun testNotInvalid() {
-		val clockToday = Clock.fixed(Instant.parse("2022-01-20T12:00:00Z"), ZoneId.systemDefault())
 		val clockFirstFeb = Clock.fixed(Instant.parse("2022-02-01T12:00:00Z"), ZoneId.systemDefault())
-		val vaccinationDate = LocalDate.now(clockFirstFeb).atStartOfDay().minusDays(270 - 15)
+		val vaccinationDate = LocalDate.now(clockFirstFeb).atStartOfDay().minusDays(270).minusDays(1)
 
 		val vaccine = Vaccine.BIONTECH
 		val vaccination = TestDataGenerator.generateVaccineCert(
@@ -209,12 +139,12 @@ class EOLBannerTests {
 			vaccine.prophylaxis,
 			vaccinationDate,
 		)
-		var data = getJsonNodeData(vaccination, null, clockToday)
+		var data = getJsonNodeData(vaccination, null, clockFirstFeb)
 		var bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
 		Assertions.assertEquals(bannerID, null)
 
 		//SERO
-		var now = OffsetDateTime.now(clockFirstFeb).minusDays(90)
+		var now = OffsetDateTime.now(clockFirstFeb).minusDays(90).minusDays(1)
 		var sampleCollectionTime = now
 		var test = TestDataGenerator.generateTestCertFromDate(
 			TestType.SEROLOGICAL.code,
@@ -224,12 +154,12 @@ class EOLBannerTests {
 			sampleCollectionTime
 		)
 
-		data = getJsonNodeData(test, null, clockToday)
+		data = getJsonNodeData(test, null, clockFirstFeb)
 		bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
 		Assertions.assertEquals(bannerID, null)
 
 
-		now = OffsetDateTime.now(clockFirstFeb).minusDays(365)
+		now = OffsetDateTime.now(clockFirstFeb).minusDays(365).minusDays(1)
 		sampleCollectionTime = now
 		test = TestDataGenerator.generateTestCertFromDate(
 			TestType.MEDICAL_EXEMPTION.code,
@@ -239,7 +169,7 @@ class EOLBannerTests {
 			sampleCollectionTime
 		)
 
-		data = getJsonNodeData(test, null, clockToday)
+		data = getJsonNodeData(test, null, clockFirstFeb)
 		bannerID = displayValidityCalculator.getEolBannerIdentifier(nationalRuleSet.displayRules, data)
 		Assertions.assertEquals(bannerID, null)
 	}
