@@ -76,7 +76,7 @@ class DisplayValidityCalculatorTest {
 		)
 		assertNotNull(validityRange)
 		val validFrom = vaccinationDate.plusDays(21)
-		val validUntil = vaccinationDate.plusDays(365 + 21)
+		val validUntil = vaccinationDate.plusDays(269 + 21)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -104,7 +104,7 @@ class DisplayValidityCalculatorTest {
 		)
 		assertNotNull(validityRange)
 		val validFrom = vaccinationDate
-		val validUntil = vaccinationDate.plusDays(364)
+		val validUntil = vaccinationDate.plusDays(269)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -134,7 +134,7 @@ class DisplayValidityCalculatorTest {
 
 
 		val validFrom = vaccinationDate
-		val validUntil = vaccinationDate.plusDays(364)
+		val validUntil = vaccinationDate.plusDays(269)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -328,6 +328,36 @@ class DisplayValidityCalculatorTest {
 	}
 
 	@Test
+	fun testPositivRatGenesenValidityRange() {
+		val today = Instant.parse("2022-01-24T12:00:00Z")
+		val clock = Clock.fixed(today, ZoneId.systemDefault())
+		val now = OffsetDateTime.now(clock).withHour(0).withMinute(0).withSecond(0)
+		val sampleCollectionTime = now
+		val test = TestDataGenerator.generateTestCertFromDate(
+			TestType.RAT.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"Nucleic acid amplification with probe detection",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			sampleCollectionTime
+		)
+
+		val data = getJsonNodeData(test, null, utcClock)
+		val validityRange =
+			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(nationalRuleSet.displayRules, data, CertType.TEST)
+		assertNotNull(validityRange)
+
+		// The expected values need to be truncated to milliseconds because the JsonDateTime class reformats the timestamp string
+		// and strips away micro- and nanoseconds
+		val expectedValidFrom =
+			sampleCollectionTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS).plusDays(10).withHour(validityRange?.validFrom?.hour?:0 ).withMinute(validityRange?.validFrom?.minute?:0).withSecond(validityRange?.validFrom?.second?:0)
+		assertEquals(expectedValidFrom, validityRange?.validFrom)
+
+		val expectedValidUntil = sampleCollectionTime.plusHours(24).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().withHour(validityRange?.validUntil?.hour?:1 ).withMinute(validityRange?.validUntil?.minute?:0).withSecond(validityRange?.validUntil?.second?:0)
+			.truncatedTo(ChronoUnit.MILLIS).plusDays(269)
+		assertEquals(expectedValidUntil, validityRange?.validUntil)
+	}
+
+	@Test
 	fun testPcrTestValidityRange() {
 		val now = OffsetDateTime.now(utcClock)
 		val duration = Duration.ofHours(10)
@@ -359,7 +389,7 @@ class DisplayValidityCalculatorTest {
 	fun testRecoveryValidityRange() {
 		val firstTestResult = LocalDate.now(utcClock).minusDays(20)
 		val validFrom = firstTestResult.plusDays(10)
-		val validUntil = firstTestResult.plusDays(364)
+		val validUntil = firstTestResult.plusDays(269)
 		val recovery = TestDataGenerator.generateRecoveryCertFromDate(
 			validFrom.atStartOfDay(),
 			validUntil.atStartOfDay(),
