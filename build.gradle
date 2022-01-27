@@ -7,7 +7,6 @@
  *
  * SPDX-License-Identifier: MPL-2.0
  */
-
 buildscript {
     repositories {
         mavenCentral()
@@ -16,8 +15,8 @@ buildscript {
 
 plugins {
     id 'java-library'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
-    id 'org.jetbrains.kotlin.kapt' version '1.4.32'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+    id 'org.jetbrains.kotlin.kapt' version '1.6.10'
     id 'com.vanniktech.maven.publish' version '0.17.0'
 }
 
@@ -40,9 +39,8 @@ compileTestKotlin {
 }
 
 dependencies {
-    // Kotlin standard library & coroutines
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
+    // Kotlin coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
 
     // Security
     implementation "com.augustcellars.cose:cose-java:1.1.0"
@@ -52,9 +50,9 @@ dependencies {
     implementation 'com.squareup.okio:okio:2.10.0'
 
     // (De-)Serialization
-    implementation 'com.squareup.moshi:moshi:1.12.0'
-    implementation 'com.squareup.moshi:moshi-adapters:1.12.0'
-    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.12.0'
+    implementation 'com.squareup.moshi:moshi:1.13.0'
+    implementation 'com.squareup.moshi:moshi-adapters:1.13.0'
+    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.13.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
     // Unit testing
@@ -62,9 +60,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
 
-    testImplementation 'com.squareup.moshi:moshi:1.12.0'
-    testImplementation 'com.squareup.moshi:moshi-adapters:1.12.0'
-    kaptTest 'com.squareup.moshi:moshi-kotlin-codegen:1.12.0'
+    testImplementation 'com.squareup.moshi:moshi:1.13.0'
+    testImplementation 'com.squareup.moshi:moshi-adapters:1.13.0'
+    kaptTest 'com.squareup.moshi:moshi-kotlin-codegen:1.13.0'
 }
 
 test {
@@ -74,3 +72,17 @@ test {
 mavenPublish {
     sonatypeHost = "S01"
 }
+
+tasks.register("downloadNationalRules") {
+    doLast {
+        println("Downloading latest national rules before running unit tests")
+        def url = "https://www.cc-d.bit.admin.ch/trust/v2/verificationRules"
+        def outputFile = "src/test/resources/nationalrules.json"
+        exec {
+            executable "sh"
+            args "-c", "curl ${url} | jq > ${outputFile}"
+        }
+    }
+}
+
+test.dependsOn downloadNationalRules
