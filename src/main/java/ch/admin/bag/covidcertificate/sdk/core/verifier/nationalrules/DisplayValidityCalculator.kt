@@ -17,6 +17,7 @@ import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.i
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
@@ -45,8 +46,8 @@ internal class DisplayValidityCalculator {
 	): ValidityRange? {
 		val resultFromDate = evalRule(displayRules, RULE_DISPLAY_DATE_FROM, data) ?: return null
 		val resultUntilDate = evalRule(displayRules, RULE_DISPLAY_DATE_UNTIL, data) ?: return null
-		val dateFromString = getDateTime(resultFromDate, data, certType)
-		val dateUntilString = getDateTime(resultUntilDate, data, certType)
+		val dateFromString = getDateTime(resultFromDate, certType, true)
+		val dateUntilString = getDateTime(resultUntilDate, certType, false)
 		return ValidityRange(dateFromString, dateUntilString)
 	}
 
@@ -65,20 +66,28 @@ internal class DisplayValidityCalculator {
 		return evalRule(displayRules, RULE_EOL_BANNER, data)?.asText(null)
 	}
 
-	private fun getDateTime(resultFromDisplayRule: JsonNode, data: JsonNode, certType: CertType): LocalDateTime? {
+	private fun getDateTime(
+		resultFromDisplayRule: JsonNode,
+		certType: CertType,
+		atStartOfDay: Boolean
+	): LocalDateTime? {
 		if (resultFromDisplayRule is JsonDateTime) {
-			return getLocalDateTime(certType, resultFromDisplayRule)
+			return getLocalDateTime(certType, resultFromDisplayRule, atStartOfDay)
 		}
 		return null
 	}
 
-	private fun getLocalDateTime(certType: CertType, data: JsonDateTime): LocalDateTime {
+	private fun getLocalDateTime(certType: CertType, data: JsonDateTime, atStartOfDay: Boolean): LocalDateTime {
 		if (certType == CertType.TEST) {
 			//test
 			return data.temporalValue().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 		} else {
 			//is vaccine or recovery entry
-			return data.temporalValue().toLocalDate().atStartOfDay()
+			if (atStartOfDay) {
+				return data.temporalValue().toLocalDate().atStartOfDay()
+			} else {
+				return data.temporalValue().toLocalDate().atTime(LocalTime.MAX)
+			}
 		}
 	}
 
