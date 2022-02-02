@@ -7,6 +7,8 @@
  *
  * SPDX-License-Identifier: MPL-2.0
  */
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         mavenCentral()
@@ -78,9 +80,22 @@ tasks.register("downloadNationalRules") {
         println("Downloading latest national rules before running unit tests")
         def url = "https://www.cc-d.bit.admin.ch/trust/v2/verificationRules"
         def outputFile = "src/test/resources/nationalrules.json"
-        exec {
-            executable "sh"
-            args "-c", "curl ${url} | jq > ${outputFile}"
+
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            exec {
+                ignoreExitValue = true
+                executable "cmd"
+                args "/c", "wsl curl '$url' | wsl jq > $outputFile"
+            }
+        } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+            exec {
+                ignoreExitValue = true
+                environment 'PATH', "${environment.PATH}:/usr/local/bin/"
+                executable "sh"
+                args "-c", "curl ${url} | jq > ${outputFile}"
+            }
+        } else {
+            println("Not running on either windows or a unix system")
         }
     }
 }
