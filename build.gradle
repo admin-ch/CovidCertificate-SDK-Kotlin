@@ -79,6 +79,7 @@ tasks.register("downloadNationalRules") {
         def url = "https://www.cc-d.bit.admin.ch/trust/v2/verificationRules"
         def outputFile = "src/test/resources/nationalrules.json"
         exec {
+            environment 'PATH', "${environment.PATH}:/usr/local/bin/"
             executable "sh"
             args "-c", "curl ${url} | jq > ${outputFile}"
         }
