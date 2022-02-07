@@ -8,8 +8,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "GR-CH-0001",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "General",
       "logic": {
         "and": [
@@ -92,8 +92,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "RR-CH-0000",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Recovery",
       "logic": {
         "if": [
@@ -155,8 +155,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "RR-CH-0001",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Recovery",
       "logic": {
         "if": [
@@ -196,8 +196,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "RR-CH-0002",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Recovery",
       "logic": {
         "if": [
@@ -248,8 +248,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "RR-CH-0003",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Recovery",
       "logic": {
         "if": [
@@ -272,7 +272,7 @@
                   {
                     "var": "payload.r.0.fr"
                   },
-                  365,
+                  270,
                   "day"
                 ]
               }
@@ -300,8 +300,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0000",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -363,8 +363,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0001",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -416,8 +416,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0002",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -430,8 +430,8 @@
                 "var": "payload.t.0.tt"
               },
               [
-                "LP217198-3",
                 "LP6464-4",
+                "LP217198-3",
                 "94504-8",
                 "medical-exemption"
               ]
@@ -446,7 +446,7 @@
       ],
       "description": [
         {
-          "desc": "The test type must be one of the value set list (RAT OR NAA or serum antibody).",
+          "desc": "The test type must be one of the value set list (RAT OR NAA or serum antibody or exemption).",
           "lang": "en"
         }
       ]
@@ -459,8 +459,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0004",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -500,8 +500,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0005",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -552,8 +552,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0006",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -622,8 +622,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0007",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -679,8 +679,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0008",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -733,8 +733,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0009",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -790,8 +790,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0010",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -847,8 +847,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0011",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -917,8 +917,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "TR-CH-0012",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Test",
       "logic": {
         "if": [
@@ -958,7 +958,7 @@
                   {
                     "var": "payload.t.0.sc"
                   },
-                  365,
+                  270,
                   "day"
                 ]
               }
@@ -987,8 +987,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0000",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1050,8 +1050,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0001",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1091,8 +1091,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0002",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1110,17 +1110,17 @@
                 "EU/1/21/1529",
                 "EU/1/20/1525",
                 "EU/1/21/1618",
+                "NVX-CoV2373",
                 "CoronaVac",
                 "BBIBP-CorV",
                 "Covishield",
                 "Covaxin",
                 "R-COVI",
                 "Covid-19-recombinant",
-                "COVOVAX",
+                "Covovax",
                 "BBIBP-CorV_T",
                 "CoronaVac_T",
-                "Covaxin_T",
-                "NVX-CoV2373"
+                "Covaxin_T"
               ]
             ]
           },
@@ -1146,8 +1146,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0003",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1187,8 +1187,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0004",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1206,18 +1206,18 @@
                     "EU/1/20/1528",
                     "EU/1/20/1507",
                     "EU/1/21/1529",
+                    "EU/1/21/1618",
+                    "NVX-CoV2373",
                     "CoronaVac",
                     "BBIBP-CorV",
                     "Covishield",
                     "Covaxin",
-                    "BBIBP-CorV_T",
-                    "CoronaVac_T",
-                    "Covaxin_T",
                     "R-COVI",
                     "Covid-19-recombinant",
-                    "COVOVAX",
-                    "EU/1/21/1618",
-                    "NVX-CoV2373"
+                    "Covovax",
+                    "BBIBP-CorV_T",
+                    "CoronaVac_T",
+                    "Covaxin_T"
                   ]
                 ]
               }
@@ -1268,8 +1268,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0005",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1349,8 +1349,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0006",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1368,18 +1368,18 @@
                     "EU/1/20/1528",
                     "EU/1/20/1507",
                     "EU/1/21/1529",
+                    "EU/1/21/1618",
+                    "NVX-CoV2373",
                     "CoronaVac",
                     "BBIBP-CorV",
                     "Covishield",
                     "Covaxin",
-                    "BBIBP-CorV_T",
-                    "CoronaVac_T",
-                    "Covaxin_T",
                     "R-COVI",
                     "Covid-19-recombinant",
-                    "EU/1/21/1618",
-                    "COVOVAX",
-                    "NVX-CoV2373"
+                    "Covovax",
+                    "BBIBP-CorV_T",
+                    "CoronaVac_T",
+                    "Covaxin_T"
                   ]
                 ]
               }
@@ -1401,7 +1401,7 @@
                   {
                     "var": "payload.v.0.dt"
                   },
-                  365,
+                  270,
                   "day"
                 ]
               }
@@ -1430,8 +1430,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0007",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1502,7 +1502,7 @@
                           {
                             "var": "payload.v.0.dt"
                           },
-                          365,
+                          270,
                           "day"
                         ]
                       }
@@ -1537,8 +1537,8 @@
       "type": "Acceptance",
       "validTo": "2031-01-01T00:00:00Z",
       "identifier": "VR-CH-0008",
-      "version": "1.0.7",
-      "validFrom": "2021-12-17T00:00:00Z",
+      "version": "1.0.8",
+      "validFrom": "2022-01-31T00:00:00Z",
       "certificateType": "Vaccination",
       "logic": {
         "if": [
@@ -1585,7 +1585,7 @@
                       {
                         "var": "payload.v.0.dt"
                       },
-                      386,
+                      291,
                       "day"
                     ]
                   }
@@ -2051,8 +2051,8 @@
                                                               "var": "payload.t.0.tt"
                                                             },
                                                             [
-                                                              "LP6464-4",
-                                                              "LP217198-3"
+                                                              "LP217198-3",
+                                                              "LP6464-4"
                                                             ]
                                                           ]
                                                         },
@@ -2421,11 +2421,13 @@
               {
                 "and": [
                   {
-                    "===": [
+                    "in": [
                       {
                         "var": "payload.v.0.mp"
                       },
-                      "EU/1/20/1525"
+                      [
+                        "EU/1/20/1525"
+                      ]
                     ]
                   },
                   {
@@ -2443,7 +2445,7 @@
                   {
                     "var": "payload.v.0.dt"
                   },
-                  385,
+                  290,
                   "day"
                 ]
               },
@@ -2452,11 +2454,13 @@
                   {
                     "and": [
                       {
-                        "===": [
+                        "in": [
                           {
                             "var": "payload.v.0.mp"
                           },
-                          "EU/1/20/1525"
+                          [
+                            "EU/1/20/1525"
+                          ]
                         ]
                       },
                       {
@@ -2474,7 +2478,7 @@
                       {
                         "var": "payload.v.0.dt"
                       },
-                      364,
+                      269,
                       "day"
                     ]
                   },
@@ -2506,7 +2510,7 @@
                                       {
                                         "var": "payload.v.0.dt"
                                       },
-                                      364,
+                                      269,
                                       "day"
                                     ]
                                   },
@@ -2526,7 +2530,7 @@
                                   {
                                     "var": "payload.v.0.dt"
                                   },
-                                  364,
+                                  269,
                                   "day"
                                 ]
                               },
@@ -2550,7 +2554,7 @@
                                       {
                                         "var": "payload.v.0.dt"
                                       },
-                                      364,
+                                      269,
                                       "day"
                                     ]
                                   },
@@ -2570,7 +2574,7 @@
                                   {
                                     "var": "payload.v.0.dt"
                                   },
-                                  364,
+                                  269,
                                   "day"
                                 ]
                               },
@@ -2600,15 +2604,18 @@
                                     "EU/1/20/1528",
                                     "EU/1/20/1507",
                                     "EU/1/21/1529",
+                                    "EU/1/21/1618",
+                                    "NVX-CoV2373",
                                     "CoronaVac",
                                     "BBIBP-CorV",
                                     "Covishield",
                                     "Covaxin",
                                     "R-COVI",
-                                    "EU/1/21/1618",
-                                    "COVOVAX",
-                                    "NVX-CoV2373",
-                                    "Covid-19-recombinant"
+                                    "Covid-19-recombinant",
+                                    "Covovax",
+                                    "BBIBP-CorV_T",
+                                    "CoronaVac_T",
+                                    "Covaxin_T"
                                   ]
                                 ]
                               },
@@ -2629,7 +2636,7 @@
                               {
                                 "var": "payload.v.0.dt"
                               },
-                              364,
+                              269,
                               "day"
                             ]
                           },
@@ -2693,7 +2700,7 @@
                               {
                                 "var": "payload.t.0.sc"
                               },
-                              365,
+                              270,
                               "day"
                             ]
                           },
@@ -2767,7 +2774,7 @@
                       {
                         "var": "payload.r.0.fr"
                       },
-                      364,
+                      269,
                       "day"
                     ]
                   },
@@ -2793,11 +2800,13 @@
               {
                 "and": [
                   {
-                    "===": [
+                    "in": [
                       {
                         "var": "payload.v.0.mp"
                       },
-                      "EU/1/20/1525"
+                      [
+                        "EU/1/20/1525"
+                      ]
                     ]
                   },
                   {
@@ -2825,18 +2834,19 @@
                       },
                       {
                         "plusTime": [
-                          "2022-02-01",
-                          0,
+                          {
+                            "var": "external.validationClock"
+                          },
+                          21,
                           "day"
                         ]
                       }
                     ]
                   },
-                  "invalidFromFirstFebruary",
                   {
                     "if": [
                       {
-                        "not-after": [
+                        "after": [
                           {
                             "plusTime": [
                               {
@@ -2851,7 +2861,7 @@
                               {
                                 "var": "external.validationClock"
                               },
-                              21,
+                              0,
                               "day"
                             ]
                           }
@@ -2862,6 +2872,9 @@
                         "var": "undefined"
                       }
                     ]
+                  },
+                  {
+                    "var": "undefined"
                   }
                 ]
               },
@@ -2880,18 +2893,19 @@
                       },
                       {
                         "plusTime": [
-                          "2022-02-01",
-                          0,
+                          {
+                            "var": "external.validationClock"
+                          },
+                          21,
                           "day"
                         ]
                       }
                     ]
                   },
-                  "invalidFromFirstFebruary",
                   {
                     "if": [
                       {
-                        "not-after": [
+                        "after": [
                           {
                             "plusTime": [
                               {
@@ -2906,7 +2920,7 @@
                               {
                                 "var": "external.validationClock"
                               },
-                              21,
+                              0,
                               "day"
                             ]
                           }
@@ -2917,6 +2931,9 @@
                         "var": "undefined"
                       }
                     ]
+                  },
+                  {
+                    "var": "undefined"
                   }
                 ]
               }
@@ -2942,18 +2959,19 @@
                       },
                       {
                         "plusTime": [
-                          "2022-02-01",
-                          0,
+                          {
+                            "var": "external.validationClock"
+                          },
+                          21,
                           "day"
                         ]
                       }
                     ]
                   },
-                  "invalidFromFirstFebruary",
                   {
                     "if": [
                       {
-                        "not-after": [
+                        "after": [
                           {
                             "plusTime": [
                               {
@@ -2968,7 +2986,7 @@
                               {
                                 "var": "external.validationClock"
                               },
-                              21,
+                              0,
                               "day"
                             ]
                           }
@@ -2979,6 +2997,9 @@
                         "var": "undefined"
                       }
                     ]
+                  },
+                  {
+                    "var": "undefined"
                   }
                 ]
               },
@@ -3026,18 +3047,19 @@
                               },
                               {
                                 "plusTime": [
-                                  "2022-02-01",
-                                  0,
+                                  {
+                                    "var": "external.validationClock"
+                                  },
+                                  21,
                                   "day"
                                 ]
                               }
                             ]
                           },
-                          "invalidFromFirstFebruary",
                           {
                             "if": [
                               {
-                                "not-after": [
+                                "after": [
                                   {
                                     "plusTime": [
                                       {
@@ -3052,7 +3074,7 @@
                                       {
                                         "var": "external.validationClock"
                                       },
-                                      21,
+                                      0,
                                       "day"
                                     ]
                                   }
@@ -3063,11 +3085,84 @@
                                 "var": "undefined"
                               }
                             ]
+                          },
+                          {
+                            "var": "undefined"
                           }
                         ]
                       },
                       {
-                        "var": "undefined"
+                        "if": [
+                          {
+                            "and": [
+                              {
+                                "in": [
+                                  {
+                                    "var": "payload.t.0.tt"
+                                  },
+                                  [
+                                    "medical-exemption"
+                                  ]
+                                ]
+                              },
+                              {
+                                "not-after": [
+                                  {
+                                    "plusTime": [
+                                      {
+                                        "var": "payload.t.0.sc"
+                                      },
+                                      365,
+                                      "day"
+                                    ]
+                                  },
+                                  {
+                                    "plusTime": [
+                                      {
+                                        "var": "external.validationClock"
+                                      },
+                                      21,
+                                      "day"
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "if": [
+                              {
+                                "after": [
+                                  {
+                                    "plusTime": [
+                                      {
+                                        "var": "payload.t.0.sc"
+                                      },
+                                      365,
+                                      "day"
+                                    ]
+                                  },
+                                  {
+                                    "plusTime": [
+                                      {
+                                        "var": "external.validationClock"
+                                      },
+                                      0,
+                                      "day"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "invalidInThreeWeeks",
+                              {
+                                "var": "undefined"
+                              }
+                            ]
+                          },
+                          {
+                            "var": "undefined"
+                          }
+                        ]
                       }
                     ]
                   },
@@ -3481,7 +3576,9 @@
       "ORG-100023050",
       "CIGB",
       "Sinopharm-WIBP",
-      "ORG-100033914"
+      "ORG-100033914",
+      "ORG-100000788",
+      "ORG-100036422"
     ],
     "disease-agent-targeted": [
       "840539006"
@@ -3518,7 +3615,12 @@
       "Abdala",
       "WIBP-CorV",
       "MVC-COV1901",
-      "EU/1/21/1618"
+      "EU/1/21/1618",
+      "Covovax",
+      "Vidprevtyn",
+      "VLA2001",
+      "EpiVacCorona-N",
+      "Sputnik-M"
     ],
     "covid-19-lab-test-type": [
       "LP6464-4",

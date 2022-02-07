@@ -90,7 +90,6 @@ tasks.register("downloadNationalRules") {
         } else if (Os.isFamily(Os.FAMILY_UNIX)) {
             exec {
                 ignoreExitValue = true
-                environment 'PATH', "${environment.PATH}:/usr/local/bin/"
                 executable "sh"
                 args "-c", "curl ${url} | jq > ${outputFile}"
             }
