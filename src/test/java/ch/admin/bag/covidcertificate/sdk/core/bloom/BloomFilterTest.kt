@@ -1,22 +1,35 @@
+/*
+ * Copyright (c) 2021 Ubique Innovation AG <https://www.ubique.ch>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 package ch.admin.bag.covidcertificate.sdk.core.bloom
 
 import ch.admin.bag.covidcertificate.sdk.core.data.base64.Base64Impl
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.security.SecureRandom
+import java.time.Instant
+import java.time.OffsetDateTime
 
 
 class BloomFilterTest {
     @Test
     fun testBloomFilter() {
-        val spec = BloomFilterSpec("5lPRc7MdD6uLy2RF/bIDowyz61BomW+9Tu0MyNqd0E/KdWYKJ/QhvAcuaOK9JO3S5qiRLeCrjJeyk5FzEhebqzIV6SscCx186hEUxdAiqgkQgS1z6kl8LPWVNWGRUbr3xXGVvI3m4tH6Y/uwIDWxwe04qITiQCf/yTab12BInvnYwmBjeZG4lpjsznX7WWsE2NS3wA==",
-            1179, 20, 1646298029533)
+        val spec = BloomFilterSpec("P7tmqgzoIlhroqWQqyUC24Jo3GZB/C1sBD2ahgMeutcPsGOyEFagdswW9H5rjcPO+7oXYKPHTMbseGl6Of+SkHYQVPP7xJNx8m0I2t3z17TuUvERHj7SH7rOKJc3zKTgpfASEKkBtRaWhnwfiTPI1wiE124tl5SpTrMY3VPyk7wozoZXHPw09Be66KY//mcBOnixQA==",
+            1179, 20, 1646302884724)
         val hash = "n4bQgYhMfWWaL+qgxVrQFaO/TxsrC4Is0V1sFbDwCgg="
         val bloom = BloomFilter(spec)
         assert(bloom.contains(hash))
     }
     @Test
     fun testRatioCorrect() {
+        val start = Instant.now()
         val hashes: MutableList<String> = mutableListOf()
         val rand = SecureRandom.getInstanceStrong()
         val numHashes = 400_000
@@ -34,7 +47,7 @@ class BloomFilterTest {
         }
 
         var contained = 0
-        val samples = 100000
+        val samples = 100_000
 
         for (i in 0 until samples) {
             val bytes = ByteArray(32)
@@ -47,5 +60,8 @@ class BloomFilterTest {
         }
         val ratio = contained.toFloat() / samples.toFloat()
         assertTrue(ratio - 5e-4f < 1e-3f && ratio + 5e-4f > 1e-3f)
+        val end = Instant.now()
+        val duration = end.toEpochMilli() - start.toEpochMilli()
+        print("Took: $duration ms\n")
     }
 }

@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2021 Ubique Innovation AG <https://www.ubique.ch>
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * SPDX-License-Identifier: MPL-2.0
+ */
 package ch.admin.bag.covidcertificate.sdk.core.bloom
 
 import ch.admin.bag.covidcertificate.sdk.core.data.base64.Base64Impl
@@ -50,9 +59,10 @@ class BloomFilter(spec: BloomFilterSpec) {
     @Throws(NoSuchAlgorithmException::class)
     fun insert(hash: String): Boolean {
         var contained = true
+        val hashBytes = Base64Impl.decode(hash)
         for (i in 0 until numHashes) {
             digest.update(ByteBuffer.allocate(4).putInt(i).array())
-            digest.update(Base64Impl.decode(hash))
+            digest.update(hashBytes)
             digest.update(ByteBuffer.allocate(8).putLong(seed).array())
             val hashByteBuffer: ByteBuffer = ByteBuffer.wrap(digest.digest())
             var hashedValue: Long = 0
@@ -73,14 +83,17 @@ class BloomFilter(spec: BloomFilterSpec) {
 
     @Throws(NoSuchAlgorithmException::class)
     operator fun contains(hash: String): Boolean {
+        val hashBytes = Base64Impl.decode(hash)
         for (i in 0 until numHashes) {
             digest.update(ByteBuffer.allocate(4).putInt(i).array())
-            digest.update(Base64Impl.decode(hash))
+            digest.update(hashBytes)
             digest.update(ByteBuffer.allocate(8).putLong(seed).array())
             val hashByteBuffer: ByteBuffer = ByteBuffer.wrap(digest.digest())
             var hashedValue: Long = 0
             for (j in 0..7) {
-                hashedValue = hashedValue xor hashByteBuffer.int.toUInt().toLong()
+                val tmpInt = hashByteBuffer.int
+                val tmpUInt = tmpInt.toUInt()
+                hashedValue = hashedValue xor tmpUInt.toLong()
             }
             val bitToSet = hashedValue % numBits
             val byteContainingBit = (bitToSet / 8).toInt()
