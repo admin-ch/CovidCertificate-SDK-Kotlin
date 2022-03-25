@@ -14,9 +14,9 @@ import ch.admin.bag.covidcertificate.sdk.core.Vaccine
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonStringAdapter
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicHeaders
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicHeaders
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
 import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
@@ -27,7 +27,13 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.*
+import java.time.Clock
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -76,7 +82,7 @@ class DisplayValidityCalculatorTest {
 		)
 		assertNotNull(validityRange)
 		val validFrom = vaccinationDate.plusDays(21)
-		val validUntil = vaccinationDate.plusDays(269 + 21)
+		val validUntil = vaccinationDate.plusDays(269 + 21L)
 		assertEquals(validFrom.toLocalDate(), validityRange?.validFrom?.toLocalDate())
 		assertEquals(validUntil.toLocalDate(), validityRange?.validUntil?.toLocalDate())
 	}
@@ -348,12 +354,22 @@ class DisplayValidityCalculatorTest {
 
 		// The expected values need to be truncated to milliseconds because the JsonDateTime class reformats the timestamp string
 		// and strips away micro- and nanoseconds
-		val expectedValidFrom =
-			sampleCollectionTime.atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().truncatedTo(ChronoUnit.MILLIS).plusDays(10).withHour(validityRange?.validFrom?.hour?:0 ).withMinute(validityRange?.validFrom?.minute?:0).withSecond(validityRange?.validFrom?.second?:0)
+		val expectedValidFrom = sampleCollectionTime.atZoneSameInstant(ZoneId.systemDefault())
+			.toLocalDateTime()
+			.truncatedTo(ChronoUnit.MILLIS)
+			.plusDays(10)
+			.withHour(validityRange?.validFrom?.hour ?: 0)
+			.withMinute(validityRange?.validFrom?.minute ?: 0)
+			.withSecond(validityRange?.validFrom?.second ?: 0)
 		assertEquals(expectedValidFrom, validityRange?.validFrom)
 
-		val expectedValidUntil = sampleCollectionTime.plusHours(24).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime().withHour(validityRange?.validUntil?.hour?:1 ).withMinute(validityRange?.validUntil?.minute?:0).withSecond(validityRange?.validUntil?.second?:0)
-			.truncatedTo(ChronoUnit.MILLIS).plusDays(269)
+		val expectedValidUntil = sampleCollectionTime.plusHours(24)
+			.atZoneSameInstant(ZoneId.systemDefault())
+			.toLocalDateTime()
+			.withHour(validityRange?.validUntil?.hour ?: 1)
+			.withMinute(validityRange?.validUntil?.minute ?: 0)
+			.withSecond(validityRange?.validUntil?.second ?: 0)
+			.truncatedTo(ChronoUnit.MILLIS).plusDays(179)
 		assertEquals(expectedValidUntil, validityRange?.validUntil)
 	}
 
@@ -389,7 +405,7 @@ class DisplayValidityCalculatorTest {
 	fun testRecoveryValidityRange() {
 		val firstTestResult = LocalDate.now(utcClock).minusDays(20)
 		val validFrom = firstTestResult.plusDays(10)
-		val validUntil = firstTestResult.plusDays(269)
+		val validUntil = firstTestResult.plusDays(179)
 		val recovery = TestDataGenerator.generateRecoveryCertFromDate(
 			validFrom.atStartOfDay(),
 			validUntil.atStartOfDay(),

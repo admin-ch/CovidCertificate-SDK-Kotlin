@@ -14,8 +14,9 @@ import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
 
 enum class NationalRulesError(val message: String, val errorCode: String) {
 	NO_VALID_DATE("Not a valid Date format", ErrorCodes.NO_VALID_DATE),
-	VALIDITY_RANGE_NOT_FOUND("Could not determine validity range", ErrorCodes.VALIDITY_RANGE_NOT_FOUND),
 	NO_VALID_PRODUCT("Product is not registered", ErrorCodes.NO_VALID_PRODUCT),
+	NO_VALID_RULES_FOR_SPECIFIC_DATE("No valid rules for specified date", ErrorCodes.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+	VALIDITY_RANGE_NOT_FOUND("Could not determine validity range", ErrorCodes.VALIDITY_RANGE_NOT_FOUND),
 	WRONG_DISEASE_TARGET("Only SarsCov2 is a valid disease target", ErrorCodes.WRONG_DISEASE_TARGET),
 	WRONG_TEST_TYPE("Test type invalid", ErrorCodes.WRONG_TEST_TYPE),
 	POSITIVE_RESULT("Test result was positive", ErrorCodes.POSITIVE_RESULT),

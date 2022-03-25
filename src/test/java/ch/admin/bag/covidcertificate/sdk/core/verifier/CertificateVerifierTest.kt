@@ -18,8 +18,18 @@ import ch.admin.bag.covidcertificate.sdk.core.decoder.CertificateDecoder
 import ch.admin.bag.covidcertificate.sdk.core.getCertificateLightTestKey
 import ch.admin.bag.covidcertificate.sdk.core.getHardcodedSigningKeys
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
-import ch.admin.bag.covidcertificate.sdk.core.models.state.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.SuccessState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwk
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificatesInMemoryImpl
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.TrustList
+import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -60,7 +70,11 @@ class CertificateVerifierTest {
 			)
 
 			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
-			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
+
+			assertEquals(
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				invalidState.nationalRulesState
+			)
 		}
 	}
 
@@ -81,7 +95,11 @@ class CertificateVerifierTest {
 			)
 
 			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
-			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
+
+			assertEquals(
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				invalidState.nationalRulesState
+			)
 		}
 	}
 
@@ -106,7 +124,10 @@ class CertificateVerifierTest {
 				(invalidState.revocationState as CheckRevocationState.INVALID).revocationErrorCode
 			)
 
-			assertTrue(invalidState.nationalRulesState is CheckNationalRulesState.SUCCESS)
+			assertEquals(
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				invalidState.nationalRulesState
+			)
 		}
 	}
 
@@ -116,8 +137,18 @@ class CertificateVerifierTest {
 		val trustList = createTrustList(getHardcodedSigningKeys("dev"))
 
 		runBlocking {
+			// This certificate should be valid, but since the custom trustlist we pass in has an empty ruleset, it will now return NO_VALID_RULES_FOR_SPECIFIC_DATE instead of SUCCESS
 			val verificationState = certificateVerifier.verify(certificateHolder, trustList, setOf("THREE_G"))
-			assertTrue(verificationState is VerificationState.SUCCESS)
+			assertTrue(verificationState is VerificationState.INVALID)
+
+			val invalidState = verificationState as VerificationState.INVALID
+			assertTrue(invalidState.signatureState is CheckSignatureState.SUCCESS)
+			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
+
+			assertEquals(
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				invalidState.nationalRulesState
+			)
 		}
 	}
 

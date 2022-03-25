@@ -5,8 +5,8 @@ import ch.admin.bag.covidcertificate.sdk.core.Vaccine
 import ch.admin.bag.covidcertificate.sdk.core.data.AcceptanceCriteriasConstants
 import ch.admin.bag.covidcertificate.sdk.core.data.TestType
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonStringAdapter
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicHeaders
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.CertLogicHeaders
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -15,7 +15,12 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import java.time.*
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.*
 
 
@@ -47,7 +52,7 @@ class EOLBannerTests {
 	fun testinvalidInThreeWeeks() {
 		val clockToday = Clock.fixed(Instant.parse("2022-01-20T12:00:00Z"), ZoneId.systemDefault())
 		val clockFirstFeb = Clock.fixed(Instant.parse("2022-02-01T12:00:00Z"), ZoneId.systemDefault())
-		var vaccinationDate = LocalDate.now(clockFirstFeb).atStartOfDay().minusDays(270 - 1)
+		var vaccinationDate = LocalDate.now(clockFirstFeb).atStartOfDay().minusDays(270 - 1L)
 
 		var vaccine = Vaccine.BIONTECH
 		var vaccination = TestDataGenerator.generateVaccineCert(
@@ -80,9 +85,9 @@ class EOLBannerTests {
 		Assertions.assertEquals(bannerID, "invalidInThreeWeeks")
 
 		//recovery
-		val firstTestResult = LocalDate.now(clockFirstFeb).minusDays(270).plusDays(1)
+		val firstTestResult = LocalDate.now(clockFirstFeb).minusDays(180).plusDays(1)
 		val validFrom = firstTestResult.plusDays(10)
-		val validUntil = firstTestResult.plusDays(364)
+		val validUntil = firstTestResult.plusDays(179)
 		val recovery = TestDataGenerator.generateRecoveryCertFromDate(
 			validFrom.atStartOfDay(),
 			validUntil.atStartOfDay(),
@@ -96,7 +101,7 @@ class EOLBannerTests {
 		Assertions.assertEquals(bannerID, "invalidInThreeWeeks")
 
 		//antigen
-		var now = OffsetDateTime.now(clockFirstFeb).minusDays(270).plusDays(1)
+		var now = OffsetDateTime.now(clockFirstFeb).minusDays(180).plusDays(1)
 		var sampleCollectionTime = now
 		var test = TestDataGenerator.generateTestCertFromDate(
 			TestType.RAT.code,
