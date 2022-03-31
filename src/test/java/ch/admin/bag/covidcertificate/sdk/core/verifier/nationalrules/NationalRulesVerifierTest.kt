@@ -49,13 +49,19 @@ class NationalRulesVerifierTest {
 
 	private lateinit var nationalRulesVerifier: NationalRulesVerifier
 	private lateinit var nationalRuleSet: RuleSet
+	private lateinit var foreignRuleSet: RuleSet
 	private lateinit var utcClock: Clock
 
 	@BeforeEach
 	fun setup() {
 		val moshi = Moshi.Builder().add(RawJsonStringAdapter()).build()
+		val ruleSetAdapter = moshi.adapter(RuleSet::class.java)
+
 		val nationalRulesContent = this::class.java.classLoader.getResource("nationalrules.json")!!.readText()
-		nationalRuleSet = moshi.adapter(RuleSet::class.java).fromJson(nationalRulesContent)!!
+		nationalRuleSet = requireNotNull(ruleSetAdapter.fromJson(nationalRulesContent))
+
+		val foreignRulesContent = this::class.java.classLoader.getResource("foreignRules_de.json")!!.readText()
+		foreignRuleSet = requireNotNull(ruleSetAdapter.fromJson(foreignRulesContent))
 
 		nationalRulesVerifier = NationalRulesVerifier()
 		utcClock = Clock.systemUTC()
@@ -561,6 +567,34 @@ class NationalRulesVerifierTest {
 		}
 	}
 
+	@Test
+	fun testPositiveRatTestShouldBeValidAfter10Days() {
+		val validRat = TestDataGenerator.generateTestCert(
+			TestType.RAT.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofDays(-10),
+			utcClock
+		)
+
+		val validRatResult = nationalRulesVerifier.verify(validRat, nationalRuleSet, CertType.TEST, null, clock = utcClock)
+		assertTrue(validRatResult is CheckNationalRulesState.SUCCESS)
+
+
+		val invalidRat = TestDataGenerator.generateTestCert(
+			TestType.RAT.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofDays(-9),
+			utcClock
+		)
+
+		val invalidRatResult = nationalRulesVerifier.verify(invalidRat, nationalRuleSet, CertType.TEST, null, clock = utcClock)
+		assertTrue(invalidRatResult is CheckNationalRulesState.NOT_YET_VALID)
+	}
+
 
 	@Test
 	fun testSeroPositiv() {
@@ -846,4 +880,40 @@ class NationalRulesVerifierTest {
 			nationalRulesVerifier.verify(validRecovery, nationalRuleSet, CertType.RECOVERY, null, checkDate, clock = utcClock)
 		assertTrue(validRecoveryResult is CheckNationalRulesState.SUCCESS)
 	}
+
+	/// FOREIGN RULES TESTS
+
+	@Test
+	fun testPositiveRatShouldNotBeValidInGermany() {
+		val positiveRatTest = TestDataGenerator.generateTestCert(
+			TestType.RAT.code,
+			AcceptanceCriteriasConstants.POSITIVE_CODE,
+			"1232",
+			AcceptanceCriteriasConstants.TARGET_DISEASE,
+			Duration.ofDays(-10),
+			utcClock
+		)
+
+		val resultSwitzerland = nationalRulesVerifier.verify(
+			positiveRatTest,
+			nationalRuleSet,
+			CertType.TEST,
+			null,
+			isForeignRulesCheck = false,
+			clock = utcClock
+		)
+		assertTrue(resultSwitzerland is CheckNationalRulesState.SUCCESS)
+
+		val resultGermany = nationalRulesVerifier.verify(
+			positiveRatTest,
+			foreignRuleSet,
+			CertType.TEST,
+			null,
+			isForeignRulesCheck = true,
+			clock = utcClock
+		)
+		assertTrue(resultGermany is CheckNationalRulesState.INVALID)
+	}
+
+
 }

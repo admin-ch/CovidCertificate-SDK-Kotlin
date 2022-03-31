@@ -46,6 +46,7 @@ object ErrorCodes {
 	const val TOO_MANY_TEST_ENTRIES = "N|TMT"
 	const val TOO_MANY_RECOVERY_ENTRIES = "N|TMR"
 	const val UNKNOWN_RULE_FAILED = "N|UNK"
+	const val COUNTRY_CODE_NOT_SUPPORTED = "N|CCNS"
 
 	/* General errors */
 	const val GENERAL_NETWORK_FAILURE = "G|NWF"
