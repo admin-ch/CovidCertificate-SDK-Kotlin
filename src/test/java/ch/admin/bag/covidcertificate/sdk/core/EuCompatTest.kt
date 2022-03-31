@@ -75,9 +75,14 @@ data class EuTestExpectedResult(
 
 class EuTestDataProvider : ArgumentsProvider {
 	companion object {
-		// If a testdata json is known to be faulty, add it's path to the list so it will be ignored during the unit tests
+		// If a testdata json is known to be faulty, add its path to the list, so it will be ignored during the unit tests
 		// E.g. "LI/2DCode/raw/4.json" used to have a missing version
-		private val KNOWN_TEST_FAILURES: List<String> = listOf()
+		private val KNOWN_TEST_FAILURES: List<String> = listOf(
+			"6.json", // Not a DGC Testdata json format, but rather an actual certificate content json
+			"GE/2DCode/raw/1.json", // Georgia has GATEWAY-ENV as a single string instead of an array
+			"GE/2DCode/raw/2.json", // Georgia has GATEWAY-ENV as a single string instead of an array
+			"GE/2DCode/raw/3.json", // Georgia has GATEWAY-ENV as a single string instead of an array
+		)
 	}
 
 	private val testDataDirectory = File(this::class.java.classLoader.getResource("dgc-testdata")!!.path)

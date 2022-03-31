@@ -11,18 +11,15 @@
 package ch.admin.bag.covidcertificate.sdk.core.models.trustlist
 
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.RawJsonString
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
-import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class RuleSet(
-	val displayRules: List<DisplayRule>,
 	val rules: List<Rule>,
-	val modeRules: ModeRules,
 	val valueSets: Map<String, Array<String>>,
 	val validDuration: Long,
+	val displayRules: List<DisplayRule>? = null,
+	val modeRules: ModeRules? = null,
 )
 
 @JsonClass(generateAdapter = true)
@@ -68,29 +65,4 @@ data class Rule(
 data class Description(
 	val desc: String,
 	val lang: String
-)
-
-internal data class CertLogicData(
-	val payload: CertLogicPayload,
-	val external: CertLogicExternalInfo,
-)
-
-internal data class CertLogicPayload(
-	val r: List<RecoveryEntry>? = null,
-	val t: List<TestEntry>? = null,
-	val v: List<VaccinationEntry>? = null,
-	val h: CertLogicHeaders? = null
-)
-
-internal data class CertLogicExternalInfo(
-	val valueSets: Map<String, Array<String>>,
-	val validationClock: String, // ISO-8601 extended offset date-time format
-	val validationClockAtStartOfDay: String, // ISO-8601 date format
-)
-
-internal data class CertLogicHeaders(
-	val iat: String?,
-	val exp: String?,
-	val isIsLight: Boolean?, //Must be isIsLight because the Json Serializer strips one "is"
-	val mode: String?
 )

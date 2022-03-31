@@ -11,12 +11,28 @@
 package ch.admin.bag.covidcertificate.sdk.core.verifier
 
 import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.*
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.Base45Service
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.DecompressionService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.PrefixIdentifierService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.RevokedHealthCertService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.TimestampService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.VerificationCoseService
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicHeaders
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
-import ch.admin.bag.covidcertificate.sdk.core.models.state.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckModeRulesState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidity
+import ch.admin.bag.covidcertificate.sdk.core.models.state.StateError
+import ch.admin.bag.covidcertificate.sdk.core.models.state.SuccessState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificatesStore
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.TrustList
 import ch.admin.bag.covidcertificate.sdk.core.utils.DEFAULT_DISPLAY_RULES_TIME_FORMATTER
 import ch.admin.bag.covidcertificate.sdk.core.utils.prettyPrint
 import ch.admin.bag.covidcertificate.sdk.core.verifier.moderules.ModeRulesVerifier
@@ -36,20 +52,34 @@ class CertificateVerifier {
 	 *
 	 * @param certificateHolder The object returned from the decoder
 	 * @param trustList The current applicable trust list, containing active public keys for signing, revoked certificate identifiers and the national rule set
+	 * @param verificationModes A set of verification mode identifiers to use for the national rules check
+	 * @param verificationType The type of verification check, either [VerificationType.WALLET] or [VerificationType.VERIFIER]
+	 * @param nationalRulesCheckDate An optional date to verify the certificate against a specific date
+	 * @param isForeignRulesCheck An optional flag to indicate this is a check against foreign national rules
 	 * @return Outcome state of the verification
 	 */
 	suspend fun verify(
 		certificateHolder: CertificateHolder,
 		trustList: TrustList,
 		verificationModes: Set<String>,
-		verificationType: VerificationType = VerificationType.VERIFIER
+		verificationType: VerificationType = VerificationType.VERIFIER,
+		nationalRulesCheckDate: LocalDateTime? = null,
+		isForeignRulesCheck: Boolean = false,
 	): VerificationState = withContext(Dispatchers.Default) {
 		// Execute all three checks in parallel...
 		val checkSignatureStateDeferred = async { checkSignature(certificateHolder, trustList.signatures) }
 		val checkRevocationStateDeferred = async { checkRevocationStatus(certificateHolder, trustList.revokedCertificates) }
-		val checkNationalRulesStateDeferred = async { checkNationalRules(certificateHolder, trustList.ruleSet) }
-		val checkModeRulesStateDeferred = async { checkModeRules(certificateHolder, verificationModes, trustList.ruleSet) }
-
+		val checkNationalRulesStateDeferred = async {
+			checkNationalRules(certificateHolder, trustList.ruleSet, nationalRulesCheckDate, isForeignRulesCheck)
+		}
+		val checkModeRulesStateDeferred = async {
+			if (isForeignRulesCheck) {
+				// Mode rules don't apply to foreign rules checks
+				CheckModeRulesState.SUCCESS(emptyList())
+			} else {
+				checkModeRules(certificateHolder, verificationModes, trustList.ruleSet)
+			}
+		}
 
 		// ... but wait for all of them to finish
 		val checkSignatureState = checkSignatureStateDeferred.await()
@@ -175,11 +205,15 @@ class CertificateVerifier {
 	 *
 	 * @param certificateHolder The object returned from the decoder
 	 * @param ruleSet The national rule set from the trust list
+	 * @param nationalRulesCheckDate An optional date to check verify the certificate against a specific date
+	 * @param isForeignRulesCheck An optional flag to indicate that this is a check against foreign national rules
 	 * @return Outcome state of the national rules check
 	 */
 	private suspend fun checkNationalRules(
 		certificateHolder: CertificateHolder,
-		ruleSet: RuleSet
+		ruleSet: RuleSet,
+		nationalRulesCheckDate: LocalDateTime? = null,
+		isForeignRulesCheck: Boolean = false,
 	): CheckNationalRulesState = withContext(Dispatchers.Default) {
 		try {
 			when {
@@ -198,7 +232,9 @@ class CertificateVerifier {
 						certificateHolder.certificate as DccCert,
 						ruleSet,
 						certificateHolder.certType!!,
-						CertLogicHeaders(issuedAt, expiredAt, false, null)
+						CertLogicHeaders(issuedAt, expiredAt, false, null),
+						nationalRulesCheckDate,
+						isForeignRulesCheck,
 					)
 				}
 				else -> {

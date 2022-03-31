@@ -40,10 +40,12 @@ internal class DisplayValidityCalculator {
 	}
 
 	fun getDisplayValidityRangeForSystemTimeZone(
-		displayRules: List<DisplayRule>,
+		displayRules: List<DisplayRule>?,
 		data: JsonNode,
 		certType: CertType
 	): ValidityRange? {
+		if (displayRules == null) return null
+
 		val resultFromDate = evalRule(displayRules, RULE_DISPLAY_DATE_FROM, data) ?: return null
 		val resultUntilDate = evalRule(displayRules, RULE_DISPLAY_DATE_UNTIL, data) ?: return null
 		val dateFromString = getDateTime(resultFromDate, certType, true)
@@ -52,18 +54,18 @@ internal class DisplayValidityCalculator {
 	}
 
 	fun isOnlyValidInSwitzerland(
-		displayRules: List<DisplayRule>,
+		displayRules: List<DisplayRule>?,
 		data: JsonNode
 	): Boolean {
-		val result = evalRule(displayRules, RULE_CH_ONLY, data) ?: return false
+		val result = displayRules?.let { evalRule(it, RULE_CH_ONLY, data) } ?: return false
 		return isTruthy(result)
 	}
 
 	fun getEolBannerIdentifier(
-		displayRules: List<DisplayRule>,
+		displayRules: List<DisplayRule>?,
 		data: JsonNode
 	): String? {
-		return evalRule(displayRules, RULE_EOL_BANNER, data)?.asText(null)
+		return displayRules?.let { evalRule(it, RULE_EOL_BANNER, data)?.asText(null) }
 	}
 
 	private fun getDateTime(

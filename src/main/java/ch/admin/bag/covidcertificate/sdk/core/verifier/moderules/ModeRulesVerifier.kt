@@ -10,12 +10,16 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.verifier.moderules
 
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicData
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicExternalInfo
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicHeaders
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicPayload
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CovidCertificate
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidity
 import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidityState
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -36,11 +40,13 @@ internal class ModeRulesVerifier {
 		mode: String,
 		clock: Clock = Clock.systemUTC()
 	): ModeValidity {
+		val modeRules = ruleSet.modeRules ?: return ModeValidity(mode, ModeValidityState.UNKNOWN)
+
 		val ruleSetData = getCertlogicData(certificate, ruleSet.valueSets, headers, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
-		val ruleLogic = jacksonMapper.readTree(ruleSet.modeRules.logic)
+		val ruleLogic = jacksonMapper.readTree(modeRules.logic)
 		val resultFromModeRule = evaluate(ruleLogic, data)
 		val state = getValidityState(resultFromModeRule)
 		return ModeValidity(mode, state)
@@ -68,28 +74,13 @@ internal class ModeRulesVerifier {
 		if (resultFromModeRule is TextNode) {
 			val modeValidityState = resultFromModeRule.textValue()
 			return when {
-				ModeValidityState.SUCCESS.name.equals(modeValidityState, true) -> {
-					ModeValidityState.SUCCESS
-				}
-				ModeValidityState.INVALID.name.equals(modeValidityState, true) -> {
-					ModeValidityState.INVALID
-				}
-				ModeValidityState.IS_LIGHT.name.equals(modeValidityState, true) -> {
-					ModeValidityState.IS_LIGHT
-				}
-				ModeValidityState.SUCCESS_2G.name.equals(modeValidityState, true) -> {
-					ModeValidityState.SUCCESS_2G
-				}
-
-				ModeValidityState.SUCCESS_2G_PLUS.name.equals(modeValidityState, true) -> {
-					ModeValidityState.SUCCESS_2G_PLUS
-				}
-				ModeValidityState.UNKNOWN_MODE.name.equals(modeValidityState, true) -> {
-					ModeValidityState.UNKNOWN_MODE
-				}
-				else -> {
-					ModeValidityState.UNKNOWN
-				}
+				ModeValidityState.SUCCESS.name.equals(modeValidityState, true) -> ModeValidityState.SUCCESS
+				ModeValidityState.INVALID.name.equals(modeValidityState, true) -> ModeValidityState.INVALID
+				ModeValidityState.IS_LIGHT.name.equals(modeValidityState, true) -> ModeValidityState.IS_LIGHT
+				ModeValidityState.SUCCESS_2G.name.equals(modeValidityState, true) -> ModeValidityState.SUCCESS_2G
+				ModeValidityState.SUCCESS_2G_PLUS.name.equals(modeValidityState, true) -> ModeValidityState.SUCCESS_2G_PLUS
+				ModeValidityState.UNKNOWN_MODE.name.equals(modeValidityState, true) -> ModeValidityState.UNKNOWN_MODE
+				else -> ModeValidityState.UNKNOWN
 			}
 		}
 		return ModeValidityState.UNKNOWN

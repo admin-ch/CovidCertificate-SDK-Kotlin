@@ -11,18 +11,30 @@
 package ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules
 
 import ch.admin.bag.covidcertificate.sdk.core.extensions.isPositiveRatTest
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicData
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicExternalInfo
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicHeaders
+import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicPayload
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState.*
-import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.*
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.DisplayRule
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Rule
+import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
 import ch.admin.bag.covidcertificate.sdk.core.utils.DateUtil
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError.*
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.evaluate
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.certlogic.isTruthy
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import java.time.*
+import java.time.Clock
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -31,13 +43,26 @@ internal class NationalRulesVerifier {
 	private val displayValidityCalculator = DisplayValidityCalculator()
 
 	fun verify(
-		dccCert: DccCert, ruleSet: RuleSet, certType: CertType, headers: CertLogicHeaders?, clock: Clock = Clock.systemUTC()
+		dccCert: DccCert,
+		ruleSet: RuleSet,
+		certType: CertType,
+		headers: CertLogicHeaders?,
+		nationalRulesCheckDate: LocalDateTime? = null,
+		isForeignRulesCheck: Boolean = false,
+		clock: Clock = Clock.systemUTC()
 	): CheckNationalRulesState {
+		// Filter the rules with the specified date
+		val rules = getValidRulesForDate(ruleSet, nationalRulesCheckDate)
+		if (rules.isEmpty()) {
+			return INVALID(NO_VALID_RULES_FOR_SPECIFIC_DATE)
+		}
+
 		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, headers, clock)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
-		for (rule in ruleSet.rules) {
+
+		rules.forEach { rule ->
 			val ruleLogic = jacksonMapper.readTree(rule.logic)
 			val isSuccessful = isTruthy(evaluate(ruleLogic, data))
 
@@ -46,14 +71,22 @@ internal class NationalRulesVerifier {
 			}
 		}
 
-		val validityRange =
-			getValidityRange(ruleSet.displayRules, data, certType)
-		val isOnlyValidInSwitzerland = displayValidityCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
-		val eolBannerIdentifier = displayValidityCalculator.getEolBannerIdentifier(ruleSet.displayRules, data)
-		return if (validityRange != null) {
-			SUCCESS(validityRange, isOnlyValidInSwitzerland, eolBannerIdentifier)
-		} else {
-			INVALID(VALIDITY_RANGE_NOT_FOUND)
+		return when {
+			ruleSet.displayRules != null -> {
+				// If the ruleset contains display rules, get the certificate validity range and additional display flags
+				val validityRange = getValidityRange(ruleSet.displayRules, data, certType)
+				val isOnlyValidInSwitzerland = displayValidityCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
+				val eolBannerIdentifier = displayValidityCalculator.getEolBannerIdentifier(ruleSet.displayRules, data)
+				SUCCESS(validityRange, isOnlyValidInSwitzerland, eolBannerIdentifier)
+			}
+			isForeignRulesCheck -> {
+				// If the ruleset contains no display rules but this is a foreign rules check, consider it a success but without any additional information
+				SUCCESS(null, false)
+			}
+			else -> {
+				// In all other cases, consider it invalid without a validity range
+				INVALID(VALIDITY_RANGE_NOT_FOUND)
+			}
 		}
 	}
 
@@ -86,10 +119,32 @@ internal class NationalRulesVerifier {
 		return CertLogicData(payload, externalInfo)
 	}
 
+	private fun getValidRulesForDate(ruleSet: RuleSet, checkDate: LocalDateTime?): List<Rule> {
+		if (checkDate == null) {
+			return ruleSet.rules
+		}
+
+		return ruleSet.rules
+			.groupBy { it.identifier } // The same rule can occur multiple times with different validity ranges
+			.mapNotNull { (_, rules) ->
+				// Filter the grouped rules by their validity range for the specified checkDate, then take the one with the latest validFrom field
+				rules.filter {
+					val validFromDate = DateUtil.parseDateTime(it.validFrom)
+					val validToDate = DateUtil.parseDateTime(it.validTo)
+
+					if (validFromDate != null && validToDate != null) {
+						checkDate in validFromDate..validToDate
+					} else {
+						false
+					}
+				}.maxByOrNull { it.validFrom }
+			}
+	}
+
 	private fun getErrorStateForRule(
 		rule: Rule,
 		dccCert: DccCert,
-		displayRules: List<DisplayRule>,
+		displayRules: List<DisplayRule>?,
 		valueSets: Map<String, Array<String>>,
 		certType: CertType,
 		headers: CertLogicHeaders?,
@@ -160,11 +215,13 @@ internal class NationalRulesVerifier {
 	}
 
 	private fun getValidityRange(
-		displayRules: List<DisplayRule>,
+		displayRules: List<DisplayRule>?,
 		data: JsonNode,
 		certType: CertType
 	): ValidityRange? {
-		return displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(displayRules, data, certType)
+		return displayRules?.let {
+			displayValidityCalculator.getDisplayValidityRangeForSystemTimeZone(it, data, certType)
+		}
 	}
 
 
