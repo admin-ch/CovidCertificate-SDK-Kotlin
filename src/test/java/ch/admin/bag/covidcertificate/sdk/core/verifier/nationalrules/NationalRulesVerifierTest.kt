@@ -314,7 +314,15 @@ class NationalRulesVerifierTest {
 			validDateFrom,
 		)
 
-		val payload = CertLogicPayload(validCert.pastInfections, validCert.tests, validCert.vaccinations, null)
+		val payload = CertLogicPayload(
+			validCert.person,
+			validCert.dateOfBirth,
+			validCert.version,
+			validCert.pastInfections,
+			validCert.tests,
+			validCert.vaccinations,
+			null
+		)
 		val clock: Clock = Clock.systemUTC()
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =
@@ -694,7 +702,15 @@ class NationalRulesVerifierTest {
 			AcceptanceCriteriasConstants.TARGET_DISEASE
 		)
 
-		val payload = CertLogicPayload(validCert.pastInfections, validCert.tests, validCert.vaccinations, null)
+		val payload = CertLogicPayload(
+			validCert.person,
+			validCert.dateOfBirth,
+			validCert.version,
+			validCert.pastInfections,
+			validCert.tests,
+			validCert.vaccinations,
+			null
+		)
 		val clock: Clock = Clock.systemUTC()
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =

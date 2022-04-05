@@ -59,9 +59,25 @@ internal class ModeRulesVerifier {
 		clock: Clock = Clock.systemUTC()
 	): CertLogicData {
 		val payload = when (certificate) {
-			is ChLightCert -> CertLogicPayload(null, null, null, headers)
-			is DccCert -> CertLogicPayload(certificate.pastInfections, certificate.tests, certificate.vaccinations, headers)
-			else -> CertLogicPayload(null, null, null, null)
+			is ChLightCert -> CertLogicPayload(
+				certificate.person,
+				certificate.dateOfBirth,
+				certificate.version,
+				null,
+				null,
+				null,
+				headers
+			)
+			is DccCert -> CertLogicPayload(
+				certificate.person,
+				certificate.dateOfBirth,
+				certificate.version,
+				certificate.pastInfections,
+				certificate.tests,
+				certificate.vaccinations,
+				headers
+			)
+			else -> CertLogicPayload(null, null, null, null, null, null, null)
 		}
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =
