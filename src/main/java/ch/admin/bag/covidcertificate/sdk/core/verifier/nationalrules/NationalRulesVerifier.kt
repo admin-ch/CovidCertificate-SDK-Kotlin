@@ -111,7 +111,16 @@ internal class NationalRulesVerifier {
 				it
 			}
 		}
-		val payload = CertLogicPayload(dccCert.pastInfections, tests, dccCert.vaccinations, headers)
+
+		val payload = CertLogicPayload(
+			dccCert.person,
+			dccCert.dateOfBirth,
+			dccCert.version,
+			dccCert.pastInfections,
+			tests,
+			dccCert.vaccinations,
+			headers
+		)
 		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 		val validationClockAtStartOfDay =
 			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)

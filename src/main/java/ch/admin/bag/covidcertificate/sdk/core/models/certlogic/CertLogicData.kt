@@ -1,5 +1,6 @@
 package ch.admin.bag.covidcertificate.sdk.core.models.certlogic
 
+import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.PersonName
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.RecoveryEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.TestEntry
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.VaccinationEntry
@@ -10,6 +11,9 @@ internal data class CertLogicData(
 )
 
 internal data class CertLogicPayload(
+	val nam: PersonName? = null,
+	val dob: String? = null,
+	val ver: String? = null,
 	val r: List<RecoveryEntry>? = null,
 	val t: List<TestEntry>? = null,
 	val v: List<VaccinationEntry>? = null,
