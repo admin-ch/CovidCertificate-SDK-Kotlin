@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.Clock
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -57,7 +58,7 @@ internal class NationalRulesVerifier {
 			return INVALID(NO_VALID_RULES_FOR_SPECIFIC_DATE)
 		}
 
-		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, headers, clock)
+		val ruleSetData = getCertlogicData(dccCert, ruleSet.valueSets, headers, clock, nationalRulesCheckDate)
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
@@ -94,7 +95,8 @@ internal class NationalRulesVerifier {
 		dccCert: DccCert,
 		valueSets: Map<String, Array<String>>,
 		headers: CertLogicHeaders?,
-		clock: Clock = Clock.systemUTC()
+		clock: Clock = Clock.systemUTC(),
+		checkDate: LocalDateTime? = null,
 	): CertLogicData {
 		val tests = dccCert.tests?.map {
 			if (it.isPositiveRatTest()) {
@@ -121,9 +123,20 @@ internal class NationalRulesVerifier {
 			dccCert.vaccinations,
 			headers
 		)
-		val validationClock = ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-		val validationClockAtStartOfDay =
-			LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+		val validationClock = checkDate
+			?.atZone(ZoneId.systemDefault())
+			?.withZoneSameInstant(ZoneOffset.UTC)
+			?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+			?: ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+		val validationClockAtStartOfDay = checkDate
+			?.atZone(ZoneId.systemDefault())
+			?.withZoneSameInstant(ZoneOffset.UTC)
+			?.with(LocalTime.MIN)
+			?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+			?: LocalDate.now(clock).atStartOfDay(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
 		val externalInfo = CertLogicExternalInfo(valueSets, validationClock, validationClockAtStartOfDay)
 		return CertLogicData(payload, externalInfo)
 	}
