@@ -72,7 +72,7 @@ class CertificateVerifierTest {
 			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
 
 			assertEquals(
-				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE, false),
 				invalidState.nationalRulesState
 			)
 		}
@@ -97,7 +97,7 @@ class CertificateVerifierTest {
 			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
 
 			assertEquals(
-				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE, false),
 				invalidState.nationalRulesState
 			)
 		}
@@ -125,7 +125,7 @@ class CertificateVerifierTest {
 			)
 
 			assertEquals(
-				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE, false),
 				invalidState.nationalRulesState
 			)
 		}
@@ -146,7 +146,7 @@ class CertificateVerifierTest {
 			assertTrue(invalidState.revocationState is CheckRevocationState.SUCCESS)
 
 			assertEquals(
-				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE),
+				CheckNationalRulesState.INVALID(NationalRulesError.NO_VALID_RULES_FOR_SPECIFIC_DATE, false),
 				invalidState.nationalRulesState
 			)
 		}
