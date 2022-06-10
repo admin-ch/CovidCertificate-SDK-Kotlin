@@ -30,16 +30,8 @@ internal object VerificationCoseService {
 	}
 
 	fun decode(keys: List<Jwk>, input: ByteArray, certType: CertType): Boolean {
-		val signature: Sign1Message = try {
-			(Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message)
-		} catch (e: Throwable) {
-			null
-		} ?: return false
-
-		// The keyId is not security-critical and thus may be in either header: https://datatracker.ietf.org/doc/html/rfc8152#section-3.1
-		val kid: ByteArray = signature.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
-			?: signature.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
-			?: return false
+		val signature = getSignature(input) ?: return false
+		val kid = getKeyId(signature) ?: return false
 
 		// Return true if any public key of the correct keyId that is allowed to sign this specific certificate type correctly validates the signature
 		return keys.filter { it.getKid() contentEquals kid }
@@ -54,6 +46,20 @@ internal object VerificationCoseService {
 					false
 				}
 			}
+	}
+
+	fun getSignature(input: ByteArray): Sign1Message? {
+		return try {
+			Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message
+		} catch (e: Throwable) {
+			null
+		}
+	}
+
+	fun getKeyId(signature: Sign1Message): ByteArray? {
+		// The keyId is not security-critical and thus may be in either header: https://datatracker.ietf.org/doc/html/rfc8152#section-3.1
+		return signature.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
+			?: signature.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
 	}
 
 }

@@ -14,6 +14,7 @@
 package ch.admin.bag.covidcertificate.sdk.core.decoder.chain
 
 import ch.admin.bag.covidcertificate.sdk.core.data.moshi.TrimmedStringAdapter
+import ch.admin.bag.covidcertificate.sdk.core.extensions.toBase64
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.light.ChLightCert
@@ -29,7 +30,7 @@ internal object CborService {
 	private val keyChLightCertV1 = CBORObject.FromObject(1)
 
 	// Takes qrCodeData to directly construct a Bagdgc AND keep the field in the DCC a val
-	fun decode(input: ByteArray, qrCodeData: String): CertificateHolder? {
+	fun decode(input: ByteArray, qrCodeData: String, kid: ByteArray?): CertificateHolder? {
 
 		val moshi = Moshi.Builder()
 			.add(Date::class.java, Rfc3339DateJsonAdapter())
@@ -44,6 +45,7 @@ internal object CborService {
 			val expirationTime: Instant? = map[CwtHeaderKeys.EXPIRATION.asCBOR()]?.let { Instant.ofEpochSecond(it.AsInt64()) }
 			val issuedAt: Instant? = map[CwtHeaderKeys.ISSUED_AT.asCBOR()]?.let { Instant.ofEpochSecond(it.AsInt64()) }
 			val issuer: String? = map[CwtHeaderKeys.ISSUER.asCBOR()]?.AsString()
+			val kidBase64: String? = kid?.toBase64()
 
 			val hcert = map[CwtHeaderKeys.HCERT.asCBOR()]
 			val light = map[CwtHeaderKeys.LIGHT.asCBOR()]
@@ -52,13 +54,13 @@ internal object CborService {
 				hcert != null -> {
 					hcert[keyDccCertV1]?.let {
 						val dccCert = dccCertAdapter.fromJson(it.ToJSONString()) ?: return null
-						return CertificateHolder(dccCert, qrCodeData, expirationTime, issuedAt, issuer)
+						return CertificateHolder(dccCert, qrCodeData, expirationTime, issuedAt, issuer, kidBase64)
 					} ?: return null
 				}
 				light != null -> {
 					light[keyChLightCertV1]?.let {
 						val chLightCert = chLightCertAdapter.fromJson(it.ToJSONString()) ?: return null
-						return CertificateHolder(chLightCert, qrCodeData, expirationTime, issuedAt, issuer)
+						return CertificateHolder(chLightCert, qrCodeData, expirationTime, issuedAt, issuer, kidBase64)
 					} ?: return null
 				}
 				else -> return null
