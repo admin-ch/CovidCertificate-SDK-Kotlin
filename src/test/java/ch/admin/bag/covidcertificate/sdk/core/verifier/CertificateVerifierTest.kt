@@ -108,7 +108,7 @@ class CertificateVerifierTest {
 		val certificateHolder = decodeCertificate(HC1_A)
 		val trustList = createTrustList(
 			signingKeys = getHardcodedSigningKeys("dev"),
-			revokedKeyIds = listOf("01:CH:42A272C9E1CAA43D934142C9")
+			revokedKeyIds = listOf("urn:uvci:01:CH:60AE7DE28A700FA9BF4B4D5D")
 		)
 
 		runBlocking {

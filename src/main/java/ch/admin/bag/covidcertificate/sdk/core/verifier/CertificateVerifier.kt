@@ -43,6 +43,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class CertificateVerifier {
 
@@ -227,7 +228,7 @@ class CertificateVerifier {
 				certificateHolder.containsDccCert() -> {
 					val nationalRulesVerifier = NationalRulesVerifier()
 					val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
-					val expiredAt = certificateHolder.expirationTime?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+					val expiredAt = certificateHolder.expirationTime?.prettyPrint(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 					val issuer = certificateHolder.issuer
 					val kid = certificateHolder.kidBase64
 					nationalRulesVerifier.verify(
@@ -272,7 +273,7 @@ class CertificateVerifier {
 		verificationIdentifier.forEach { verificationMode ->
 			try {
 				val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
-				val expiredAt = certificateHolder.expirationTime?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				val expiredAt = certificateHolder.expirationTime?.prettyPrint(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 				val isLight = certificateHolder.containsChLightCert()
 				val issuer = certificateHolder.issuer
 				val kid = certificateHolder.kidBase64
