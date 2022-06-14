@@ -109,6 +109,7 @@ class CertificateVerifier {
 					checkNationalRulesState.validityRange,
 					checkModeRulesState.modeValidities,
 					checkNationalRulesState.eolBannerIdentifier,
+					checkNationalRulesState.showRenewBanner,
 				)
 				VerificationState.SUCCESS(walletSuccessState, isLightCertificate)
 			} else {
@@ -125,7 +126,7 @@ class CertificateVerifier {
 		) {
 			VerificationState.INVALID(
 				checkSignatureState, checkRevocationState, checkNationalRulesState,
-				checkNationalRulesState.validityRange()
+				checkNationalRulesState.validityRange(), checkNationalRulesState.showRenewBanner()
 			)
 		} else {
 			VerificationState.LOADING
@@ -148,12 +149,6 @@ class CertificateVerifier {
 			val certType = certificateHolder.certType
 				?: return@withContext CheckSignatureState.INVALID(ErrorCodes.SIGNATURE_TYPE_INVALID)
 
-			// Check that the signature timestamps are valid
-			val timestampError = TimestampService.decode(certificateHolder)
-			if (timestampError != null) {
-				return@withContext CheckSignatureState.INVALID(timestampError)
-			}
-
 			// Repeat decode chain to get and verify COSE signature
 			val encoded = PrefixIdentifierService.decode(certificateHolder.qrCodeData)
 				?: return@withContext CheckSignatureState.INVALID(ErrorCodes.DECODE_PREFIX)
@@ -162,9 +157,15 @@ class CertificateVerifier {
 			val cose = DecompressionService.decode(compressed)
 				?: return@withContext CheckSignatureState.INVALID(ErrorCodes.DECODE_Z_LIB)
 
-			val valid = VerificationCoseService.decode(signatures.certs, cose, certType)
-			if (valid) {
-				CheckSignatureState.SUCCESS
+			val isSignatureValid = VerificationCoseService.decode(signatures.certs, cose, certType)
+			if (isSignatureValid) {
+				// Check that the signature timestamps are valid
+				val timestampError = TimestampService.decode(certificateHolder)
+				if (timestampError != null) {
+					CheckSignatureState.INVALID(timestampError)
+				} else {
+					CheckSignatureState.SUCCESS
+				}
 			} else {
 				CheckSignatureState.INVALID(ErrorCodes.SIGNATURE_COSE_INVALID)
 			}
