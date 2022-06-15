@@ -33,6 +33,7 @@ internal class DisplayValidityCalculator {
 		private const val RULE_DISPLAY_DATE_UNTIL = "display-until-date"
 		private const val RULE_CH_ONLY = "is-only-valid-in-ch"
 		private const val RULE_EOL_BANNER = "eol-banner"
+		private const val RULE_RENEW_BANNER = "renew-banner"
 	}
 
 	private val jacksonMapper = ObjectMapper().apply {
@@ -68,6 +69,13 @@ internal class DisplayValidityCalculator {
 		return displayRules?.let { evalRule(it, RULE_EOL_BANNER, data)?.asText(null) }
 	}
 
+	fun getShowRenewBanner(
+		displayRules: List<DisplayRule>?,
+		data: JsonNode
+	): String? {
+		return displayRules?.let { evalRule(it, RULE_RENEW_BANNER, data)?.asText(null) }
+	}
+
 	private fun getDateTime(
 		resultFromDisplayRule: JsonNode,
 		certType: CertType,
@@ -80,15 +88,15 @@ internal class DisplayValidityCalculator {
 	}
 
 	private fun getLocalDateTime(certType: CertType, data: JsonDateTime, atStartOfDay: Boolean): LocalDateTime {
-		if (certType == CertType.TEST) {
+		return if (certType == CertType.TEST) {
 			//test
-			return data.temporalValue().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
+			data.temporalValue().atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
 		} else {
 			//is vaccine or recovery entry
 			if (atStartOfDay) {
-				return data.temporalValue().toLocalDate().atStartOfDay()
+				data.temporalValue().toLocalDate().atStartOfDay()
 			} else {
-				return data.temporalValue().toLocalDate().atTime(LocalTime.MAX)
+				data.temporalValue().toLocalDate().atTime(LocalTime.MAX)
 			}
 		}
 	}

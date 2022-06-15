@@ -13,14 +13,14 @@ package ch.admin.bag.covidcertificate.sdk.core.models.state
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 
 sealed class VerificationState {
-
 	data class SUCCESS(val successState: SuccessState, var isLightCertificate: Boolean) : VerificationState()
 
 	data class INVALID(
 		val signatureState: CheckSignatureState?,
 		val revocationState: CheckRevocationState?,
 		val nationalRulesState: CheckNationalRulesState?,
-		val validityRange: ValidityRange?
+		val validityRange: ValidityRange?,
+		val showRenewBanner: String?,
 	) : VerificationState()
 
 	object LOADING : VerificationState()
@@ -28,17 +28,16 @@ sealed class VerificationState {
 }
 
 sealed class SuccessState {
-
 	data class WalletSuccessState(
 		val isValidOnlyInSwitzerland: Boolean,
 		val validityRange: ValidityRange?,
 		val modeValidity: List<ModeValidity>,
 		val eolBannerIdentifier: String?,
+		val showRenewBanner: String?,
 	) : SuccessState()
 
 	data class VerifierSuccessState(
 		val modeValidity: ModeValidity
 	) : SuccessState()
-
 }
 

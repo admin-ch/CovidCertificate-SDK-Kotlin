@@ -17,25 +17,29 @@ sealed class CheckNationalRulesState {
 	data class SUCCESS(
 		val validityRange: ValidityRange?,
 		val isOnlyValidInCH: Boolean,
-		val eolBannerIdentifier: String? = null
+		val eolBannerIdentifier: String? = null,
+		val showRenewBanner: String? = null,
 	) : CheckNationalRulesState()
 
 	data class NOT_YET_VALID(
 		val validityRange: ValidityRange?,
 		val isOnlyValidInCH: Boolean,
-		val ruleId: String? = null
+		val ruleId: String? = null,
+		val showRenewBanner: String? = null,
 	) : CheckNationalRulesState()
 
 	data class NOT_VALID_ANYMORE(
 		val validityRange: ValidityRange?,
 		val isOnlyValidInCH: Boolean,
-		val ruleId: String? = null
+		val ruleId: String? = null,
+		val showRenewBanner: String? = null,
 	) : CheckNationalRulesState()
 
 	data class INVALID(
 		val nationalRulesError: NationalRulesError?,
 		val isOnlyValidInCH: Boolean,
-		val ruleId: String? = null
+		val ruleId: String? = null,
+		val showRenewBanner: String? = null,
 	) : CheckNationalRulesState()
 
 	object LOADING : CheckNationalRulesState()
@@ -45,6 +49,14 @@ sealed class CheckNationalRulesState {
 		is NOT_VALID_ANYMORE -> validityRange
 		is NOT_YET_VALID -> validityRange
 		is SUCCESS -> validityRange
+		else -> null
+	}
+
+	fun showRenewBanner(): String? = when (this) {
+		is SUCCESS -> showRenewBanner
+		is NOT_YET_VALID -> showRenewBanner
+		is NOT_VALID_ANYMORE -> showRenewBanner
+		is INVALID -> showRenewBanner
 		else -> null
 	}
 }

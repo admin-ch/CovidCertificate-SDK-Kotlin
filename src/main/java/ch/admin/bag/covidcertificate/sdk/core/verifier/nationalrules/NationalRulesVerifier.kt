@@ -58,11 +58,12 @@ internal class NationalRulesVerifier {
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
 
 		val isOnlyValidInSwitzerland = displayValidityCalculator.isOnlyValidInSwitzerland(ruleSet.displayRules, data)
+		val showRenewBanner = displayValidityCalculator.getShowRenewBanner(ruleSet.displayRules, data)
 
 		// Filter the rules with the specified date
 		val rules = getValidRulesForDate(ruleSet, nationalRulesCheckDate)
 		if (rules.isEmpty()) {
-			return INVALID(NO_VALID_RULES_FOR_SPECIFIC_DATE, isOnlyValidInSwitzerland)
+			return INVALID(NO_VALID_RULES_FOR_SPECIFIC_DATE, isOnlyValidInSwitzerland, showRenewBanner = showRenewBanner)
 		}
 
 		rules.forEach { rule ->
@@ -77,6 +78,7 @@ internal class NationalRulesVerifier {
 					ruleSetData.external.valueSets,
 					certType,
 					isOnlyValidInSwitzerland,
+					showRenewBanner,
 					headers
 				)
 			}
@@ -88,7 +90,7 @@ internal class NationalRulesVerifier {
 				val validityRange = getValidityRange(ruleSet.displayRules, data, certType)
 
 				val eolBannerIdentifier = displayValidityCalculator.getEolBannerIdentifier(ruleSet.displayRules, data)
-				SUCCESS(validityRange, isOnlyValidInSwitzerland, eolBannerIdentifier)
+				SUCCESS(validityRange, isOnlyValidInSwitzerland, eolBannerIdentifier, showRenewBanner)
 			}
 			isForeignRulesCheck -> {
 				// If the ruleset contains no display rules but this is a foreign rules check, consider it a success but without any additional information
@@ -96,7 +98,7 @@ internal class NationalRulesVerifier {
 			}
 			else -> {
 				// In all other cases, consider it invalid without a validity range
-				INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland)
+				INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, showRenewBanner = showRenewBanner)
 			}
 		}
 	}
@@ -180,6 +182,7 @@ internal class NationalRulesVerifier {
 		valueSets: Map<String, Array<String>>,
 		certType: CertType,
 		isOnlyValidInSwitzerland: Boolean,
+		showRenewBanner: String?,
 		headers: CertLogicHeaders?,
 		clock: Clock = Clock.systemUTC()
 	): CheckNationalRulesState {
@@ -187,63 +190,51 @@ internal class NationalRulesVerifier {
 		val jacksonMapper = ObjectMapper()
 		jacksonMapper.setTimeZone(TimeZone.getTimeZone(ZoneOffset.UTC))
 		val data = jacksonMapper.valueToTree<JsonNode>(ruleSetData)
+		val validityRange = getValidityRange(displayRules, data, certType)
+
 		return when (rule.identifier) {
-			"GR-CH-0001" -> INVALID(WRONG_DISEASE_TARGET, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0000" -> INVALID(TOO_MANY_VACCINE_ENTRIES, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0001" -> INVALID(NOT_FULLY_PROTECTED, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0002" -> INVALID(NO_VALID_PRODUCT, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0003" -> INVALID(NO_VALID_DATE, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0004" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0005" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0006" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0007" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"VR-CH-0008" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0000" -> INVALID(TOO_MANY_TEST_ENTRIES, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0001" -> INVALID(POSITIVE_RESULT, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0002" -> INVALID(WRONG_TEST_TYPE, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0003" -> INVALID(NO_VALID_PRODUCT, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0004" -> INVALID(NO_VALID_DATE, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0005" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0006" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0007" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0008" -> INVALID(NEGATIVE_RESULT, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0009" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0010" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0011" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"TR-CH-0012" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"RR-CH-0000" -> INVALID(TOO_MANY_RECOVERY_ENTRIES, isOnlyValidInSwitzerland, rule.identifier)
-			"RR-CH-0001" -> INVALID(NO_VALID_DATE, isOnlyValidInSwitzerland, rule.identifier)
-			"RR-CH-0002" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			"RR-CH-0003" -> getValidityRange(displayRules, data, certType)?.let {
-				NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier)
-			} ?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier)
-			else -> INVALID(UNKNOWN_RULE_FAILED, isOnlyValidInSwitzerland, rule.identifier)
+			"GR-CH-0001" -> INVALID(WRONG_DISEASE_TARGET, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0000" -> INVALID(TOO_MANY_VACCINE_ENTRIES, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0001" -> INVALID(NOT_FULLY_PROTECTED, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0002" -> INVALID(NO_VALID_PRODUCT, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0003" -> INVALID(NO_VALID_DATE, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0004" -> validityRange?.let { NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0005" -> validityRange?.let { NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0006" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0007" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"VR-CH-0008" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0000" -> INVALID(TOO_MANY_TEST_ENTRIES, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0001" -> INVALID(POSITIVE_RESULT, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0002" -> INVALID(WRONG_TEST_TYPE, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0003" -> INVALID(NO_VALID_PRODUCT, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0004" -> INVALID(NO_VALID_DATE, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0005" -> validityRange?.let { NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0006" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0007" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0008" -> INVALID(NEGATIVE_RESULT, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0009" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0010" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0011" -> validityRange?.let { NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"TR-CH-0012" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"RR-CH-0000" -> INVALID(TOO_MANY_RECOVERY_ENTRIES, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"RR-CH-0001" -> INVALID(NO_VALID_DATE, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"RR-CH-0002" -> validityRange?.let { NOT_YET_VALID(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			"RR-CH-0003" -> validityRange?.let { NOT_VALID_ANYMORE(it, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner) }
+				?: INVALID(VALIDITY_RANGE_NOT_FOUND, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
+			else -> INVALID(UNKNOWN_RULE_FAILED, isOnlyValidInSwitzerland, rule.identifier, showRenewBanner)
 		}
 	}
 
@@ -257,6 +248,4 @@ internal class NationalRulesVerifier {
 		}
 	}
 
-
 }
-
