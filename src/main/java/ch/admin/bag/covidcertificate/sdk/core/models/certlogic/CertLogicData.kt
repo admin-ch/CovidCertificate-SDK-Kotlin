@@ -30,5 +30,7 @@ internal data class CertLogicHeaders(
 	val iat: String?,
 	val exp: String?,
 	val isIsLight: Boolean?, //Must be isIsLight because the Json Serializer strips one "is"
-	val mode: String?
+	val mode: String?,
+	val iss: String? = null,
+	val kid: String? = null,
 )

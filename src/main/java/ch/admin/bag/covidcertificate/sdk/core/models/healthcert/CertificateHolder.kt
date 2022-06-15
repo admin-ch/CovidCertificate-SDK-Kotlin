@@ -21,6 +21,7 @@ class CertificateHolder(
 	val expirationTime: Instant? = null,
 	val issuedAt: Instant? = null,
 	val issuer: String? = null,
+	val kidBase64: String? = null,
 ) : Serializable {
 
 	var certType: CertType? = null

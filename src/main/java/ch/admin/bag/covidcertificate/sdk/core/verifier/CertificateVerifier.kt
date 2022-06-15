@@ -43,6 +43,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 class CertificateVerifier {
 
@@ -227,12 +228,14 @@ class CertificateVerifier {
 				certificateHolder.containsDccCert() -> {
 					val nationalRulesVerifier = NationalRulesVerifier()
 					val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
-					val expiredAt = certificateHolder.expirationTime?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+					val expiredAt = certificateHolder.expirationTime?.prettyPrint(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+					val issuer = certificateHolder.issuer
+					val kid = certificateHolder.kidBase64
 					nationalRulesVerifier.verify(
 						certificateHolder.certificate as DccCert,
 						ruleSet,
 						certificateHolder.certType!!,
-						CertLogicHeaders(issuedAt, expiredAt, false, null),
+						CertLogicHeaders(issuedAt, expiredAt, false, null, issuer, kid),
 						nationalRulesCheckDate,
 						isForeignRulesCheck,
 					)
@@ -261,21 +264,23 @@ class CertificateVerifier {
 		val modeRulesVerifier = ModeRulesVerifier()
 		val modeValidities = mutableListOf<ModeValidity>()
 
-		val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
-		val expiredAt = certificateHolder.expirationTime?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
 		if (!certificateHolder.containsChLightCert() && !certificateHolder.containsDccCert()) {
 			return@withContext CheckModeRulesState.ERROR(
 				StateError(ErrorCodes.RULESET_UNKNOWN, certificateHolder = certificateHolder)
 			)
-
 		}
+
 		verificationIdentifier.forEach { verificationMode ->
 			try {
+				val issuedAt = certificateHolder.issuedAt?.prettyPrint(DEFAULT_DISPLAY_RULES_TIME_FORMATTER)
+				val expiredAt = certificateHolder.expirationTime?.prettyPrint(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 				val isLight = certificateHolder.containsChLightCert()
+				val issuer = certificateHolder.issuer
+				val kid = certificateHolder.kidBase64
 				val modeValidity = modeRulesVerifier.verify(
 					certificateHolder.certificate,
 					ruleSet,
-					CertLogicHeaders(issuedAt, expiredAt, isLight, verificationMode),
+					CertLogicHeaders(issuedAt, expiredAt, isLight, verificationMode, issuer, kid),
 					verificationMode
 				)
 				modeValidities.add(modeValidity)

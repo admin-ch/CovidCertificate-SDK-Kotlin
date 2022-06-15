@@ -17,6 +17,7 @@ import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.CertTypeService
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.DecompressionService
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.NoopVerificationCoseService
 import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.PrefixIdentifierService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.VerificationCoseService
 import ch.admin.bag.covidcertificate.sdk.core.models.state.DecodeState
 import ch.admin.bag.covidcertificate.sdk.core.models.state.StateError
 
@@ -43,8 +44,12 @@ object CertificateDecoder {
 		// COSE decode to retrieve the CBOR data
 		val cbor = NoopVerificationCoseService.decode(cose) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_COSE))
 
+		// Read the key ID from the signature. This is non-critical for the certificate decoding, so it does not return an error state if it is missing
+		val signature = VerificationCoseService.getSignature(cose)
+		val kid = signature?.let { VerificationCoseService.getKeyId(it) }
+
 		// Decode the CBOR data into a certificate holder
-		val certificateHolder = CborService.decode(cbor, qrCodeData) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_CBOR))
+		val certificateHolder = CborService.decode(cbor, qrCodeData, kid) ?: return DecodeState.ERROR(StateError(ErrorCodes.DECODE_CBOR))
 
 		// Determine the certificate type the certificate holder contains
 		certificateHolder.certType = CertTypeService.decode(certificateHolder)
