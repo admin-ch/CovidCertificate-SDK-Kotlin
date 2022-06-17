@@ -10,6 +10,7 @@
 
 package ch.admin.bag.covidcertificate.sdk.core.models.state
 
+import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.NationalRulesError
 import ch.admin.bag.covidcertificate.sdk.core.verifier.nationalrules.ValidityRange
 
@@ -52,11 +53,20 @@ sealed class CheckNationalRulesState {
 		else -> null
 	}
 
-	fun showRenewBanner(): String? = when (this) {
-		is SUCCESS -> showRenewBanner
-		is NOT_YET_VALID -> showRenewBanner
-		is NOT_VALID_ANYMORE -> showRenewBanner
-		is INVALID -> showRenewBanner
-		else -> null
+	fun showRenewBanner(checkSignatureState: CheckSignatureState, checkRevocationState: CheckRevocationState): String? {
+		if (checkSignatureState is CheckSignatureState.INVALID && checkSignatureState.signatureErrorCode != ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED) {
+			return null
+		}
+		if (checkRevocationState is CheckRevocationState.INVALID) {
+			return null
+		}
+
+		return when (this) {
+			is SUCCESS -> showRenewBanner
+			is NOT_YET_VALID -> showRenewBanner
+			is NOT_VALID_ANYMORE -> showRenewBanner
+			is INVALID -> showRenewBanner
+			else -> null
+		}
 	}
 }
