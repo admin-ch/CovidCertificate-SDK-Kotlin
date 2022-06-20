@@ -11,12 +11,24 @@
 package ch.admin.bag.covidcertificate.sdk.core.verifier
 
 import ch.admin.bag.covidcertificate.sdk.core.data.ErrorCodes
-import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.*
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.Base45Service
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.DecompressionService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.PrefixIdentifierService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.RevokedHealthCertService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.TimestampService
+import ch.admin.bag.covidcertificate.sdk.core.decoder.chain.VerificationCoseService
 import ch.admin.bag.covidcertificate.sdk.core.models.certlogic.CertLogicHeaders
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertType
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.CertificateHolder
 import ch.admin.bag.covidcertificate.sdk.core.models.healthcert.eu.DccCert
-import ch.admin.bag.covidcertificate.sdk.core.models.state.*
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckModeRulesState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckNationalRulesState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckRevocationState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.CheckSignatureState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.ModeValidity
+import ch.admin.bag.covidcertificate.sdk.core.models.state.StateError
+import ch.admin.bag.covidcertificate.sdk.core.models.state.SuccessState
+import ch.admin.bag.covidcertificate.sdk.core.models.state.VerificationState
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.Jwks
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RevokedCertificatesStore
 import ch.admin.bag.covidcertificate.sdk.core.models.trustlist.RuleSet
@@ -111,12 +123,21 @@ class CertificateVerifier {
 			|| checkNationalRulesState is CheckNationalRulesState.NOT_YET_VALID
 			|| checkNationalRulesState is CheckNationalRulesState.NOT_VALID_ANYMORE
 		) {
+			val showRenewBanner = if (
+				(checkSignatureState is CheckSignatureState.INVALID && checkSignatureState.signatureErrorCode != ErrorCodes.SIGNATURE_TIMESTAMP_EXPIRED)
+				|| checkRevocationState is CheckRevocationState.INVALID
+			) {
+				null
+			} else {
+				checkNationalRulesState.showRenewBanner()
+			}
+
 			VerificationState.INVALID(
 				checkSignatureState,
 				checkRevocationState,
 				checkNationalRulesState,
 				checkNationalRulesState.validityRange(),
-				checkNationalRulesState.showRenewBanner(checkSignatureState, checkRevocationState)
+				showRenewBanner
 			)
 		} else {
 			VerificationState.LOADING
