@@ -18,17 +18,17 @@ import java.io.Serializable
 @JsonClass(generateAdapter = true)
 data class PersonName(
 	@Json(name = "fn") @get:JsonProperty("fn") val familyName: String?,
-	@Json(name = "fnt") @get:JsonProperty("fnt") val standardizedFamilyName: String,
+	@Json(name = "fnt") @get:JsonProperty("fnt") val standardizedFamilyName: String?,
 	@Json(name = "gn") @get:JsonProperty("gn") val givenName: String?,
 	@Json(name = "gnt") @get:JsonProperty("gnt") val standardizedGivenName: String?,
 ) : Serializable {
 
-	fun prettyFamilyName(): String = familyName ?: standardizedFamilyName
+	fun prettyFamilyName(): String = familyName ?: (standardizedFamilyName ?: "")
 
 	fun prettyGivenName(): String = givenName ?: (standardizedGivenName ?: "")
 
 	fun prettyName(): String = "${prettyFamilyName()} ${prettyGivenName()}"
 
 	// Don't fall back to the givenName if the standardizedGivenName is null, since the givenName can reasonably contain non-standard characters.
-	fun prettyStandardizedName(): String = "${standardizedFamilyName}<<${standardizedGivenName ?: ""}"
+	fun prettyStandardizedName(): String = "${standardizedFamilyName ?: ""}<<${standardizedGivenName ?: ""}"
 }
