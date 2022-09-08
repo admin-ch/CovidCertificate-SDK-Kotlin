@@ -20,4 +20,8 @@ class RevokedCertificatesInMemoryImpl(private var revokedCertificates: List<Stri
 		}
 	}
 
+	override fun getPrepopulatedSinceHeader(isProd: Boolean): String {
+		return "0"
+	}
+
 }
