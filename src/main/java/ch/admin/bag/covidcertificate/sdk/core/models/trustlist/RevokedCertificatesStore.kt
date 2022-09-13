@@ -16,4 +16,6 @@ interface RevokedCertificatesStore {
 	fun containsCertificate(certificate: String): Boolean
 
 	fun addCertificates(certificates: List<String>)
+
+	fun getPrepopulatedSinceHeader(isProd: Boolean): String
 }
